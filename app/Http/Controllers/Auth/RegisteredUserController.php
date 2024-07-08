@@ -1,19 +1,15 @@
 <?php
-
-// quizas elimniar ? verificar primero
-
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use Spatie\Permission\Models\Role;
 
 class RegisteredUserController extends Controller
 {
@@ -30,28 +26,74 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
-        //Log::debug($request->all()); // Esta línea imprime todos los datos del request en tu archivo de log
         $request->validate([
-            'nombre' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255'],
             'apellidos' => ['required', 'string', 'max:255'],
-            'correoElectronico' => ['required', 'string', 'email', 'max:255', 'unique:users,correoElectronico'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
-        $user = User::create([
-            'nombre' => $request->nombre,
-            'apellidos' => $request->apellidos,
-            'correoElectronico' => $request->correoElectronico,
-            'password' => Hash::make($request->password),
-            'tipoIdentificacion' => 'Cedula', // Establece un valor predeterminado adecuado
+        // Guarda los datos de registro inicial en la sesión
+        session([
+            'registro_inicial' => [
+                'name' => $request->name,
+                'apellidos' => $request->apellidos,
+                'email' => $request->email,
+                'password' => Hash::make($request->password), // Almacena la contraseña hasheada
+            ]
         ]);
 
-        event(new Registered($user));
+        return redirect()->route('register.complete');
+    }
 
-        Auth::login($user);
+    /**
+     * Display the complete registration form.
+     */
+    public function showCompleteForm(): View
+    {
+        // Verifica si los datos de registro inicial existen en la sesión
+        if (!session()->has('registro_inicial')) {
+            return redirect()->route('register');
+        }
 
-        return redirect(RouteServiceProvider::HOME);
+        return view('auth.register_complete', ['datos' => session('registro_inicial')]);
+    }
+
+    /**
+     * Handle the completion of the registration.
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function completeRegistration(Request $request)
+    {
+        $request->validate([
+            'tipoIdentificacion' => ['required', 'string', 'max:255'],
+            'identificacion' => ['required', 'string', 'max:255'],
+            'idGenero' => ['required', 'integer'],
+            'fechaNacimiento' => ['required', 'date'],
+            'telefonoConvencional' => ['nullable', 'string', 'max:255', 'regex:/^[0-9]*$/'],
+            'telefonoCelular' => ['nullable', 'string', 'max:255', 'regex:/^[0-9]*$/'],
+            'direccion' => ['required', 'string', 'max:255'],
+            'idCiudadResidencia' => ['required', 'integer'],
+        ]);
+
+        $registroInicial = session('registro_inicial');
+
+        $user = Auth::user();
+        $user->update([
+            'tipoIdentificacion' => $request->tipoIdentificacion,
+            'identificacion' => $request->identificacion,
+            'idGenero' => $request->idGenero,
+            'fechaNacimiento' => $request->fechaNacimiento,
+            'telefonoConvencional' => $request->telefonoConvencional,
+            'telefonoCelular' => $request->telefonoCelular,
+            'direccion' => $request->direccion,
+            'idCiudadResidencia' => $request->idCiudadResidencia,
+            'idEstadoUsuario' => 2, // Estado activo después de completar el registro
+        ]);
+
+        return redirect()->route('dashboard'); // O la ruta que desees después de completar el registro
     }
 }

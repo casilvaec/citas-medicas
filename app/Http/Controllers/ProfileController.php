@@ -74,7 +74,7 @@ class ProfileController extends Controller
         $user->telefonoCelular = $request->telefonoCelular;
         $user->direccion = $request->direccion;
         $user->idCiudadResidencia = $request->idCiudadResidencia;
-        $user->idEstadoUsuario = 1; // Asignar usuario como activo
+        $user->idEstadoUsuario = 2; // Asignar usuario como activo
 
         // Actualizar la contraseña si se proporciona
         if ($request->password) {

@@ -102,7 +102,7 @@ class RegisterController extends Controller
             'telefonoCelular' => $data['telefonoCelular'],
             'direccion' => $data['direccion'],
             'idCiudadResidencia' => $data['idCiudadResidencia'],
-            'idEstadoUsuario' => 0, // Asignar usuario como inactivo por defecto
+            'idEstadoUsuario' => 1, // Asignar usuario como inactivo por defecto
         ]);
     }
 }

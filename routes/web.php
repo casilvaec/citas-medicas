@@ -4,7 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\ProfileController; // Asegúrate de importar el controlador
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Auth\RegisteredUserController; // Asegúrate de importar el controlador
 
 /*
 |--------------------------------------------------------------------------
@@ -59,3 +60,8 @@ Route::middleware('auth')->group(function () {
 });
 
 
+Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
+Route::post('/register', [RegisteredUserController::class, 'store']);
+
+Route::get('/register/complete', [RegisteredUserController::class, 'showCompleteForm'])->name('register.complete');
+Route::post('/register/complete', [RegisteredUserController::class, 'completeRegistration'])->name('register.complete.post');
