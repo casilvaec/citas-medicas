@@ -1,84 +1,48 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión</title>
-    <!-- Enlazamos Bootstrap para estilos -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #e9f7f9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .login-container {
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .login-container img {
-            display: block;
-            margin: 0 auto 20px;
-        }
-        .login-container .form-group {
-            margin-bottom: 1rem;
-        }
-    </style>
-</head>
-<body>
+<x-guest-layout>
+    <x-authentication-card>
+        <x-slot name="logo">
+            <x-authentication-card-logo />
+        </x-slot>
 
-<!-- Contenedor del formulario de inicio de sesión -->
-<div class="login-container">
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
-        <div class="text-center">
-            <img src="hospital-logo.png" alt="Hospital Logo" width="72" height="72">
-            <h2>Hospital Isidro Ayora</h2>
-            <p>Por favor, ingresa tus datos para iniciar sesión.</p>
-        </div>
+        <x-validation-errors class="mb-4" />
 
-        <div class="form-group">
-            <label for="correoElectronico">Correo Electrónico</label>
-            <input type="email" name="correoElectronico" class="form-control @error('correoElectronico') is-invalid @enderror" id="correoElectronico" placeholder="Ingresa tu correo electrónico" value="{{ old('correoElectronico') }}" required autofocus>
-            @error('correoElectronico')
-                <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                </span>
-            @enderror
-        </div>
-
-        <div class="form-group">
-            <label for="password">Contraseña</label>
-            <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" id="password" placeholder="Contraseña" required>
-            @error('password')
-                <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                </span>
-            @enderror
-        </div>
-
-        <div class="form-group form-check">
-            <input type="checkbox" name="remember" class="form-check-input" id="remember" {{ old('remember') ? 'checked' : '' }}>
-            <label class="form-check-label" for="remember">Recuérdame</label>
-        </div>
-
-        <button type="submit" class="btn btn-primary btn-block">Iniciar Sesión</button>
-        
-        @if (Route::has('password.request'))
-            <a class="btn btn-link" href="{{ route('password.request') }}">¿Olvidaste tu contraseña?</a>
+        @if (session('status'))
+            <div class="mb-4 font-medium text-sm text-green-600">
+                {{ session('status') }}
+            </div>
         @endif
 
-        <p class="text-center mt-3">¿No tienes una cuenta? <a href="{{ route('register') }}">Regístrate</a></p>
-    </form>
-</div>
+        <form method="POST" action="{{ route('login') }}">
+            @csrf
 
-<!-- Enlazamos scripts de Bootstrap -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html>
+            <div>
+                <x-label for="email" value="{{ __('Email') }}" />
+                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
+            </div>
+
+            <div class="mt-4">
+                <x-label for="password" value="{{ __('Password') }}" />
+                <x-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="current-password" />
+            </div>
+
+            <div class="block mt-4">
+                <label for="remember_me" class="flex items-center">
+                    <x-checkbox id="remember_me" name="remember" />
+                    <span class="ml-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
+                </label>
+            </div>
+
+            <div class="flex items-center justify-end mt-4">
+                @if (Route::has('password.request'))
+                    <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
+                        {{ __('Forgot your password?') }}
+                    </a>
+                @endif
+
+                <x-button class="ml-4">
+                    {{ __('Log in') }}
+                </x-button>
+            </div>
+        </form>
+    </x-authentication-card>
+</x-guest-layout>

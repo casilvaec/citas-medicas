@@ -6,44 +6,41 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Fortify\TwoFactorAuthenticatable;
+use Laravel\Jetstream\HasProfilePhoto;
+use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles; // Importar el trait HasRoles
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, HasProfilePhoto, Notifiable, TwoFactorAuthenticatable, HasRoles; // Usar el trait HasRoles
 
     /**
-     * Los atributos que se pueden asignar masivamente.
+     * The attributes that are mass assignable.
      *
      * @var array<int, string>
      */
     protected $fillable = [
-        'nombre',                 // Cambiado de 'name' a 'nombre'
-        'apellidos',               // Añadido campo 'apellido'
-        'correoElectronico',      // Actualizado para reflejar el nombre correcto del campo
+        'name',
+        'email',
         'password',
-        'tipoIdentificacion',
-        'identificacion',
-        'idGenero',
-        'fechaNacimiento',
-        'telefonoConvencional',
-        'telefonoCelular',
-        'direccion',
-        'idCiudadResidencia',
-        'idEstadoUsuario',
+        'estado', // Asegúrate de agregar 'estado' a los fillable si no está
     ];
 
     /**
-     * Los atributos que deben estar ocultos para los arrays.
+     * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>
      */
     protected $hidden = [
         'password',
         'remember_token',
+        'two_factor_recovery_codes',
+        'two_factor_secret',
     ];
 
     /**
-     * Los atributos que deben ser convertidos a tipos nativos.
+     * The attributes that should be cast.
      *
      * @var array<string, string>
      */
@@ -52,26 +49,11 @@ class User extends Authenticatable
     ];
 
     /**
-     * Obtener el estado del usuario.
+     * The accessors to append to the model's array form.
+     *
+     * @var array<int, string>
      */
-    public function estadoUsuario()
-    {
-        return $this->belongsTo(EstadoUsuario::class, 'idEstadoUsuario');
-    }
-
-    /**
-     * Obtener el correo electrónico para restablecer la contraseña.
-     */
-    public function getEmailForPasswordReset()
-    {
-        return $this->correoElectronico;
-    }
-
-    /**
-     * Obtener el correo electrónico para la verificación.
-     */
-    public function getEmailForVerification()
-    {
-        return $this->correoElectronico;
-    }
+    protected $appends = [
+        'profile_photo_url',
+    ];
 }
