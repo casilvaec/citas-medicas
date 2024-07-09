@@ -71,19 +71,37 @@ class PatientController extends Controller
 }
 
 
+public function editProfile()
+{
+    // Datos simulados del paciente
+    $patientData = [
+        'name' => 'Carlos Silva',
+        'email' => 'casilva2@utpl.edu.ec',
+        'phone' => '123-456-7890',
+        'address' => 'Calle Falsa 123',
+    ];
+    return view('patient.edit_profile', ['patient' => $patientData]);
+}
+
+public function updateProfile(Request $request)
+{
+    // Aquí manejarías la lógica para actualizar los datos del paciente en la base de datos
+
+    return redirect()->route('patient.profile.edit')->with('status', 'Perfil actualizado correctamente');
+}
 
 
 
-    public function editProfile()
-    {
-        return view('patient.edit_profile');
-    }
+    // public function editProfile()
+    // {
+    //     return view('patient.edit_profile');
+    // }
 
-    public function updateProfile(Request $request)
-    {
-        // Lógica para actualizar el perfil
-        return redirect()->route('patient.dashboard')->with('status', 'Perfil actualizado correctamente');
-    }
+    // public function updateProfile(Request $request)
+    // {
+    //     // Lógica para actualizar el perfil
+    //     return redirect()->route('patient.dashboard')->with('status', 'Perfil actualizado correctamente');
+    // }
 
     public function listAppointments()
     {
