@@ -28,16 +28,51 @@ class PatientController extends Controller
         return view('patient.confirm_appointment');
     }
 
+    // public function showAppointments()
+    // {
+    //     // Obtener las citas programadas y pasarlas a la vista
+    //     $appointments = [
+    //         ['id' => 1, 'specialty' => 'Cardiología', 'doctor' => 'Dr. Smith', 'datetime' => '10/10/2024 10:00 AM'],
+    //         ['id' => 2, 'specialty' => 'Dermatología', 'doctor' => 'Dr. Jones', 'datetime' => '11/10/2024 11:00 AM'],
+    //         ['id' => 3, 'specialty' => 'Pediatría', 'doctor' => 'Dr. Brown', 'datetime' => '12/10/2024 12:00 PM']
+    //     ];
+    //     return view('patient.appointments_list', ['appointments' => $appointments]);
+    // }
+
     public function showAppointments()
-    {
-        return view('patient.cancel');
-    }
+{
+    // Aquí puedes obtener y pasar las citas programadas al view
+    $appointments = [
+        ['id' => 1, 'specialty' => 'Cardiología', 'doctor' => 'Dr. Smith', 'datetime' => '10/10/2024 10:00 AM'],
+        ['id' => 2, 'specialty' => 'Dermatología', 'doctor' => 'Dr. Jones', 'datetime' => '11/10/2024 11:00 AM'],
+        ['id' => 3, 'specialty' => 'Pediatría', 'doctor' => 'Dr. Brown', 'datetime' => '12/10/2024 12:00 PM']
+    ];
+    return view('patient.appointments_list', ['appointments' => $appointments]);
+}
+
+    
+
+    // public function cancelAppointment($id)
+    // {
+    //     // Lógica para cancelar la cita
+    //     // Aquí deberías tener lógica real para cancelar la cita en tu base de datos
+    //     // Ejemplo: Appointment::find($id)->delete();
+        
+    //     return redirect()->route('patient.appointments_list')->with('status', 'Cita cancelada correctamente');
+    // }
 
     public function cancelAppointment(Request $request)
-    {
-        // Lógica para cancelar la cita
-        return redirect()->route('patient.dashboard')->with('status', 'Cita cancelada correctamente');
-    }
+{
+    $appointmentId = $request->input('appointment_id');
+
+    // Simula la eliminación de la cita. En un caso real, deberías eliminar la cita de la base de datos.
+
+    return redirect()->route('patient.appointments.cancel')->with('status', 'Cita cancelada correctamente')->with('cancelled_id', $appointmentId);
+}
+
+
+
+
 
     public function editProfile()
     {
@@ -51,9 +86,8 @@ class PatientController extends Controller
     }
 
     public function listAppointments()
-{
-    // Aquí puedes obtener y pasar las citas programadas al view
-    return view('patient.appointments_list'); // Crear esta vista para mostrar las citas
-}
-
+    {
+        // Aquí puedes obtener y pasar las citas programadas al view
+        return view('patient.appointments_list'); // Crear esta vista para mostrar las citas
+    }
 }
