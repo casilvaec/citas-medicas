@@ -23,6 +23,14 @@ class User extends Authenticatable
         'apellidos',
         'email',
         'password',
+        'tipoIdentificacion',
+        'identificacion',
+        'idGenero',
+        'fechaNacimiento',
+        'telefonoConvencional',
+        'telefonoCelular',
+        'direccion',
+        'idCiudadResidencia',
         'idEstadoUsuario',
     ];
 
