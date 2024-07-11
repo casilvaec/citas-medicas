@@ -1,3 +1,7 @@
+<!-- resources/views/patient/appointments_list.blade.php -->
+
+<!-- resources/views/patient/appointments_list.blade.php -->
+
 @extends('layouts.app')
 
 @section('content')
@@ -26,7 +30,8 @@
     </ul>
     <div class="text-center">
         <a href="{{ route('patient.dashboard') }}" class="btn btn-primary mx-2">Volver al Panel de Control</a>
-        <a href="{{ route('logout') }}" class="btn btn-danger mx-2">Cerrar Sesión</a>
     </div>
 </div>
 @endsection
+
+

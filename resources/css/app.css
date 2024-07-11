@@ -1,3 +1,14 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Importar Bootstrap */
+@import "bootstrap/dist/css/bootstrap.min.css";
+
+/* Estilos personalizados */
+body {
+  background-color: #f8f9fa;
+}
+
+.btn-custom {
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+}

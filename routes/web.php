@@ -63,9 +63,12 @@ Route::middleware('auth')->group(function () {
     })->name('profile.redirect');
 });
 
+
+// ruta de registro inicial
 Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
 Route::post('/register', [RegisteredUserController::class, 'store']);
 
+// ruta de registro completo
 Route::get('/register/complete', [RegisteredUserController::class, 'showCompleteForm'])->name('register.complete');
 Route::post('/register/complete', [RegisteredUserController::class, 'completeRegistration'])->name('register.complete.post');
 
