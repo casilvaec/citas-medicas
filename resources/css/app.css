@@ -1,6 +1,10 @@
 /* Importar Bootstrap */
 @import "bootstrap/dist/css/bootstrap.min.css";
 
+/* Importa datatables */
+@import '~datatables.net-bs5/css/dataTables.bootstrap5.css';
+
+
 /* Estilos personalizados */
 body {
   background-color: #f8f9fa;

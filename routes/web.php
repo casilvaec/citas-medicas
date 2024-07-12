@@ -109,3 +109,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/patient/appointments/schedule', [PatientController::class, 'store'])->name('patient.appointments.store');
 });
 */
+
+
+// datatables ejemplo
+
+Route::get('datatable', function () {
+    return view('datatable');
+});
+
