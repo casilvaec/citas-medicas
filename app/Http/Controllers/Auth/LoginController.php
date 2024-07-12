@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Illuminate\Http\Request;
+// Remove the duplicate import statement
+//use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\LoginRequest;
+use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
@@ -14,7 +16,7 @@ class LoginController extends Controller
     use AuthenticatesUsers;
 
     // Redirigir a esta ruta después de iniciar sesión
-    protected $redirectTo = '/home';
+    protected $redirectTo = '/dashboard';
 
     // Constructor para aplicar middleware
     public function __construct()

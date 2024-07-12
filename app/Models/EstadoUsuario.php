@@ -9,6 +9,9 @@ class EstadoUsuario extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nombre'];
-}
+    protected $table = 'estadousuario';
 
+    protected $fillable = [
+        'estado',
+    ];
+}

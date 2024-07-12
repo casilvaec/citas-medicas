@@ -1,3 +1,4 @@
+<!-- resources/views/auth/register.blade.php -->
 <x-guest-layout>
     <x-authentication-card>
         <x-slot name="logo">
@@ -20,8 +21,8 @@
             </div>
 
             <div class="mt-4">
-                <x-label for="email" value="{{ __('Correo Electrónico') }}" />
-                <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
+                <x-label for="correoElectronico" value="{{ __('Correo Electrónico') }}" />
+                <x-input id="correoElectronico" class="block mt-1 w-full" type="email" name="correoElectronico" :value="old('correoElectronico')" required autocomplete="username" />
             </div>
 
             <div class="mt-4">

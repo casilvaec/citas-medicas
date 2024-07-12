@@ -1,12 +1,18 @@
 <?php
 
+
+// manejaria registro inicial  ???
+
+
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\Controller; // Add this line
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Auth\RegistersUsers; // Add this line
 use App\Http\Requests\RegisterRequest;
+use Illuminate\Auth\Events\Registered;
 
 class RegisterController extends Controller
 {
