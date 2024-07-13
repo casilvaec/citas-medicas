@@ -1,8 +1,9 @@
 <!-- resources/views/layouts/sidebar.blade.php -->
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
   <a href="{{ url('/') }}" class="brand-link">
-      <img src="{{ asset('img/adminlte/AdminLTELogo.png') }}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3">
-      <span class="brand-text font-weight-light">AdminLTE 3</span>
+      {{-- <img src="{{ asset('img/adminlte/AdminLTELogo.png') }}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"> --}}
+      <img src="{{ asset('hospital-logo.png') }}" alt="Hospital Logo" class="brand-image img-circle elevation-3">
+      <span class="brand-text font-weight-light">Administración</span>
   </a>
   <div class="sidebar">
       <nav class="mt-2">

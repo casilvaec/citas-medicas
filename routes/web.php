@@ -12,6 +12,7 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\RpuController;
+use App\Http\Controllers\RPU\PermissionControllerRPU;
 
 /*
 |--------------------------------------------------------------------------
@@ -81,7 +82,7 @@ Route::resource('users', UserController::class)->middleware('auth');
 Route::resource('roles', RoleController::class)->middleware('auth');
 
 // Rutas para la gestión de permisos
-Route::resource('permissions', PermissionController::class)->middleware('auth');
+//Route::resource('permissions', PermissionController::class)->middleware('auth');
 
 
 
@@ -128,3 +129,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/rpu', [RpuController::class, 'index'])->name('rpu.index');
 });
+
+// para RPU
+// Permisos
+
+//Route::resource('permissions', PermissionController::class);
+Route::get('admin/rpu', [RpuController::class, 'index'])->name('admin.rpu.index');
+Route::resource('permissions', PermissionControllerRPU::class);

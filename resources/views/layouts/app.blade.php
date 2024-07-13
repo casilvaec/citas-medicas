@@ -127,7 +127,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'Hospital Isidro Ayora') }}</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -137,7 +137,11 @@
     <link rel="stylesheet" href="{{ asset('css/adminlte/adminlte.min.css') }}">
     <link rel="stylesheet" href="{{ asset('plugins/adminlte/fontawesome-free/css/all.min.css') }}">
     <link rel="stylesheet" href="{{ asset('plugins/adminlte/icheck-bootstrap/icheck-bootstrap.min.css') }}">
-    <!-- Otros CSS necesarios -->
+    
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="{{ asset('plugins/adminlte/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('plugins/adminlte/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('plugins/adminlte/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
 
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -170,9 +174,24 @@
     <script src="{{ asset('plugins/adminlte/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('plugins/adminlte/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('js/adminlte/adminlte.min.js') }}"></script>
-    <!-- Otros JS necesarios -->
+    
+    <!-- DataTables JS -->
+    <script src="{{ asset('plugins/adminlte/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('plugins/adminlte/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('plugins/adminlte/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
+    <script src="{{ asset('plugins/adminlte/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('plugins/adminlte/datatables-buttons/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('plugins/adminlte/datatables-buttons/js/buttons.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('plugins/adminlte/jszip/jszip.min.js') }}"></script>
+    <script src="{{ asset('plugins/adminlte/pdfmake/pdfmake.min.js') }}"></script>
+    <script src="{{ asset('plugins/adminlte/pdfmake/vfs_fonts.js') }}"></script>
+    <script src="{{ asset('plugins/adminlte/datatables-buttons/js/buttons.html5.min.js') }}"></script>
+    <script src="{{ asset('plugins/adminlte/datatables-buttons/js/buttons.print.min.js') }}"></script>
+    <script src="{{ asset('plugins/adminlte/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    @stack('scripts')
 </body>
 </html>

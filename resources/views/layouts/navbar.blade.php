@@ -1,6 +1,4 @@
-Crear las vistas de Navbar, Sidebar y Footer.
-blade
-Copiar código
+
 <!-- resources/views/layouts/navbar.blade.php -->
 <nav class="main-header navbar navbar-expand navbar-white navbar-light">
     <ul class="navbar-nav">
