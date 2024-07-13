@@ -10,6 +10,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController; 
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PatientController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\RpuController;
 
 /*
 |--------------------------------------------------------------------------
@@ -117,3 +119,12 @@ Route::get('datatable', function () {
     return view('datatable');
 });
 
+// PARA ADMINLTE
+
+// routes/web.php
+Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+
+Route::prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/rpu', [RpuController::class, 'index'])->name('rpu.index');
+});
