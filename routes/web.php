@@ -13,6 +13,7 @@ use App\Http\Controllers\PatientController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\RpuController;
 use App\Http\Controllers\RPU\PermissionControllerRPU;
+use App\Http\Controllers\RPU\RoleControllerRPU;
 
 /*
 |--------------------------------------------------------------------------
@@ -136,3 +137,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
 //Route::resource('permissions', PermissionController::class);
 Route::get('admin/rpu', [RpuController::class, 'index'])->name('admin.rpu.index');
 Route::resource('permissions', PermissionControllerRPU::class);
+
+//Roles
+Route::resource('roles', RoleControllerRPU::class);
