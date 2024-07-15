@@ -42,6 +42,7 @@
 
 
 
+
 namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -49,7 +50,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
-
 
 class User extends Authenticatable
 {
@@ -59,11 +59,13 @@ class User extends Authenticatable
         'nombre',
         'apellidos',
         'correoElectronico',
+        'username',
         'password',
         'tipoIdentificacionId',
         'fechaNacimiento',
         'generoId',
-        'telefono',
+        'telefonoConvencional',
+        'telefonoCelular',
         'direccion',
         'ciudadResidenciaId',
         'estadoId',
@@ -71,23 +73,24 @@ class User extends Authenticatable
 
     protected $hidden = [
         'password',
+        'remember_token',
     ];
 
+    // Método para acceder al atributo email como correoElectronico
     public function getEmailAttribute()
     {
         return $this->attributes['correoElectronico'];
     }
 
+    // Método para asignar el atributo email a correoElectronico
     public function setEmailAttribute($value)
     {
         $this->attributes['correoElectronico'] = $value;
     }
 
+    // Relación con el modelo EstadoUsuario
     public function estadoUsuario()
     {
-    return $this->belongsTo(EstadoUsuario::class, 'estadoId');
+        return $this->belongsTo(EstadoUsuario::class, 'estadoId');
     }
-
 }
-
-

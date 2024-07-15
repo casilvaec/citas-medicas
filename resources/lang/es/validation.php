@@ -58,15 +58,17 @@ return [
   'url' => 'El formato del campo :attribute no es válido.',
 
   'custom' => [
-      'attribute-name' => [
-          'rule-name' => 'mensaje-personalizado',
+      'correoElectronico' => [
+          'unique' => 'El correo ya está en uso. Inggrese otro correo',
+          'required' => 'El correo es obligatorio',
+
       ],
   ],
 
   'attributes' => [
       'name' => 'nombre',
       'apellidos' => 'apellidos',
-      'email' => 'correo electrónico',
+      'correoElectronico' => 'correo electrónico',
       'password' => 'contraseña',
       'password_confirmation' => 'confirmación de contraseña',
       'tipoIdentificacion' => 'tipo de identificación',

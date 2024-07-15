@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\RpuController;
 use App\Http\Controllers\RPU\PermissionControllerRPU;
 use App\Http\Controllers\RPU\RoleControllerRPU;
+use App\Http\Controllers\RPU\UserControllerRPU;
 
 /*
 |--------------------------------------------------------------------------
@@ -140,3 +141,7 @@ Route::resource('permissions', PermissionControllerRPU::class);
 
 //Roles
 Route::resource('roles', RoleControllerRPU::class);
+
+
+// Usuarios
+Route::resource('users', UserControllerRPU::class);

@@ -120,6 +120,7 @@
 </body>
 </html> --}}
 
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -152,18 +153,26 @@
 <body class="hold-transition sidebar-mini">
     <div class="wrapper">
         <!-- Navbar -->
-        @include('layouts.navbar') <!-- Incluir la barra de navegación desde un archivo separado -->
+        @include('layouts.navbar')
 
         <!-- Main Sidebar Container -->
-        @include('layouts.sidebar') <!-- Incluir la barra lateral desde un archivo separado -->
+        @include('layouts.sidebar')
 
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
-            @yield('content') <!-- Donde se incluirá el contenido específico de cada página -->
+            <!-- Mensajes de Confirmación -->
+            @if(session('success'))
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{ session('success') }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            @endif
+
+            @yield('content')
         </div>
-        
+
         <!-- Footer -->
-        @include('layouts.footer') <!-- Incluir el pie de página desde un archivo separado -->
+        @include('layouts.footer')
     </div>
     
     @stack('modals')
@@ -195,3 +204,4 @@
     @stack('scripts')
 </body>
 </html>
+
