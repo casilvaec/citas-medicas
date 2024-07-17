@@ -3,8 +3,6 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-// Remove the duplicate import statement
-//use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\LoginRequest;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
@@ -63,38 +61,48 @@ class LoginController extends Controller
     // Validar los datos del formulario de login
     protected function validateLogin(Request $request)
     {
-        // Requerir que el correoElectronico y la contraseña estén presentes y sean válidos
+        // Requerir que el nombre de usuario y la contraseña estén presentes y sean válidos
         $request->validate([
-            
             'username' => 'required|string',
             'password' => 'required|string',
         ]);
     }
 
-    // Definir que el campo de nombre de usuario es el correo electrónico
+    // Definir que el campo de nombre de usuario es 'username'
     public function username()
     {
-        // Usar el campo correoElectronico como nombre de usuario
+        // Usar el campo 'username' como nombre de usuario
         return 'username';
     }
 
     /**
-     * Log the user out of the application.
+     * Cerrar la sesión del usuario en la aplicación.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function logout(Request $request)
     {
+        // Cerrar sesión
         Auth::logout();
 
+        // Invalidar la sesión
         $request->session()->invalidate();
 
+        // Regenerar el token de la sesión
         $request->session()->regenerateToken();
 
-        return redirect('/login'); // Redirige a la página de inicio de sesión después de cerrar sesión
+        // Redirigir a la página de inicio de sesión después de cerrar sesión
+        return redirect('/login');
     }
 
+    /**
+     * Método para manejar acciones después de autenticar al usuario.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Models\User  $user
+     * @return \Illuminate\Http\RedirectResponse
+     */
     protected function authenticated(Request $request, $user)
     {
         // Verifica si el atributo estadoId del usuario autenticado es igual a 1
@@ -106,6 +114,5 @@ class LoginController extends Controller
         // Si estadoId no es igual a 1, redirige al usuario a la ruta que intentaba acceder antes de iniciar sesión
         // Si no hay una ruta específica, redirige a la ruta definida por $this->redirectPath()
         return redirect()->intended($this->redirectPath());
-}
-
+    }
 }
