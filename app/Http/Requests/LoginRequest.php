@@ -24,8 +24,16 @@ class LoginRequest extends FormRequest
     public function rules()
     {
         return [
-            'correoElectronico' => 'required|string|email',
+            'username' => 'required|string',
             'password' => 'required|string',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'username.required' => 'El nombre de usuario es obligatorio.',
+            'password.required' => 'La contraseña es obligatoria.',
         ];
     }
 }

@@ -6,9 +6,6 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Auth\RegisteredUserController;
-use App\Http\Controllers\UserController; 
-use App\Http\Controllers\RoleController; 
-use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\RpuController;
@@ -38,7 +35,12 @@ Route::get('/home', function () {
 // Ruta para el recurso appointments
 Route::resource('appointments', AppointmentController::class);
 
-// Rutas de autenticación (manejadas por el RegisterController)
+// Rutas de autenticación
+Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('login', [LoginController::class, 'login']);
+Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+
+// Rutas de registro
 Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('register', [RegisterController::class, 'register']);
 
@@ -52,7 +54,6 @@ Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
 // Ruta para editar el perfil del usuario
 Route::middleware('auth')->group(function () {
-    // Rutas protegidas que requieren autenticación
     Route::get('profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -68,26 +69,22 @@ Route::middleware('auth')->group(function () {
     })->name('profile.redirect');
 });
 
-
-// ruta de registro inicial
+// Ruta de registro inicial
 Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
 Route::post('/register', [RegisteredUserController::class, 'store']);
 
-// ruta de registro completo
+// Ruta de registro completo
 Route::get('/register/complete', [RegisteredUserController::class, 'showCompleteForm'])->name('register.complete');
 Route::post('/register/complete', [RegisteredUserController::class, 'completeRegistration'])->name('register.complete.post');
 
 // Rutas para la gestión de usuarios
-Route::resource('users', UserController::class)->middleware('auth');
+Route::resource('users', UserControllerRPU::class);
 
 // Rutas para la gestión de roles
-Route::resource('roles', RoleController::class)->middleware('auth');
+Route::resource('roles', RoleControllerRPU::class);
 
 // Rutas para la gestión de permisos
-//Route::resource('permissions', PermissionController::class)->middleware('auth');
-
-
-
+Route::resource('permissions', PermissionControllerRPU::class);
 
 // Desactivar autenticación temporalmente para pruebas
 // Ruta del dashboard del paciente
@@ -101,10 +98,6 @@ Route::get('/patient/profile/edit', [PatientController::class, 'editProfile'])->
 Route::post('/patient/profile/update', [PatientController::class, 'updateProfile'])->name('patient.profile.update');
 Route::get('/patient/appointments/list', [PatientController::class, 'listAppointments'])->name('patient.appointments.list');
 
-
-
-
-
 // Al terminar las pruebas, recuerda reactivar la autenticación
 /*
 // Rutas para el flujo de paciente
@@ -115,9 +108,7 @@ Route::middleware('auth')->group(function () {
 });
 */
 
-
-// datatables ejemplo
-
+// Datatables ejemplo
 Route::get('datatable', function () {
     return view('datatable');
 });
@@ -132,16 +123,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/rpu', [RpuController::class, 'index'])->name('rpu.index');
 });
 
-// para RPU
 // Permisos
-
-//Route::resource('permissions', PermissionController::class);
-Route::get('admin/rpu', [RpuController::class, 'index'])->name('admin.rpu.index');
 Route::resource('permissions', PermissionControllerRPU::class);
 
-//Roles
+// Roles
 Route::resource('roles', RoleControllerRPU::class);
-
 
 // Usuarios
 Route::resource('users', UserControllerRPU::class);

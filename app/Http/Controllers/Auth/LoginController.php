@@ -65,7 +65,8 @@ class LoginController extends Controller
     {
         // Requerir que el correoElectronico y la contraseña estén presentes y sean válidos
         $request->validate([
-            $this->username() => 'required|string',
+            
+            'username' => 'required|string',
             'password' => 'required|string',
         ]);
     }
@@ -74,7 +75,7 @@ class LoginController extends Controller
     public function username()
     {
         // Usar el campo correoElectronico como nombre de usuario
-        return 'correoElectronico';
+        return 'username';
     }
 
     /**
@@ -93,5 +94,18 @@ class LoginController extends Controller
 
         return redirect('/login'); // Redirige a la página de inicio de sesión después de cerrar sesión
     }
+
+    protected function authenticated(Request $request, $user)
+    {
+        // Verifica si el atributo estadoId del usuario autenticado es igual a 1
+        if ($user->estadoId == 1) {
+            // Si estadoId es igual a 1, redirige al usuario a la ruta 'register.complete'
+            return redirect()->route('register.complete');
+        }
+    
+        // Si estadoId no es igual a 1, redirige al usuario a la ruta que intentaba acceder antes de iniciar sesión
+        // Si no hay una ruta específica, redirige a la ruta definida por $this->redirectPath()
+        return redirect()->intended($this->redirectPath());
 }
 
+}
