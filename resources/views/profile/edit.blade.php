@@ -22,15 +22,13 @@
 
             <!-- Tipo de Identificación -->
             <div class="form-group">
-                <label for="tipoIdentificacion">Tipo de Identificación</label>
-                <select name="tipoIdentificacion" class="form-control @error('tipoIdentificacion') is-invalid @enderror" id="tipoIdentificacion" required>
-                    @foreach($tiposIdentificacion as $tipo)
-                        <option value="{{ $tipo->id }}" {{ old('tipoIdentificacion', $user->tipoIdentificacionId) == $tipo->id ? 'selected' : '' }}>
-                            {{ $tipo->tipo }}
-                        </option>
+                <label for="tipoIdentificacionId">Tipo de Identificación</label>
+                <select name="tipoIdentificacionId" class="form-control @error('tipoIdentificacionId') is-invalid @enderror" id="tipoIdentificacionId" required>
+                    @foreach ($tiposIdentificacion as $tipo)
+                        <option value="{{ $tipo->id }}" {{ old('tipoIdentificacionId', $user->tipoIdentificacionId) == $tipo->id ? 'selected' : '' }}>{{ $tipo->tipo }}</option>
                     @endforeach
                 </select>
-                @error('tipoIdentificacion')
+                @error('tipoIdentificacionId')
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ $message }}</strong>
                     </span>
@@ -50,15 +48,13 @@
 
             <!-- Género -->
             <div class="form-group">
-                <label for="idGenero">Género</label>
-                <select name="idGenero" class="form-control @error('idGenero') is-invalid @enderror" id="idGenero" required>
-                    @foreach($generos as $genero)
-                        <option value="{{ $genero->id }}" {{ old('idGenero', $user->generoId) == $genero->id ? 'selected' : '' }}>
-                            {{ $genero->nombre }}
-                        </option>
+                <label for="generoId">Género</label>
+                <select name="generoId" class="form-control @error('generoId') is-invalid @enderror" id="generoId" required>
+                    @foreach ($generos as $genero)
+                        <option value="{{ $genero->id }}" {{ old('generoId', $user->generoId) == $genero->id ? 'selected' : '' }}>{{ $genero->nombre }}</option>
                     @endforeach
                 </select>
-                @error('idGenero')
+                @error('generoId')
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ $message }}</strong>
                     </span>
@@ -67,15 +63,13 @@
 
             <!-- Ciudad de Residencia -->
             <div class="form-group">
-                <label for="idCiudadResidencia">Ciudad de Residencia</label>
-                <select name="idCiudadResidencia" class="form-control @error('idCiudadResidencia') is-invalid @enderror" id="idCiudadResidencia" required>
-                    @foreach($ciudades as $ciudad)
-                        <option value="{{ $ciudad->id }}" {{ old('idCiudadResidencia', $user->ciudadResidenciaId) == $ciudad->id ? 'selected' : '' }}>
-                            {{ $ciudad->nombre }}
-                        </option>
+                <label for="ciudadResidenciaId">Ciudad de Residencia</label>
+                <select name="ciudadResidenciaId" class="form-control @error('ciudadResidenciaId') is-invalid @enderror" id="ciudadResidenciaId" required>
+                    @foreach ($ciudades as $ciudad)
+                        <option value="{{ $ciudad->id }}" {{ old('ciudadResidenciaId', $user->ciudadResidenciaId) == $ciudad->id ? 'selected' : '' }}>{{ $ciudad->nombre }}</option>
                     @endforeach
                 </select>
-                @error('idCiudadResidencia')
+                @error('ciudadResidenciaId')
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ $message }}</strong>
                     </span>
@@ -109,6 +103,17 @@
                 <label for="correoElectronico">Correo Electrónico</label>
                 <input type="email" name="correoElectronico" class="form-control @error('correoElectronico') is-invalid @enderror" id="correoElectronico" value="{{ old('correoElectronico', $user->correoElectronico) }}" required>
                 @error('correoElectronico')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                @enderror
+            </div>
+
+            <!-- Nombre de Usuario -->
+            <div class="form-group">
+                <label for="username">Nombre de Usuario</label>
+                <input type="text" name="username" class="form-control @error('username') is-invalid @enderror" id="username" value="{{ old('username', $user->username) }}" required>
+                @error('username')
                     <span class="invalid-feedback" role="alert">
                         <strong>{{ $message }}</strong>
                     </span>

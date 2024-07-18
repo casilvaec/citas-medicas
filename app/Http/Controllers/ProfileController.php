@@ -33,68 +33,53 @@ class ProfileController extends Controller
      */
     public function update(Request $request): RedirectResponse
     {
-        // Validar los datos del formulario
-        $rules = [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . Auth::id()],
-            'password' => ['nullable', 'string', 'min:8', 'confirmed'],
-            'tipoIdentificacion' => ['required', 'string'],
-            'apellidos' => ['required', 'string', 'max:255'],
-            'idGenero' => ['required', 'integer'],
-            'fechaNacimiento' => ['required', 'date'],
-            'telefonoConvencional' => ['nullable', 'string', 'max:20', 'regex:/^[0-9]+$/'],
-            'telefonoCelular' => ['nullable', 'string', 'max:20', 'regex:/^[0-9]+$/'],
-            'direccion' => ['required', 'string', 'max:255'],
-            'idCiudadResidencia' => ['required', 'integer'],
-        ];
-
-        // Validaciones específicas para cada tipo de identificación
-        if ($request->tipoIdentificacion === 'Cédula') {
-            $rules['identificacion'] = ['required', 'string', 'size:10', 'regex:/^[0-9]+$/'];
-        } elseif ($request->tipoIdentificacion === 'Pasaporte') {
-            $rules['identificacion'] = ['required', 'string', 'max:20'];
-        } else {
-            $rules['identificacion'] = ['required', 'string', 'max:13', 'regex:/^[0-9]+$/'];
-        }
-
-        $customMessages = [
-            'identificacion.regex' => 'Debe ingresar números.',
+        $request->validate([
+            'tipoIdentificacionId' => 'required|exists:tipos_identificacion,id',
+            'identificacion' => 'required|string|max:255',
+            'generoId' => 'required|exists:generos,id',
+            'ciudadResidenciaId' => 'required|exists:ciudades,id',
+            'nombre' => 'required|string|max:255',
+            'apellidos' => 'required|string|max:255',
+            'correoElectronico' => 'required|string|email|max:255|unique:users,correoElectronico,' . Auth::id(),
+            'username' => 'required|string|max:255|unique:users,username,' . Auth::id(),
+            'telefonoConvencional' => 'nullable|string|max:20|regex:/^[0-9]+$/',
+            'telefonoCelular' => 'nullable|string|max:20|regex:/^[0-9]+$/',
+            'direccion' => 'nullable|string|max:255',
+            'fechaNacimiento' => 'nullable|date',
+            'password' => 'nullable|string|min:8|confirmed',
+        ], [
             'telefonoConvencional.regex' => 'Debe ingresar números.',
-            'telefonoCelular.regex' => 'Debe ingresar números.'
-        ];
+            'telefonoCelular.regex' => 'Debe ingresar números.',
+        ]);
 
-        $request->validate($rules, $customMessages);
-
-        // Obtener el usuario autenticado
         $user = Auth::user();
+
         // Actualizar los campos del usuario
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->tipoIdentificacion = $request->tipoIdentificacion;
-        $user->identificacion = $request->identificacion;
+        $user->tipoIdentificacionId = $request->tipoIdentificacionId;
+       
+        $user->generoId = $request->generoId;
+        $user->ciudadResidenciaId = $request->ciudadResidenciaId;
+        $user->nombre = $request->nombre;
         $user->apellidos = $request->apellidos;
-        $user->idGenero = $request->idGenero;
-        $user->fechaNacimiento = $request->fechaNacimiento;
+        $user->correoElectronico = $request->correoElectronico;
+        $user->username = $request->username;
         $user->telefonoConvencional = $request->telefonoConvencional;
         $user->telefonoCelular = $request->telefonoCelular;
         $user->direccion = $request->direccion;
-        $user->idCiudadResidencia = $request->idCiudadResidencia;
-        $user->idEstadoUsuario = 2; // Asignar usuario como activo
+        $user->fechaNacimiento = $request->fechaNacimiento;
+        $user->estadoId = 2; // Actualiza el estado del usuario a activo
 
-        // Actualizar la contraseña si se proporciona
-        if ($request->password) {
+        if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
         }
 
         // Si el correo electrónico cambia, marcar email_verified_at como null
-        if ($user->isDirty('email')) {
+        if ($user->isDirty('correoElectronico')) {
             $user->email_verified_at = null;
         }
 
-        // Guardar los cambios en la base de datos
         $user->save();
 
-        // Redirigir a la página de edición de perfil con un mensaje de éxito
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 
