@@ -1,5 +1,7 @@
 <?php
 
+// app/Http/Controllers/Catalogo/TipoIdentificacionController.php
+
 namespace App\Http\Controllers\Catalogo;
 
 use App\Http\Controllers\Controller;
@@ -22,7 +24,7 @@ class TipoIdentificacionController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'tipo' => 'required|string|max:255|unique:tipos_identificacion',
+            'tipo' => 'required|string|max:255|unique:tipos_identificacion,tipo',
         ]);
 
         TipoIdentificacion::create($request->all());
@@ -31,26 +33,26 @@ class TipoIdentificacionController extends Controller
                          ->with('success', 'Tipo de Identificación creado exitosamente.');
     }
 
-    public function edit(TipoIdentificacion $tipoIdentificacion)
+    public function edit(TipoIdentificacion $tipos_identificacion)
     {
-        return view('catalogos.tipos_identificacion.edit', compact('tipoIdentificacion'));
+        return view('catalogos.tipos_identificacion.edit', ['tipoIdentificacion' => $tipos_identificacion]);
     }
 
-    public function update(Request $request, TipoIdentificacion $tipoIdentificacion)
+    public function update(Request $request, TipoIdentificacion $tipos_identificacion)
     {
         $request->validate([
-            'tipo' => 'required|string|max:255|unique:tipos_identificacion,tipo,' . $tipoIdentificacion->id,
+            'tipo' => 'required|string|max:255|unique:tipos_identificacion,tipo,' . $tipos_identificacion->id,
         ]);
 
-        $tipoIdentificacion->update($request->all());
+        $tipos_identificacion->update($request->all());
 
         return redirect()->route('admin.tipos-identificacion.index')
                          ->with('success', 'Tipo de Identificación actualizado exitosamente.');
     }
 
-    public function destroy(TipoIdentificacion $tipoIdentificacion)
+    public function destroy(TipoIdentificacion $tipos_identificacion)
     {
-        $tipoIdentificacion->delete();
+        $tipos_identificacion->delete();
 
         return redirect()->route('admin.tipos-identificacion.index')
                          ->with('success', 'Tipo de Identificación eliminado exitosamente.');
