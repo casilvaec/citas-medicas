@@ -12,6 +12,9 @@ use App\Http\Controllers\Admin\RpuController;
 use App\Http\Controllers\RPU\PermissionControllerRPU;
 use App\Http\Controllers\RPU\RoleControllerRPU;
 use App\Http\Controllers\RPU\UserControllerRPU;
+use App\Http\Controllers\Catalogo\TipoIdentificacionController;
+use App\Http\Controllers\Catalogo\GeneroController;
+use App\Http\Controllers\Catalogo\CiudadResidenciaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -115,12 +118,14 @@ Route::get('datatable', function () {
 
 // PARA ADMINLTE
 
-// routes/web.php
-Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
-
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/rpu', [RpuController::class, 'index'])->name('rpu.index');
+
+    // Rutas para la gestión de catálogos
+    Route::resource('tipos-identificacion', TipoIdentificacionController::class);
+    Route::resource('generos', GeneroController::class);
+    Route::resource('ciudades-residencia', CiudadResidenciaController::class);
 });
 
 // Permisos
@@ -131,3 +136,4 @@ Route::resource('roles', RoleControllerRPU::class);
 
 // Usuarios
 Route::resource('users', UserControllerRPU::class);
+
