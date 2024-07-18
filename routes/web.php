@@ -117,6 +117,7 @@ Route::get('datatable', function () {
 });
 
 // PARA ADMINLTE
+Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 
 Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -125,7 +126,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Rutas para la gestión de catálogos
     Route::resource('tipos-identificacion', TipoIdentificacionController::class);
     Route::resource('generos', GeneroController::class);
-    Route::resource('ciudades-residencia', CiudadResidenciaController::class);
+    Route::resource('ciudades-residencia', CiudadResidenciaController::class, ['parameters' => ['ciudades-residencia' => 'ciudad']]);
 });
 
 // Permisos

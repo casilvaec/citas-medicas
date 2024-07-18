@@ -10,8 +10,8 @@ class CiudadResidenciaController extends Controller
 {
     public function index()
     {
-        $ciudadesResidencia = CiudadResidencia::all();
-        return view('catalogos.ciudades_residencia.index', compact('ciudadesResidencia'));
+        $ciudades = CiudadResidencia::all();
+        return view('catalogos.ciudades_residencia.index', compact('ciudades'));
     }
 
     public function create()
@@ -22,7 +22,7 @@ class CiudadResidenciaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nombre' => 'required|string|max:255|unique:ciudades_residencia',
+            'nombre' => 'required|string|max:255',
         ]);
 
         CiudadResidencia::create($request->all());
@@ -31,28 +31,29 @@ class CiudadResidenciaController extends Controller
                          ->with('success', 'Ciudad de Residencia creada exitosamente.');
     }
 
-    public function edit(CiudadResidencia $ciudadResidencia)
+    public function edit(CiudadResidencia $ciudad)
     {
-        return view('catalogos.ciudades_residencia.edit', compact('ciudadResidencia'));
+        return view('catalogos.ciudades_residencia.edit', compact('ciudad'));
     }
 
-    public function update(Request $request, CiudadResidencia $ciudadResidencia)
+    public function update(Request $request, CiudadResidencia $ciudad)
     {
         $request->validate([
-            'nombre' => 'required|string|max:255|unique:ciudades_residencia,nombre,' . $ciudadResidencia->id,
+            'nombre' => 'required|string|max:255',
         ]);
 
-        $ciudadResidencia->update($request->all());
+        $ciudad->update($request->all());
 
         return redirect()->route('admin.ciudades-residencia.index')
                          ->with('success', 'Ciudad de Residencia actualizada exitosamente.');
     }
 
-    public function destroy(CiudadResidencia $ciudadResidencia)
+    public function destroy(CiudadResidencia $ciudad)
     {
-        $ciudadResidencia->delete();
+        $ciudad->delete();
 
         return redirect()->route('admin.ciudades-residencia.index')
                          ->with('success', 'Ciudad de Residencia eliminada exitosamente.');
     }
 }
+

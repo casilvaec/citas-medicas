@@ -10,4 +10,8 @@ class CiudadResidencia extends Model
     use HasFactory;
 
     protected $fillable = ['nombre'];
+
+    // Define el nombre correcto de la tabla
+    protected $table = 'ciudades';
 }
+
