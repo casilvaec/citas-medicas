@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\TipoIdentificacion;
+use App\Models\Genero;
+use App\Models\CiudadResidencia;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -18,9 +20,12 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
-        return view('profile.edit', [
-            'user' => $request->user(),
-        ]);
+        $user = $request->user();
+        $tiposIdentificacion = TipoIdentificacion::all();
+        $generos = Genero::all();
+        $ciudades = CiudadResidencia::all();
+
+        return view('profile.edit', compact('user', 'tiposIdentificacion', 'generos', 'ciudades'));
     }
 
     /**
@@ -120,5 +125,3 @@ class ProfileController extends Controller
         return Redirect::to('/');
     }
 }
-
-

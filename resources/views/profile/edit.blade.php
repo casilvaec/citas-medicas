@@ -24,9 +24,11 @@
             <div class="form-group">
                 <label for="tipoIdentificacion">Tipo de Identificación</label>
                 <select name="tipoIdentificacion" class="form-control @error('tipoIdentificacion') is-invalid @enderror" id="tipoIdentificacion" required>
-                    <option value="Cédula" {{ old('tipoIdentificacion', $user->tipoIdentificacion) == 'Cédula' ? 'selected' : '' }}>Cédula</option>
-                    <option value="RUC" {{ old('tipoIdentificacion', $user->tipoIdentificacion) == 'RUC' ? 'selected' : '' }}>RUC</option>
-                    <option value="Pasaporte" {{ old('tipoIdentificacion', $user->tipoIdentificacion) == 'Pasaporte' ? 'selected' : '' }}>Pasaporte</option>
+                    @foreach($tiposIdentificacion as $tipo)
+                        <option value="{{ $tipo->id }}" {{ old('tipoIdentificacion', $user->tipoIdentificacionId) == $tipo->id ? 'selected' : '' }}>
+                            {{ $tipo->tipo }}
+                        </option>
+                    @endforeach
                 </select>
                 @error('tipoIdentificacion')
                     <span class="invalid-feedback" role="alert">
@@ -50,9 +52,11 @@
             <div class="form-group">
                 <label for="idGenero">Género</label>
                 <select name="idGenero" class="form-control @error('idGenero') is-invalid @enderror" id="idGenero" required>
-                    <option value="1" {{ old('idGenero', $user->idGenero) == 1 ? 'selected' : '' }}>Masculino</option>
-                    <option value="2" {{ old('idGenero', $user->idGenero) == 2 ? 'selected' : '' }}>Femenino</option>
-                    <option value="3" {{ old('idGenero', $user->idGenero) == 3 ? 'selected' : '' }}>Otro</option>
+                    @foreach($generos as $genero)
+                        <option value="{{ $genero->id }}" {{ old('idGenero', $user->generoId) == $genero->id ? 'selected' : '' }}>
+                            {{ $genero->nombre }}
+                        </option>
+                    @endforeach
                 </select>
                 @error('idGenero')
                     <span class="invalid-feedback" role="alert">
@@ -65,9 +69,11 @@
             <div class="form-group">
                 <label for="idCiudadResidencia">Ciudad de Residencia</label>
                 <select name="idCiudadResidencia" class="form-control @error('idCiudadResidencia') is-invalid @enderror" id="idCiudadResidencia" required>
-                    <option value="1" {{ old('idCiudadResidencia', $user->idCiudadResidencia) == 1 ? 'selected' : '' }}>Loja</option>
-                    <option value="2" {{ old('idCiudadResidencia', $user->idCiudadResidencia) == 2 ? 'selected' : '' }}>Catamayo</option>
-                    <!-- Añadir más opciones según las ciudades disponibles -->
+                    @foreach($ciudades as $ciudad)
+                        <option value="{{ $ciudad->id }}" {{ old('idCiudadResidencia', $user->ciudadResidenciaId) == $ciudad->id ? 'selected' : '' }}>
+                            {{ $ciudad->nombre }}
+                        </option>
+                    @endforeach
                 </select>
                 @error('idCiudadResidencia')
                     <span class="invalid-feedback" role="alert">
