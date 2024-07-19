@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
 use App\Models\Medico;
 use App\Models\EspecialidadMedica;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class MedicosController extends Controller
 {

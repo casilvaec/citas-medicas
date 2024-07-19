@@ -16,6 +16,8 @@ use App\Http\Controllers\RPU\UserControllerRPU;
 use App\Http\Controllers\Catalogo\TipoIdentificacionController;
 use App\Http\Controllers\Catalogo\GeneroController;
 use App\Http\Controllers\Catalogo\CiudadResidenciaController;
+use App\Http\Controllers\Admin\EspecialidadesMedicasController;
+use App\Http\Controllers\Admin\MedicosController;
 
 /*
 |--------------------------------------------------------------------------
@@ -112,6 +114,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('tipos-identificacion', TipoIdentificacionController::class);
     Route::resource('generos', GeneroController::class);
     Route::resource('ciudades-residencia', CiudadResidenciaController::class, ['parameters' => ['ciudades-residencia' => 'ciudad']]);
+    
+    //Rutas para gestion de médicos
+    Route::resource('especialidades', EspecialidadesMedicasController::class);
+    Route::resource('medicos', MedicosController::class);
 });
 
 // Permisos
@@ -123,9 +129,5 @@ Route::resource('roles', RoleControllerRPU::class);
 // Usuarios
 Route::resource('users', UserControllerRPU::class);
 
-//Especialdiades médicas
-Route::resource('especialidades', EspecialidadesMedicasController::class);
 
-// Médicos
-Route::resource('medicos', MedicosController::class);
 
