@@ -122,3 +122,10 @@ Route::resource('roles', RoleControllerRPU::class);
 
 // Usuarios
 Route::resource('users', UserControllerRPU::class);
+
+//Especialdiades médicas
+Route::resource('especialidades', EspecialidadesMedicasController::class);
+
+// Médicos
+Route::resource('medicos', MedicosController::class);
+

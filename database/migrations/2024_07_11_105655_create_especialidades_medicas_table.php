@@ -10,7 +10,7 @@ class CreateEspecialidadesMedicasTable extends Migration
     {
         Schema::create('especialidades_medicas', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('nombre')->nullable();
+            $table->string('nombre')->nullable(false); // Hacer que el nombre no pueda ser nulo
             $table->text('descripcion')->nullable();
             $table->boolean('estado')->default(1);
             $table->timestamps();
