@@ -105,14 +105,28 @@ class LoginController extends Controller
      */
     protected function authenticated(Request $request, $user)
     {
-        // Verifica si el atributo estadoId del usuario autenticado es igual a 1
+        // Obtener los IDs de los roles
+        $adminRoleId = 7;
+        $patientRoleId = 1;
+        // Otros roles pueden ser añadidos aquí si es necesario
+
+        // Verificar si el estado del usuario es igual a 1
         if ($user->estadoId == 1) {
-            // Si estadoId es igual a 1, redirige al usuario a la ruta 'register.complete'
-            return redirect()->route('register.complete');
+            // Redirigir a la página de edición de perfil
+            return redirect()->route('profile.edit');
         }
-    
-        // Si estadoId no es igual a 1, redirige al usuario a la ruta que intentaba acceder antes de iniciar sesión
-        // Si no hay una ruta específica, redirige a la ruta definida por $this->redirectPath()
-        return redirect()->intended($this->redirectPath());
+
+        // Verificar si el estado del usuario es igual a 2
+        if ($user->estadoId == 2) {
+            // Redirección basada en el rol del usuario
+            if ($user->roles->contains($adminRoleId)) {
+                return redirect()->route('admin.dashboard');
+            } elseif ($user->roles->contains($patientRoleId)) {
+                return redirect()->route('patient.dashboard');
+            }
+        }
+
+        // Redirección por defecto
+        return redirect()->route('home');
     }
 }

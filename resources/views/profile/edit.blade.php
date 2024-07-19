@@ -470,8 +470,6 @@
 </body>
 </html> --}}
 
-
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -484,9 +482,15 @@
     <div class="container">
         <h1>Editar Perfil</h1>
 
-        @if (session('status'))
+        @if (session('status') == 'profile-updated')
             <div class="alert alert-success">
-                {!! nl2br(e(session('status'))) !!}
+                Perfil actualizado con éxito. Por favor, inicie sesión nuevamente.
+                <br>
+                @if (session('password'))
+                    <strong>Usuario:</strong> {{ session('username') }}<br>
+                    <strong>Contraseña:</strong> (Solo para pruebas: {{ session('password') }})
+                @endif
+                <a href="{{ route('login') }}" class="btn btn-primary mt-3">Iniciar Sesión</a>
             </div>
         @endif
 
@@ -500,7 +504,7 @@
             </div>
         @endif
 
-        <form method="POST" action="{{ route('profile.update') }}">
+        <form method="POST" action="{{ route('profile.update') }}" id="profile-form">
             @csrf
             @method('PATCH')
 
@@ -593,17 +597,6 @@
                 @enderror
             </div>
 
-            <!-- Nombre de Usuario -->
-            <div class="form-group">
-                <label for="username">Nombre de Usuario</label>
-                <input type="text" name="username" class="form-control @error('username') is-invalid @enderror" id="username" value="{{ old('username', $user->username) }}" required>
-                @error('username')
-                    <span class="invalid-feedback" role="alert">
-                        <strong>{{ $message }}</strong>
-                    </span>
-                @enderror
-            </div>
-
             <!-- Teléfono Convencional -->
             <div class="form-group">
                 <label for="telefonoConvencional">Teléfono Convencional</label>
@@ -648,14 +641,14 @@
                 @enderror
             </div>
 
-            <!-- Contraseña Actual -->
-            <div class="form-group">
-                <input type="checkbox" id="changePassword" name="changePassword">
-                <label for="changePassword">Marque para cambiar la contraseña</label>
+            <!-- Checkbox para cambiar la contraseña -->
+            <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="changePasswordCheck">
+                <label class="form-check-label" for="changePasswordCheck">Cambiar Contraseña</label>
             </div>
 
-            <div id="passwordFields" style="display:none;">
-                <!-- Contraseña Actual -->
+            <!-- Campos de contraseña -->
+            <div id="passwordFields" style="display: none;">
                 <div class="form-group">
                     <label for="current_password">Contraseña Actual</label>
                     <input type="password" name="current_password" class="form-control @error('current_password') is-invalid @enderror" id="current_password">
@@ -666,7 +659,6 @@
                     @enderror
                 </div>
 
-                <!-- Nueva Contraseña -->
                 <div class="form-group">
                     <label for="password">Nueva Contraseña</label>
                     <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" id="password">
@@ -677,7 +669,6 @@
                     @enderror
                 </div>
 
-                <!-- Confirmar Nueva Contraseña -->
                 <div class="form-group">
                     <label for="password_confirmation">Confirmar Nueva Contraseña</label>
                     <input type="password" name="password_confirmation" class="form-control" id="password_confirmation">
@@ -702,18 +693,97 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        document.getElementById('changePassword').addEventListener('change', function() {
-            var passwordFields = document.getElementById('passwordFields');
-            if (this.checked) {
-                passwordFields.style.display = 'block';
-            } else {
-                passwordFields.style.display = 'none';
+        document.addEventListener('DOMContentLoaded', function () {
+            const profileForm = document.getElementById('profile-form');
+            const changePasswordCheck = document.getElementById('changePasswordCheck');
+            const passwordFields = document.getElementById('passwordFields');
+            const currentPassword = document.getElementById('current_password');
+            const password = document.getElementById('password');
+            const passwordConfirmation = document.getElementById('password_confirmation');
+
+            changePasswordCheck.addEventListener('change', function () {
+                if (this.checked) {
+                    passwordFields.style.display = 'block';
+                    currentPassword.setAttribute('required', 'required');
+                    password.setAttribute('required', 'required');
+                    passwordConfirmation.setAttribute('required', 'required');
+                } else {
+                    passwordFields.style.display = 'none';
+                    currentPassword.removeAttribute('required');
+                    password.removeAttribute('required');
+                    passwordConfirmation.removeAttribute('required');
+                }
+            });
+
+            profileForm.addEventListener('input', function (event) {
+                validateField(event.target);
+            });
+
+            function validateField(field) {
+                if (field.name === 'numeroIdentificacion' && isNaN(field.value)) {
+                    setError(field, 'El número de identificación debe ser un número.');
+                } else {
+                    clearError(field);
+                }
+
+                if (field.name === 'telefonoConvencional' && !/^[0-9]+$/.test(field.value)) {
+                    setError(field, 'Debe ingresar solo números.');
+                } else {
+                    clearError(field);
+                }
+
+                if (field.name === 'telefonoCelular' && !/^[0-9]+$/.test(field.value)) {
+                    setError(field, 'Debe ingresar solo números.');
+                } else {
+                    clearError(field);
+                }
+
+                if (field.name === 'correoElectronico' && !/^[\w\.-]+@[a-zA-Z\d\.-]+\.[a-zA-Z]{2,6}$/.test(field.value)) {
+                    setError(field, 'Debe ingresar un correo electrónico válido.');
+                } else {
+                    clearError(field);
+                }
+
+                if (field.name === 'current_password' && password.value && !field.value) {
+                    setError(field, 'Debe ingresar su contraseña actual para cambiar la contraseña.');
+                } else {
+                    clearError(field);
+                }
+
+                if (field.name === 'password' && field.value !== passwordConfirmation.value) {
+                    setError(field, 'Las contraseñas no coinciden.');
+                } else {
+                    clearError(field);
+                }
+
+                if (field.name === 'password_confirmation' && field.value !== password.value) {
+                    setError(field, 'Las contraseñas no coinciden.');
+                } else {
+                    clearError(field);
+                }
+            }
+
+            function setError(field, message) {
+                field.classList.add('is-invalid');
+                let error = field.nextElementSibling;
+                if (!error || !error.classList.contains('invalid-feedback')) {
+                    error = document.createElement('span');
+                    error.classList.add('invalid-feedback');
+                    field.after(error);
+                }
+                error.innerHTML = '<strong>' + message + '</strong>';
+            }
+
+            function clearError(field) {
+                field.classList.remove('is-invalid');
+                let error = field.nextElementSibling;
+                if (error && error.classList.contains('invalid-feedback')) {
+                    error.remove();
+                }
             }
         });
     </script>
 </body>
 </html>
-
-
 
 

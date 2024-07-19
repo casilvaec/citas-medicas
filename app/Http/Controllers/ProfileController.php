@@ -123,6 +123,8 @@
 
 
 
+
+
 namespace App\Http\Controllers;
 
 use App\Models\User;
@@ -156,6 +158,8 @@ class ProfileController extends Controller
      */
     public function update(Request $request): RedirectResponse
     {
+        $user = Auth::user();
+
         $request->validate([
             'tipoIdentificacionId' => 'required|exists:tipos_identificacion,id',
             'numeroIdentificacion' => 'required|string|max:255',
@@ -163,8 +167,7 @@ class ProfileController extends Controller
             'ciudadResidenciaId' => 'required|exists:ciudades,id',
             'nombre' => 'required|string|max:255',
             'apellidos' => 'required|string|max:255',
-            'correoElectronico' => 'required|string|email|max:255|unique:users,correoElectronico,' . Auth::id(),
-            'username' => 'required|string|max:255|unique:users,username,' . Auth::id(),
+            'correoElectronico' => 'required|string|email|max:255|unique:users,correoElectronico,' . $user->id,
             'telefonoConvencional' => 'nullable|string|max:20|regex:/^[0-9]+$/',
             'telefonoCelular' => 'nullable|string|max:20|regex:/^[0-9]+$/',
             'direccion' => 'nullable|string|max:255',
@@ -172,11 +175,9 @@ class ProfileController extends Controller
             'current_password' => 'nullable|string|min:8',
             'password' => 'nullable|string|min:8|confirmed',
         ], [
-            'telefonoConvencional.regex' => 'Debe ingresar números.',
-            'telefonoCelular.regex' => 'Debe ingresar números.',
+            'telefonoConvencional.regex' => 'Debe ingresar solo números.',
+            'telefonoCelular.regex' => 'Debe ingresar solo números.',
         ]);
-
-        $user = Auth::user();
 
         // Validar la contraseña actual si se proporciona una nueva contraseña
         if ($request->filled('password')) {
@@ -194,7 +195,6 @@ class ProfileController extends Controller
         $user->nombre = $request->nombre;
         $user->apellidos = $request->apellidos;
         $user->correoElectronico = $request->correoElectronico;
-        $user->username = $request->username;
         $user->telefonoConvencional = $request->telefonoConvencional;
         $user->telefonoCelular = $request->telefonoCelular;
         $user->direccion = $request->direccion;
@@ -208,12 +208,8 @@ class ProfileController extends Controller
 
         $user->save();
 
-        $statusMessage = "Perfil actualizado con éxito. Por favor, inicie sesión nuevamente.";
-        if ($request->filled('password')) {
-            $statusMessage .= "\n\nUsuario: " . $user->username . "\nContraseña: (Solo para pruebas: " . $request->password . ")";
-        }
-
-        return Redirect::route('profile.edit')->with('status', $statusMessage);
+        Auth::logout();
+        return redirect('/login')->with('status', 'Perfil actualizado con éxito. Por favor, inicie sesión nuevamente.')->with('username', $user->username)->with('password', $request->password);
     }
 
     /**
@@ -243,3 +239,8 @@ class ProfileController extends Controller
         return Redirect::to('/');
     }
 }
+
+
+
+
+

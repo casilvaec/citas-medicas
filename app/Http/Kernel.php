@@ -65,5 +65,6 @@ class Kernel extends HttpKernel
         'signed' => \App\Http\Middleware\ValidateSignature::class, // Middleware para validar firmas de URL
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class, // Middleware para limitar la tasa de solicitudes
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class, // Middleware para asegurar que el email esté verificado
+        //'redirectBasedOnRole' => \App\Http\Middleware\RedirectBasedOnRole::class, // Middleware para redirigir basado en el rol
     ];
 }

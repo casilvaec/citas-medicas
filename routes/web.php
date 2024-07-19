@@ -1,3 +1,4 @@
+
 <?php
 
 use Illuminate\Support\Facades\Route;
@@ -55,12 +56,10 @@ Route::get('/dashboard', function () {
 // Ruta para cerrar sesión
 Route::post('logout', [LoginController::class, 'logout'])->name('logout');
 
-// Ruta para editar el perfil del usuario
-Route::middleware('auth')->group(function () {
-    Route::get('profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+// Rutas para editar y actualizar el perfil del usuario
+Route::get('profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+Route::patch('profile/update', [ProfileController::class, 'update'])->name('profile.update');
+Route::delete('profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
 // Requiere el archivo de rutas de Breeze si estás utilizando Breeze para otras rutas de autenticación
 require __DIR__.'/auth.php';
@@ -75,10 +74,6 @@ Route::middleware('auth')->group(function () {
 // Ruta de registro inicial
 Route::get('/register', [RegisteredUserController::class, 'create'])->name('register');
 Route::post('/register', [RegisteredUserController::class, 'store']);
-
-// Ruta de registro completo
-Route::get('/register/complete', [RegisteredUserController::class, 'showCompleteForm'])->name('register.complete');
-Route::post('/register/complete', [RegisteredUserController::class, 'completeRegistration'])->name('register.complete.post');
 
 // Rutas para la gestión de usuarios
 Route::resource('users', UserControllerRPU::class);
@@ -100,16 +95,6 @@ Route::post('/patient/appointments/cancel', [PatientController::class, 'cancelAp
 Route::get('/patient/profile/edit', [PatientController::class, 'editProfile'])->name('patient.profile.edit');
 Route::post('/patient/profile/update', [PatientController::class, 'updateProfile'])->name('patient.profile.update');
 Route::get('/patient/appointments/list', [PatientController::class, 'listAppointments'])->name('patient.appointments.list');
-
-// Al terminar las pruebas, recuerda reactivar la autenticación
-/*
-// Rutas para el flujo de paciente
-Route::middleware('auth')->group(function () {
-    Route::get('/patient/dashboard', [PatientController::class, 'dashboard'])->name('patient.dashboard');
-    Route::get('/patient/appointments/schedule', [PatientController::class, 'schedule'])->name('patient.appointments.schedule');
-    Route::post('/patient/appointments/schedule', [PatientController::class, 'store'])->name('patient.appointments.store');
-});
-*/
 
 // Datatables ejemplo
 Route::get('datatable', function () {
@@ -137,4 +122,3 @@ Route::resource('roles', RoleControllerRPU::class);
 
 // Usuarios
 Route::resource('users', UserControllerRPU::class);
-
