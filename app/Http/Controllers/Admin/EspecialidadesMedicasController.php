@@ -2,62 +2,68 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use App\Models\EspecialidadMedica;
+
+use App\Models\EspecialidadesMedicas;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class EspecialidadesMedicasController extends Controller
 {
     // Mostrar la lista de especialidades
     public function index()
     {
-        $especialidades = EspecialidadMedica::all();
-        return view('especialidades_medica.index', compact('especialidades'));
+        $especialidades = EspecialidadesMedicas::all();
+        return view('especialidades_medicas.index', compact('especialidades'));
     }
 
     // Mostrar el formulario para crear una nueva especialidad
     public function create()
     {
-        return view('especialidades_medica.create');
+        return view('especialidades_medicas.create');
     }
 
     // Guardar una nueva especialidad
     public function store(Request $request)
     {
         $request->validate([
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'nullable|string',
+            'nombre' => 'required',
+            'descripcion' => 'nullable',
+            'estado' => 'required|boolean',
         ]);
 
-        EspecialidadMedica::create($request->all());
+        EspecialidadesMedicas::create($request->all());
 
-        return redirect()->route('especialidades.index')->with('success', 'Especialidad creada correctamente.');
+        return redirect()->route('admin.especialidades.index')->with('success', 'Especialidad médica creada exitosamente.');
     }
 
     // Mostrar el formulario para editar una especialidad
-    public function edit(EspecialidadMedica $especialidad)
+    public function edit($id)
     {
-        return view('especialidades_medica.edit', compact('especialidad'));
+        $especialidad = EspecialidadesMedicas::findOrFail($id);
+        return view('especialidades_medicas.edit', compact('especialidad'));
     }
 
     // Actualizar una especialidad
-    public function update(Request $request, EspecialidadMedica $especialidad)
+    public function update(Request $request, $id)
     {
         $request->validate([
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'nullable|string',
+            'nombre' => 'required',
+            'descripcion' => 'nullable',
+            'estado' => 'required|boolean',
         ]);
 
+        $especialidad = EspecialidadesMedicas::findOrFail($id);
         $especialidad->update($request->all());
 
-        return redirect()->route('especialidades.index')->with('success', 'Especialidad actualizada correctamente.');
+        return redirect()->route('admin.especialidades.index')->with('success', 'Especialidad médica actualizada exitosamente.');
     }
 
     // Eliminar una especialidad
-    public function destroy(EspecialidadMedica $especialidad)
+    public function destroy($id)
     {
+        $especialidad = EspecialidadesMedicas::findOrFail($id);
         $especialidad->delete();
 
-        return redirect()->route('especialidades.index')->with('success', 'Especialidad eliminada correctamente.');
+        return redirect()->route('admin.especialidades.index')->with('success', 'Especialidad médica eliminada correctamente.');
     }
 }

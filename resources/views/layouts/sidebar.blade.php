@@ -73,7 +73,7 @@
                 </li>
                 <li class="nav-item">
                     <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-user-md"></i>
+                        <i class="nav-icon fas fa-stethoscope"></i>
                         <p>
                             Gestión Área Médica
                             <i class="right fas fa-angle-left"></i>
@@ -82,13 +82,13 @@
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
                             <a href="{{ route('admin.especialidades.index') }}" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
+                                <i class="fas fa-book nav-icon"></i>
                                 <p>Especialidades Médicas</p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="{{ route('admin.medicos.index') }}" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
+                                <i class="fas fa-user-md nav-icon"></i>
                                 <p>Médicos</p>
                             </a>
                         </li>

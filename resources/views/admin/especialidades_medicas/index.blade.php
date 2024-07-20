@@ -1,14 +1,14 @@
 @extends('adminlte::page')
 
-@section('title', 'Gestión de Médicos')
+@section('title', 'Especialidades Médicas')
 
 @section('content_header')
-    <h1>Gestión de Médicos</h1>
+    <h1>Especialidades Médicas</h1>
 @stop
 
 @section('content')
     <div class="container">
-        <a href="{{ route('medicos.create') }}" class="btn btn-primary">Crear Nuevo Médico</a>
+        <a href="{{ route('admin.especialidades.create') }}" class="btn btn-primary mb-3">Crear Nueva Especialidad</a>
         @if (session('success'))
             <div class="alert alert-success mt-3">
                 {{ session('success') }}
@@ -19,23 +19,21 @@
                 <tr>
                     <th>ID</th>
                     <th>Nombre</th>
-                    <th>Especialidades</th>
+                    <th>Descripción</th>
+                    <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($medicos as $medico)
+                @foreach ($especialidades as $especialidad)
                     <tr>
-                        <td>{{ $medico->id }}</td>
-                        <td>{{ $medico->user->nombre }} {{ $medico->user->apellidos }}</td>
+                        <td>{{ $especialidad->id }}</td>
+                        <td>{{ $especialidad->nombre }}</td>
+                        <td>{{ $especialidad->descripcion }}</td>
+                        <td>{{ $especialidad->estado ? 'Activo' : 'Inactivo' }}</td>
                         <td>
-                            @foreach ($medico->especialidades as $especialidad)
-                                {{ $especialidad->nombre }}
-                            @endforeach
-                        </td>
-                        <td>
-                            <a href="{{ route('medicos.edit', $medico) }}" class="btn btn-warning">Editar</a>
-                            <form action="{{ route('medicos.destroy', $medico) }}" method="POST" style="display:inline;">
+                            <a href="{{ route('admin.especialidades.edit', $especialidad->id) }}" class="btn btn-warning">Editar</a>
+                            <form action="{{ route('admin.especialidades.destroy', $especialidad->id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger">Eliminar</button>
