@@ -7,6 +7,7 @@ use App\Models\Medico;
 use App\Models\EspecialidadesMedicas;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Spatie\Permission\Models\Role;
 
 class MedicosController extends Controller
 {
@@ -20,7 +21,8 @@ class MedicosController extends Controller
     // Mostrar el formulario para crear un nuevo médico
     public function create()
     {
-        $usuarios = User::all();
+        $roleMedico = Role::where('name', 'medico')->first();
+        $usuarios = User::role($roleMedico)->get();
         $especialidades = EspecialidadesMedicas::all();
         return view('admin.medicos.create', compact('usuarios', 'especialidades'));
     }
@@ -29,11 +31,11 @@ class MedicosController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,id',
+            'usuarioId' => 'required|exists:users,id',
             'especialidades' => 'required|array',
         ]);
 
-        $medico = Medico::create(['usuarioId' => $request->user_id]);
+        $medico = Medico::create(['usuarioId' => $request->usuarioId]);
         $medico->especialidades()->sync($request->especialidades);
 
         return redirect()->route('admin.medicos.index')->with('success', 'Médico creado correctamente.');
@@ -42,7 +44,8 @@ class MedicosController extends Controller
     // Mostrar el formulario para editar un médico
     public function edit(Medico $medico)
     {
-        $usuarios = User::all();
+        $roleMedico = Role::where('name', 'medico')->first();
+        $usuarios = User::role( $roleMedico->medicoId)->get();                              
         $especialidades = EspecialidadesMedicas::all();
         return view('admin.medicos.edit', compact('medico', 'usuarios', 'especialidades'));
     }
@@ -51,11 +54,11 @@ class MedicosController extends Controller
     public function update(Request $request, Medico $medico)
     {
         $request->validate([
-            'user_id' => 'required|exists:users,id',
+            'usuarioId' => 'required|exists:users,id',
             'especialidades' => 'required|array',
         ]);
 
-        $medico->update(['usuarioId' => $request->user_id]);
+        $medico->update(['usuarioId' => $request->usuarioId]);
         $medico->especialidades()->sync($request->especialidades);
 
         return redirect()->route('admin.medicos.index')->with('success', 'Médico actualizado correctamente.');

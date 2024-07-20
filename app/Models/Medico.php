@@ -18,6 +18,6 @@ class Medico extends Model
 
     public function especialidades()
     {
-        return $this->belongsToMany(EspecialidadMedica::class, 'medico_especialidades', 'medicoId', 'especialidadId');
+        return $this->belongsToMany(EspecialidadesMedicas::class, 'medico_especialidades', 'medicoId', 'especialidadId');
     }
 }

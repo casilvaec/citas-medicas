@@ -9,8 +9,8 @@
             @csrf
             @method('PUT')
             <div class="form-group">
-                <label for="user_id">Usuario</label>
-                <select name="usuarioId" id="usuarioId"class="form-control"  required>
+                <label for="usuarioId">Usuario</label>
+                <select name="usuarioId" id="usuarioId" class="form-control" required>
                     @foreach($usuarios as $usuario)
                         <option value="{{ $usuario->id }}" {{ $usuario->id == $medico->usuarioId ? 'selected' : '' }}>
                             {{ $usuario->nombre }} {{ $usuario->apellidos }}
