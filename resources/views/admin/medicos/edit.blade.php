@@ -10,7 +10,7 @@
             @method('PUT')
             <div class="form-group">
                 <label for="usuarioId">Usuario</label>
-                <select name="usuarioId" id="usuarioId" class="form-control" required>
+                <select name="usuarioId" id="usuarioId" class="form-control">
                     @foreach($usuarios as $usuario)
                         <option value="{{ $usuario->id }}" {{ $usuario->id == $medico->usuarioId ? 'selected' : '' }}>
                             {{ $usuario->nombre }} {{ $usuario->apellidos }}
@@ -20,7 +20,7 @@
             </div>
             <div class="form-group">
                 <label for="especialidades">Especialidades</label>
-                <select name="especialidades[]" id="especialidades" class="form-control"  multiple required>
+                <select name="especialidades[]" id="especialidades" class="form-control"  multiple>
                     @foreach ($especialidades as $especialidad)
                         <option value="{{ $especialidad->id }}" {{ in_array($especialidad->id, $medico->especialidades->pluck('id')->toArray()) ? 'selected' : '' }}>
                             {{ $especialidad->nombre }}

@@ -42,10 +42,11 @@ class MedicosController extends Controller
     }
 
     // Mostrar el formulario para editar un médico
-    public function edit(Medico $medico)
+    public function edit($id)
     {
+        $medico = Medico::findOrFail($id);
         $roleMedico = Role::where('name', 'medico')->first();
-        $usuarios = User::role( $roleMedico->medicoId)->get();                              
+        $usuarios = User::role( $roleMedico)->get();                              
         $especialidades = EspecialidadesMedicas::all();
         return view('admin.medicos.edit', compact('medico', 'usuarios', 'especialidades'));
     }
