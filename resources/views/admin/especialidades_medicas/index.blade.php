@@ -6,11 +6,7 @@
     <div class="container">
         <h1>Especialidades Médicas</h1>
         <a href="{{ route('admin.especialidades.create') }}" class="btn btn-primary mb-3">Agregar Especialidad</a>
-        @if (session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-            </div>
-        @endif
+       
         <table class="table">
             <thead>
                 <tr>

@@ -23,7 +23,7 @@ class MedicosController extends Controller
     {
         $roleMedico = Role::where('name', 'medico')->first();
         $usuarios = User::role($roleMedico)->get();
-        $especialidades = EspecialidadesMedicas::all();
+        $especialidades = EspecialidadesMedicas::where('estado', 1)->get(); //obtiene solo especialidades activas
         return view('admin.medicos.create', compact('usuarios', 'especialidades'));
     }
 
@@ -47,7 +47,7 @@ class MedicosController extends Controller
         $medico = Medico::findOrFail($id);
         $roleMedico = Role::where('name', 'medico')->first();
         $usuarios = User::role( $roleMedico)->get();                              
-        $especialidades = EspecialidadesMedicas::all();
+        $especialidades = EspecialidadesMedicas::where('estado', 1)->get(); //obtiene solo especialidades activas
         return view('admin.medicos.edit', compact('medico', 'usuarios', 'especialidades'));
     }
 
