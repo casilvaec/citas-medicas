@@ -10,8 +10,10 @@ class CreateMedicosTable extends Migration
     {
         Schema::create('medicos', function (Blueprint $table) {
             $table->increments('id');
-            $table->foreignId('usuarioId')->nullable()->constrained('users')->onDelete('cascade'); // Asegurarse de que la tabla referenciada sea 'users'
+            $table->unsignedInteger('usuarioId')->nullable(); // Asegurarse de que la tabla referenciada sea 'users'
             $table->timestamps();
+
+            $table->foreign('usuarioId')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

@@ -29,11 +29,11 @@ class MedicosController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'usuarioId' => 'required|exists:users,id',
+            'user_id' => 'required|exists:users,id',
             'especialidades' => 'required|array',
         ]);
 
-        $medico = Medico::create(['usuarioId' => $request->usuarioId]);
+        $medico = Medico::create(['usuarioId' => $request->user_id]);
         $medico->especialidades()->sync($request->especialidades);
 
         return redirect()->route('admin.medicos.index')->with('success', 'Médico creado correctamente.');
@@ -51,11 +51,11 @@ class MedicosController extends Controller
     public function update(Request $request, Medico $medico)
     {
         $request->validate([
-            'usuarioId' => 'required|exists:users,id',
+            'user_id' => 'required|exists:users,id',
             'especialidades' => 'required|array',
         ]);
 
-        $medico->update(['usuarioId' => $request->usuarioId]);
+        $medico->update(['usuarioId' => $request->user_id]);
         $medico->especialidades()->sync($request->especialidades);
 
         return redirect()->route('admin.medicos.index')->with('success', 'Médico actualizado correctamente.');
