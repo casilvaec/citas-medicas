@@ -1,26 +1,30 @@
-@extends('adminlte::page')
+@extends('layouts.app')
 
-@section('title', 'Editar Especialidad Médica')
 
-@section('content_header')
-    <h1>Editar Especialidad Médica</h1>
-@stop
 
 @section('content')
     <div class="container">
-        <form action="{{ route('especialidades.update', $especialidad) }}" method="POST">
+        <h1>Editar Especialidad Médica</h1>
+        <form action="{{ route('admin.especialidades.update', $especialidad->id) }}" method="POST">
             @csrf
-            @method('PATCH')
+            @method('PUT')
             <div class="form-group">
                 <label for="nombre">Nombre</label>
-                <input type="text" name="nombre" class="form-control" id="nombre" value="{{ $especialidad->nombre }}" required>
+                <input type="text" name="nombre" id="nombre" class="form-control"  value="{{ $especialidad->nombre }}" required>
             </div>
             <div class="form-group">
                 <label for="descripcion">Descripción</label>
-                <textarea name="descripcion" class="form-control" id="descripcion">{{ $especialidad->descripcion }}</textarea>
+                <textarea name="descripcion" id="descripcion" class="form-control" >{{ $especialidad->descripcion }}</textarea>
             </div>
-            <button type="submit" class="btn btn-primary">Guardar</button>
-            <a href="{{ route('especialidades.index') }}" class="btn btn-secondary">Cancelar</a>
+            <div class="form-group">
+                <label for="estado">Estado</label>
+                <select name="estado" id="estado" class="form-control" required>
+                    <option value="1" {{ $especialidad->estado ? 'selected' : '' }}>Activo</option>
+                    <option value="0" {{ $especialidad->estado ? 'selected' : '' }}>Inactivo</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Actualizar</button>
+            
         </form>
     </div>
-@stop
+@endsection

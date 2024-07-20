@@ -1,25 +1,28 @@
-@extends('adminlte::page')
+@extends('layouts.app')
 
-@section('title', 'Crear Especialidad Médica')
-
-@section('content_header')
-    <h1>Crear Especialidad Médica</h1>
-@stop
 
 @section('content')
     <div class="container">
-        <form action="{{ route('especialidades.store') }}" method="POST">
+        <h1>Agregar Nueva Especialidad Médica</h1>
+        <form action="{{ route('admin.especialidades.store') }}" method="POST">
             @csrf
             <div class="form-group">
                 <label for="nombre">Nombre</label>
-                <input type="text" name="nombre" class="form-control" id="nombre" required>
+                <input type="text" name="nombre" id="nombre" class="form-control" id="nombre" required>
             </div>
             <div class="form-group">
                 <label for="descripcion">Descripción</label>
-                <textarea name="descripcion" class="form-control" id="descripcion"></textarea>
+                <textarea name="descripcion" id="descripcion" class="form-control"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="estado">Estado</label>
+                <select name="estado" id="estado" class="form-control" required>
+                    <option value="1">Activo</option>
+                    <option value="0">Inactivo</option>
+                </select>
             </div>
             <button type="submit" class="btn btn-primary">Guardar</button>
-            <a href="{{ route('especialidades.index') }}" class="btn btn-secondary">Cancelar</a>
+            
         </form>
     </div>
-@stop
+@endsection

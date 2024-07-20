@@ -1,20 +1,17 @@
-@extends('adminlte::page')
+@extends('layouts.app')
 
-@section('title', 'Editar Médico')
 
-@section('content_header')
-    <h1>Editar Médico</h1>
-@stop
 
 @section('content')
     <div class="container">
-        <form action="{{ route('medicos.update', $medico) }}" method="POST">
+        <h1>Editar Médico</h1>
+        <form action="{{ route('admin.medicos.update', $medico->id) }}" method="POST">
             @csrf
-            @method('PATCH')
+            @method('PUT')
             <div class="form-group">
                 <label for="user_id">Usuario</label>
-                <select name="user_id" class="form-control" id="user_id" required>
-                    @foreach ($usuarios as $usuario)
+                <select name="usuarioId" id="usuarioId"class="form-control"  required>
+                    @foreach($usuarios as $usuario)
                         <option value="{{ $usuario->id }}" {{ $usuario->id == $medico->usuarioId ? 'selected' : '' }}>
                             {{ $usuario->nombre }} {{ $usuario->apellidos }}
                         </option>
@@ -23,7 +20,7 @@
             </div>
             <div class="form-group">
                 <label for="especialidades">Especialidades</label>
-                <select name="especialidades[]" class="form-control" id="especialidades" multiple required>
+                <select name="especialidades[]" id="especialidades" class="form-control"  multiple required>
                     @foreach ($especialidades as $especialidad)
                         <option value="{{ $especialidad->id }}" {{ in_array($especialidad->id, $medico->especialidades->pluck('id')->toArray()) ? 'selected' : '' }}>
                             {{ $especialidad->nombre }}
@@ -31,8 +28,8 @@
                     @endforeach
                 </select>
             </div>
-            <button type="submit" class="btn btn-primary">Guardar</button>
-            <a href="{{ route('medicos.index') }}" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-primary">Actualizar</button>
+            
         </form>
     </div>
-@stop
+@endsection

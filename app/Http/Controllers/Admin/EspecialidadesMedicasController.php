@@ -13,13 +13,13 @@ class EspecialidadesMedicasController extends Controller
     public function index()
     {
         $especialidades = EspecialidadesMedicas::all();
-        return view('especialidades_medicas.index', compact('especialidades'));
+        return view('admin.especialidades_medicas.index', compact('especialidades'));
     }
 
     // Mostrar el formulario para crear una nueva especialidad
     public function create()
     {
-        return view('especialidades_medicas.create');
+        return view('admin.especialidades_medicas.create');
     }
 
     // Guardar una nueva especialidad
@@ -40,7 +40,7 @@ class EspecialidadesMedicasController extends Controller
     public function edit($id)
     {
         $especialidad = EspecialidadesMedicas::findOrFail($id);
-        return view('especialidades_medicas.edit', compact('especialidad'));
+        return view('admin.especialidades_medicas.edit', compact('especialidad'));
     }
 
     // Actualizar una especialidad

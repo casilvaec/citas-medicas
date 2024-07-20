@@ -1,14 +1,11 @@
-@extends('adminlte::page')
+@extends('layouts.app')
 
-@section('title', 'Médicos')
 
-@section('content_header')
-    <h1>Médicos</h1>
-@stop
 
 @section('content')
     <div class="container">
-        <a href="{{ route('admin.medicos.create') }}" class="btn btn-primary mb-3">Crear Nuevo Médico</a>
+        <h1>Gestión de Médicos</h1>
+        <a href="{{ route('admin.medicos.create') }}" class="btn btn-primary mb-3">Agregar Médico</a>
         @if (session('success'))
             <div class="alert alert-success">
                 {{ session('success') }}
@@ -19,24 +16,22 @@
                 <tr>
                     <th>ID</th>
                     <th>Nombre</th>
+                    <th>Apellidos</th>
                     <th>Especialidades</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($medicos as $medico)
+                @foreach($medicos as $medico)
                     <tr>
                         <td>{{ $medico->id }}</td>
-                        <td>{{ $medico->user->nombre }} {{ $medico->user->apellidos }}</td>
-                        <td>
-                            @foreach ($medico->especialidades as $especialidad)
-                              <span class="badge badge-info">{{ $especialidad->nombre }}</span>
-                                
-                            @endforeach
-                        </td>
+                        <td>{{ $medico->user->nombre }}</td>
+                        <td>{{ $medico->user->apellidos }}</td>
+                        <td>{{ $medico->especialidades->pluck('nombre')->join(',') }}</td>
+                        
                         <td>
                             <a href="{{ route('admin.medicos.edit', $medico->id) }}" class="btn btn-warning">Editar</a>
-                            <form action="{{ route('admin.medicos.destroy', $medico->id) }}" method="POST" style="display:inline;">
+                            <form action="{{ route('admin.medicos.destroy', $medico->id) }}" method="POST" style="display:inline-block;">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger">Eliminar</button>
@@ -47,4 +42,4 @@
             </tbody>
         </table>
     </div>
-@stop
+@endsection
