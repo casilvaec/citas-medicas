@@ -18,6 +18,8 @@ use App\Http\Controllers\Catalogo\GeneroController;
 use App\Http\Controllers\Catalogo\CiudadResidenciaController;
 use App\Http\Controllers\Admin\EspecialidadesMedicasController;
 use App\Http\Controllers\Admin\MedicosController;
+use App\Http\Controllers\Admin\HorarioMedicoController;
+use App\Http\Controllers\Admin\DisponibilidadMedicoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -118,6 +120,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     //Rutas para gestion de médicos
     Route::resource('especialidades', EspecialidadesMedicasController::class);
     Route::resource('medicos', MedicosController::class);
+
+    //Rutas para gestion de horarios de médicos
+    Route::resource('horarios_medicos', HorarioMedicoController::class);
+    Route::resource('disponibilidad_medicos', DisponibilidadMedicoController::class);
 });
 
 // Permisos

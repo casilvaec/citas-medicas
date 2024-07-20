@@ -92,6 +92,18 @@
                                 <p>Médicos</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.horarios_medicos.index') }}" class="nav-link">
+                                <i class="nav-icon fas fa-clock"></i>
+                                <p>Horarios</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.disponibilidad_medicos.index') }}" class="nav-link">
+                                <i class="nav-icon fas fa-calendar-alt"></i>
+                                <p>Disponibilidad</p>
+                            </a>
+                        </li>
                     </ul>
                 </li>
                 <!-- Otros enlaces de menú -->
