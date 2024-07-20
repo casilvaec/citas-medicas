@@ -25,7 +25,7 @@ class HorarioMedicoController extends Controller
     {
         $request->validate([
             'medicoId' => 'required|exists:medicos,id',
-            'diaSemana' => 'required|integer',
+            'diaSemana' => 'required|integer|min:1|max:7',
             'horaInicio' => 'required|date_format:H:i',
             'horaFin' => 'required|date_format:H:i|after:horaInicio',
         ]);
@@ -35,29 +35,32 @@ class HorarioMedicoController extends Controller
         return redirect()->route('admin.horarios_medicos.index')->with('success', 'Horario médico creado correctamente.');
     }
 
-    public function edit(HorarioMedico $horarioMedico)
+    public function edit($id)
     {
+        $horario = HorarioMedico::findOrFail($id);
         $medicos = Medico::all();
-        return view('admin.horarios_medicos.edit', compact('horarioMedico', 'medicos'));
+        return view('admin.horarios_medicos.edit', compact('horario', 'medicos'));
     }
 
-    public function update(Request $request, HorarioMedico $horarioMedico)
+    public function update(Request $request, $id)
     {
         $request->validate([
             'medicoId' => 'required|exists:medicos,id',
-            'diaSemana' => 'required|integer',
+            'diaSemana' => 'required|integer|min:1|max:7',
             'horaInicio' => 'required|date_format:H:i',
             'horaFin' => 'required|date_format:H:i|after:horaInicio',
         ]);
 
-        $horarioMedico->update($request->all());
+        $horario = HorarioMedico::findOrFail($id);
+        $horario->update($request->all());
 
         return redirect()->route('admin.horarios_medicos.index')->with('success', 'Horario médico actualizado correctamente.');
     }
 
-    public function destroy(HorarioMedico $horarioMedico)
+    public function destroy($id)
     {
-        $horarioMedico->delete();
+        $horario = HorarioMedico::findOrFail($id);
+        $horario->delete();
 
         return redirect()->route('admin.horarios_medicos.index')->with('success', 'Horario médico eliminado correctamente.');
     }
