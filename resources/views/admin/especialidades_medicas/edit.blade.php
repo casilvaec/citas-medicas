@@ -19,8 +19,8 @@
             <div class="form-group">
                 <label for="estado">Estado</label>
                 <select name="estado" id="estado" class="form-control" required>
-                    <option value="1" {{ $especialidad->estado ? 'selected' : '' }}>Activo</option>
-                    <option value="0" {{ $especialidad->estado ? 'selected' : '' }}>Inactivo</option>
+                    <option value="1" {{ $especialidad->estado == 1 ? 'selected' : '' }}>Activo</option>
+                    <option value="0" {{ $especialidad->estado == 0 ? 'selected' : '' }}>Inactivo</option>
                 </select>
             </div>
             <button type="submit" class="btn btn-primary">Actualizar</button>
