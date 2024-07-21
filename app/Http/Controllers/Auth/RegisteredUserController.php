@@ -435,6 +435,7 @@
 ///////////////////////////////////////////
 
 
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -447,6 +448,7 @@ use Illuminate\Validation\Rules;
 use Spatie\Permission\Models\Role;
 use Illuminate\Contracts\View\View as ViewContract;
 use Illuminate\View\View;
+use DB;
 
 class RegisteredUserController extends Controller
 {
@@ -495,6 +497,14 @@ class RegisteredUserController extends Controller
             // Manejar el caso en que el rol 'paciente' no exista
             return redirect()->route('register')->withErrors(['msg' => 'El rol de paciente no existe.']);
         }
+
+        // Crear un registro en la tabla pacientes
+        DB::table('pacientes')->insert([
+            'usuarioId' => $user->id,
+            'estado' => 1, // Estado inicial
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
 
         // Disparar el evento Registered después de crear el usuario
         event(new Registered($user));
