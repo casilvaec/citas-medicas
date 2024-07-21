@@ -2,19 +2,19 @@
 
 @section('content')
 <div class="container">
-    <h1>Gestión de Horarios Médicos</h1>
-    <a href="{{ route('admin.horarios_medicos.create') }}" class="btn btn-primary mb-3">Agregar Horario</a>
-    @if (session('success'))
-        <div class="alert alert-success">
+    <h2>Gestión de Horarios a Médicos</h2>
+    <a href="{{ route('admin.horarios_medicos.create') }}" class="btn btn-primary mb-3">Asignar Horario</a>
+    {{-- @if (session('success'))
+        <div class="alert alert-success mt-3">
             {{ session('success') }}
         </div>
-    @endif
-    <table class="table">
+    @endif --}}
+    <table class="table mt -3">
         <thead>
             <tr>
                 <th>ID</th>
                 <th>Médico</th>
-                <th>Día de la Semana</th>
+                <th>Fecha</th>
                 <th>Hora Inicio</th>
                 <th>Hora Fin</th>
                 <th>Acciones</th>
@@ -25,7 +25,7 @@
             <tr>
                 <td>{{ $horario->id }}</td>
                 <td>{{ $horario->medico->nombre }} {{ $horario->medico->apellido }}</td>
-                <td>{{ $horario->diaSemana }}</td>
+                <td>{{ $horario->fecha }}</td>
                 <td>{{ $horario->horaInicio }}</td>
                 <td>{{ $horario->horaFin }}</td>
                 <td>

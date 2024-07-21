@@ -4,11 +4,11 @@
 <div class="container">
     <h1>Gestión de Disponibilidad de Médicos</h1>
     <a href="{{ route('admin.disponibilidad_medicos.create') }}" class="btn btn-primary mb-3">Agregar Disponibilidad</a>
-    @if (session('success'))
+    {{-- @if (session('success'))
         <div class="alert alert-success">
             {{ session('success') }}
         </div>
-    @endif
+    @endif --}}
     <table class="table">
         <thead>
             <tr>

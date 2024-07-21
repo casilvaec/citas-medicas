@@ -126,7 +126,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('disponibilidad_medicos', DisponibilidadMedicoController::class);
 
     //Ruta para la búsqueda de médicos
-    Route::get('/admin/medicos/search', [MedicosController::class, 'search'])->name('admin.medicos.search');
+    Route::get('/medicos/search', [MedicosController::class, 'search'])->name('medicos.search');
 
 });
 
