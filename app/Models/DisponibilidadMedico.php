@@ -9,6 +9,8 @@ class DisponibilidadMedico extends Model
 {
     use HasFactory;
 
+    protected $table = 'disponibilidad_medicos';
+
     protected $fillable = ['medicoId', 'fecha', 'horaInicio', 'horaFin', 'disponible'];
 
     public function medico()

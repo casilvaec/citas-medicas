@@ -46,7 +46,7 @@ class MedicosController extends Controller
     {
         $medico = Medico::findOrFail($id);
         $roleMedico = Role::where('name', 'medico')->first();
-        $usuarios = User::role( $roleMedico)->get();                              
+        $usuarios = User::role($roleMedico)->get();                              
         $especialidades = EspecialidadesMedicas::where('estado', 1)->get(); //obtiene solo especialidades activas
         return view('admin.medicos.edit', compact('medico', 'usuarios', 'especialidades'));
     }
@@ -71,5 +71,26 @@ class MedicosController extends Controller
         $medico->delete();
 
         return redirect()->route('admin.medicos.index')->with('success', 'Médico eliminado correctamente.');
+    }
+
+    // Método de búsqueda de médicos para Select2
+    public function search(Request $request)
+    {
+        $search = $request->input('q');
+        $medicos = User::role('medico')
+                    ->where('nombre', 'LIKE', "%{$search}%")
+                    ->orWhere('apellido', 'LIKE', "%{$search}%")
+                    ->get(['id', 'nombre', 'apellido']);
+
+        $response = [];
+
+        foreach ($medicos as $medico) {
+            $response[] = [
+                'id' => $medico->id,
+                'text' => $medico->nombre . ' ' . $medico->apellido
+            ];
+        }
+
+        return response()->json($response);
     }
 }

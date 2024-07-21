@@ -124,6 +124,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     //Rutas para gestion de horarios de médicos
     Route::resource('horarios_medicos', HorarioMedicoController::class);
     Route::resource('disponibilidad_medicos', DisponibilidadMedicoController::class);
+
+    //Ruta para la búsqueda de médicos
+    Route::get('/admin/medicos/search', [MedicosController::class, 'search'])->name('admin.medicos.search');
+
 });
 
 // Permisos

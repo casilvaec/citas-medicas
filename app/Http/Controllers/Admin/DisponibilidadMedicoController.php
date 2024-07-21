@@ -1,5 +1,6 @@
 <?php
 
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -36,13 +37,14 @@ class DisponibilidadMedicoController extends Controller
         return redirect()->route('admin.disponibilidad_medicos.index')->with('success', 'Disponibilidad médica creada correctamente.');
     }
 
-    public function edit(DisponibilidadMedico $disponibilidadMedico)
+    public function edit($id)
     {
+        $disponibilidad = DisponibilidadMedico::findOrFail($id);
         $medicos = Medico::all();
-        return view('admin.disponibilidad_medicos.edit', compact('disponibilidadMedico', 'medicos'));
+        return view('admin.disponibilidad_medicos.edit', compact('disponibilidad', 'medicos'));
     }
 
-    public function update(Request $request, DisponibilidadMedico $disponibilidadMedico)
+    public function update(Request $request, $id)
     {
         $request->validate([
             'medicoId' => 'required|exists:medicos,id',
@@ -52,14 +54,16 @@ class DisponibilidadMedicoController extends Controller
             'disponible' => 'required|boolean',
         ]);
 
-        $disponibilidadMedico->update($request->all());
+        $disponibilidad = DisponibilidadMedico::findOrFail($id);
+        $disponibilidad->update($request->all());
 
         return redirect()->route('admin.disponibilidad_medicos.index')->with('success', 'Disponibilidad médica actualizada correctamente.');
     }
 
-    public function destroy(DisponibilidadMedico $disponibilidadMedico)
+    public function destroy($id)
     {
-        $disponibilidadMedico->delete();
+        $disponibilidad = DisponibilidadMedico::findOrFail($id);
+        $disponibilidad->delete();
 
         return redirect()->route('admin.disponibilidad_medicos.index')->with('success', 'Disponibilidad médica eliminada correctamente.');
     }
