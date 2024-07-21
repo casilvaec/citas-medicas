@@ -11,7 +11,7 @@ class HorarioMedico extends Model
 
     protected $table = 'horarios_medicos';
 
-    protected $fillable = ['medicoId', 'diaSemana', 'horaInicio', 'horaFin'];
+    protected $fillable = ['medicoId', 'fecha', 'horaInicio', 'horaFin'];
 
     public function medico()
     {

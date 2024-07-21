@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\HorarioMedico;
-use App\Models\User; // Asegurarse de importar el modelo User
 use Illuminate\Http\Request;
+use App\Models\User;
+use App\Models\HorarioMedico;
+use Carbon\Carbon;
 
 class HorarioMedicoController extends Controller
 {
@@ -26,13 +27,24 @@ class HorarioMedicoController extends Controller
         $request->validate([
             'medicoId' => 'required|exists:users,id', // Cambiado para asegurar que 'users' sea la tabla referenciada
             'fecha' => 'required|date',
-            'horaInicio' => 'required|date_format:H:i',
-            'horaFin' => 'required|date_format:H:i|after:horaInicio',
+            'horarios' => 'required|array'
         ]);
 
-        HorarioMedico::create($request->all());
+        $medicoId = $request->medicoId;
+        $fecha = $request->fecha;
+        $horarios = $request->horarios;
 
-        return redirect()->route('admin.horarios_medicos.index')->with('success', 'Horario médico asignado correctamente.');
+        foreach ($horarios as $horario) {
+            list($horaInicio, $horaFin) = explode('-', $horario);
+            HorarioMedico::create([
+                'medicoId' => $medicoId,
+                'fecha' => $fecha,
+                'horaInicio' => $horaInicio,
+                'horaFin' => $horaFin,
+            ]);
+        }
+
+        return redirect()->route('admin.horarios_medicos.index')->with('success', 'Horario asignado correctamente.');
     }
 
     public function edit($id)
@@ -47,8 +59,7 @@ class HorarioMedicoController extends Controller
         $request->validate([
             'medicoId' => 'required|exists:users,id', // Cambiado para asegurar que 'users' sea la tabla referenciada
             'fecha' => 'required|date',
-            'horaInicio' => 'required|date_format:H:i',
-            'horaFin' => 'required|date_format:H:i|after:horaInicio',
+            'horarios' => 'required|array'
         ]);
 
         $horario = HorarioMedico::findOrFail($id);
@@ -70,10 +81,9 @@ class HorarioMedicoController extends Controller
         $search = $request->get('q');
 
         $medicos = User::role('medico')
-            ->where('identificacion', 'LIKE', "%$search%")
-            ->orWhere('nombre', 'LIKE', "%$search%")
+            ->where('nombre', 'LIKE', "%$search%")
             ->orWhere('apellido', 'LIKE', "%$search%")
-            ->get();
+            ->get(['id', 'nombre', 'apellido']);
 
         return response()->json($medicos);
     }

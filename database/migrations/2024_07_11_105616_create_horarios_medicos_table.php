@@ -11,6 +11,7 @@ class CreateHorariosMedicosTable extends Migration
         Schema::create('horarios_medicos', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('medicoId')->nullable();
+            $table->date('fecha');
             $table->integer('diaSemana')->nullable();
             $table->time('horaInicio')->nullable();
             $table->time('horaFin')->nullable();

@@ -17,23 +17,20 @@
         </div>
 
         <div class="form-group">
-            <label for="fecha_inicio">Fecha de Inicio</label>
-            <input type="text" class="form-control datepicker" id="fecha_inicio" name="fecha_inicio">
+            <label for="fecha">Fecha</label>
+            <input type="text" class="form-control datepicker" id="fecha" name="fecha">
         </div>
 
         <div class="form-group">
-            <label for="fecha_fin">Fecha de Fin</label>
-            <input type="text" class="form-control datepicker" id="fecha_fin" name="fecha_fin">
-        </div>
-
-        <div class="form-group">
-            <label for="hora_inicio">Hora de Inicio</label>
-            <input type="text" class="form-control timepicker" id="hora_inicio" name="hora_inicio">
-        </div>
-
-        <div class="form-group">
-            <label for="hora_fin">Hora de Fin</label>
-            <input type="text" class="form-control timepicker" id="hora_fin" name="hora_fin">
+            <label>Seleccione el Horario</label>
+            <div>
+                <input type="checkbox" id="horario_morning" name="horarios[]" value="09:00-12:00">
+                <label for="horario_morning">09:00 - 12:00</label>
+            </div>
+            <div>
+                <input type="checkbox" id="horario_afternoon" name="horarios[]" value="16:00-18:00">
+                <label for="horario_afternoon">16:00 - 18:00</label>
+            </div>
         </div>
 
         <button type="submit" class="btn btn-primary">Guardar</button>
@@ -51,20 +48,9 @@
 
         $('.datepicker').datepicker({
             format: 'yyyy-mm-dd',
-            startDate: '+0d',
-            daysOfWeekDisabled: [0, 6]
-        });
-
-        $('.timepicker').timepicker({
-            timeFormat: 'HH:mm',
-            interval: 30,
-            minTime: '09:00',
-            maxTime: '18:00',
-            defaultTime: '09:00',
-            startTime: '09:00',
-            dynamic: false,
-            dropdown: true,
-            scrollbar: true
+            startDate: '-0d',
+            autoclose: true,
+            daysOfWeekDisabled: [0, 6] // Deshabilitar sábados y domingos
         });
     });
 </script>
