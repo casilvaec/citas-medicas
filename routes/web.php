@@ -1,4 +1,3 @@
-
 <?php
 
 use Illuminate\Support\Facades\Route;
@@ -20,6 +19,8 @@ use App\Http\Controllers\Admin\EspecialidadesMedicasController;
 use App\Http\Controllers\Admin\MedicosController;
 use App\Http\Controllers\Admin\HorarioMedicoController;
 use App\Http\Controllers\Admin\DisponibilidadMedicoController;
+use App\Http\Controllers\Admin\ConsultoriosController;
+use App\Http\Controllers\Admin\ConsultorioMedicoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -127,7 +128,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     //Ruta para la búsqueda de médicos
     Route::get('/medicos/search', [MedicosController::class, 'search'])->name('medicos.search');
-
+    
+    // Rutas para Consultorios
+    Route::resource('consultorios', ConsultoriosController::class);
+    
+    // Rutas para Asignación de Consultorios
+    Route::resource('consultorio_medico', ConsultorioMedicoController::class)->except(['show', 'edit', 'update']);
+    
+    // Ruta para Estadísticas (implementación futura)
+    Route::get('consultorios/estadisticas', [ConsultoriosController::class, 'estadisticas'])->name('consultorios.estadisticas');
 });
 
 // Permisos
@@ -138,6 +147,7 @@ Route::resource('roles', RoleControllerRPU::class);
 
 // Usuarios
 Route::resource('users', UserControllerRPU::class);
+
 
 
 
