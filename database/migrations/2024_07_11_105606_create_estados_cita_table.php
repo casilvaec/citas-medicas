@@ -8,11 +8,11 @@ class CreateEstadosCitaTable extends Migration
 {
     public function up()
     {
-        Schema::create('estados_cita', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('nombre')->unique()->nullable();
-            $table->timestamps();
-        });
+    //     Schema::create('estados_cita', function (Blueprint $table) {
+    //         $table->increments('id');
+    //         $table->string('nombre')->unique()->nullable();
+    //         $table->timestamps();
+    //     });
     }
 
     public function down()

@@ -8,15 +8,15 @@ class CreateExamenesTable extends Migration
 {
     public function up()
     {
-        Schema::create('examenes', function (Blueprint $table) {
-            $table->increments('id');
-            $table->unsignedInteger('citaId')->nullable();
-            $table->text('descripcion')->nullable();
-            $table->date('fechaProgramada')->nullable();
-            $table->timestamps();
+    //     Schema::create('examenes', function (Blueprint $table) {
+    //         $table->increments('id');
+    //         $table->unsignedInteger('citaId')->nullable();
+    //         $table->text('descripcion')->nullable();
+    //         $table->date('fechaProgramada')->nullable();
+    //         $table->timestamps();
 
-            $table->foreign('citaId')->references('id')->on('citas')->onDelete('cascade');
-        });
+    //         $table->foreign('citaId')->references('id')->on('citas')->onDelete('cascade');
+    //     });
     }
 
     public function down()

@@ -10,11 +10,11 @@ class CreateTiposIdentificacionTable extends Migration
 {
     public function up()
     {
-        Schema::create('tipos_identificacion', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('tipo')->unique()->nullable();
-            $table->timestamps();
-        });
+    //     Schema::create('tipos_identificacion', function (Blueprint $table) {
+    //         $table->increments('id');
+    //         $table->string('tipo')->unique()->nullable();
+    //         $table->timestamps();
+    //     });
     }
 
     public function down()
