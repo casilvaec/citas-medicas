@@ -4,11 +4,11 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePacientesTable extends Migration
+class CreateAdministradoresTable extends Migration
 {
     public function up()
     {
-        Schema::create('pacientes', function (Blueprint $table) {
+        Schema::create('administradores', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('usuarioId');
             $table->timestamps();
@@ -19,7 +19,7 @@ class CreatePacientesTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('pacientes');
+        Schema::dropIfExists('administradores');
     }
 }
 

@@ -8,13 +8,13 @@ class CreateMedicosTable extends Migration
 {
     public function up()
     {
-    //     Schema::create('medicos', function (Blueprint $table) {
-    //         $table->increments('id');
-    //         $table->unsignedBigInteger('usuarioId')->nullable();
-    //         $table->timestamps();
+        Schema::create('medicos', function (Blueprint $table) {
+            $table->increments('id');
+            $table->unsignedInteger('usuarioId');
+            $table->timestamps();
 
-    //         $table->foreign('usuarioId')->references('id')->on('users')->onDelete('cascade');
-    //     });
+            $table->foreign('usuarioId')->references('id')->on('users')->onDelete('cascade');
+        });
     }
 
     public function down()
