@@ -4,21 +4,22 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
 
 class Medico extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['usuarioId', 'especialidadId'];
+    protected $fillable = ['user_id', 'especialidad_id'];
 
+    // Relación con el modelo User
     public function user()
     {
-        return $this->belongsTo(User::class, 'usuarioId');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
+    // Relación con el modelo Especialidad
     public function especialidades()
     {
-        return $this->belongsToMany(EspecialidadesMedicas::class, 'medico_especialidades', 'medicoId', 'especialidadId');
+        return $this->belongsToMany(EspecialidadesMedicas::class, 'medico_especialidades', 'medico_id', 'especialidad_id');
     }
 }
