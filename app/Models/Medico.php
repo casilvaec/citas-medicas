@@ -9,12 +9,12 @@ class Medico extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['user_id', 'especialidad_id'];
+    protected $fillable = ['usuarioId', 'especialidad_id'];
 
     // Relación con el modelo User
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'usuarioId');
     }
 
     // Relación con el modelo Especialidad

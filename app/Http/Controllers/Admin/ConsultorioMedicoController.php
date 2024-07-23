@@ -23,15 +23,18 @@ class ConsultorioMedicoController extends Controller
     //     $medicos = Medico::with('user')->get()->pluck('user.full_name', 'id');
     //     return view('admin.consultorio_medico.create', compact('consultorios', 'medicos'));
     // }
-
     public function create()
-{
-    $consultorios = Consultorio::where('estado', 'Disponible')->pluck('nombre', 'id');
-    $medicos = Medico::with('user')->get()->mapWithKeys(function($medico) {
-        return [$medico->id => $medico->user->nombre . ' ' . $medico->user->apellidos];
-    });
-    return view('admin.consultorio_medico.create', compact('consultorios', 'medicos'));
-}
+    {
+        $consultorios = Consultorio::where('estado', 'Disponible')->pluck('nombre', 'id');
+        $medicos = Medico::with('user')->get()->filter(function ($medico) {
+            return $medico->user !== null;
+        })->mapWithKeys(function ($medico) {
+            return [$medico->id => $medico->user->nombre . ' ' . $medico->user->apellidos];
+        });
+
+        return view('admin.consultorio_medico.create', compact('consultorios', 'medicos'));
+    }
+    
 
     public function store(AssignConsultorioRequest $request)
     {
