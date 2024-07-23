@@ -1,5 +1,6 @@
-<?php
+<?php 
 
+// app/Models/ConsultorioMedico.php
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -11,17 +12,15 @@ class ConsultorioMedico extends Model
 
     protected $table = 'consultorio_medico';
 
-    protected $fillable = [
-        'consultorio_id', 'medico_id', 'fecha_asignacion',
-    ];
+    protected $fillable = ['consultorioId', 'medicoId', 'fecha_asignacion'];
 
     public function consultorio()
     {
-        return $this->belongsTo(Consultorio::class);
+        return $this->belongsTo(Consultorio::class, 'consultorioId');
     }
 
     public function medico()
     {
-        return $this->belongsTo(Medico::class);
+        return $this->belongsTo(User::class, 'medicoId');
     }
 }

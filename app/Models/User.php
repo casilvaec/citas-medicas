@@ -42,7 +42,6 @@
 
 
 
-
 namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -93,4 +92,12 @@ class User extends Authenticatable
     {
         return $this->belongsTo(EstadoUsuario::class, 'estadoId');
     }
+
+    // Relación con el modelo Consultorio a través de la tabla pivote consultorio_medico
+    public function consultorios()
+    {
+        return $this->belongsToMany(Consultorio::class, 'consultorio_medico', 'medicoId', 'consultorioId')
+                    ->withPivot('fecha_asignacion');
+    }
 }
+

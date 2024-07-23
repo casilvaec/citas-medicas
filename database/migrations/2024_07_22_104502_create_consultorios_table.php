@@ -12,7 +12,7 @@ class CreateConsultoriosTable extends Migration
             $table->id();
             $table->string('codigo')->unique();
             $table->string('nombre');
-            $table->text('descripcion')->nullable();
+            $table->text('descripcion');
             $table->string('ubicacion');
             $table->string('estado')->default('Disponible');
             $table->timestamps();

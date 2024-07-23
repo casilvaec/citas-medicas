@@ -1,0 +1,89 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Cita;
+use App\Models\User;
+use App\Models\Medico;
+use App\Models\EspecialidadesMedicas;
+use App\Models\HorarioMedico;
+use Illuminate\Http\Request;
+
+class CitasController extends Controller
+{
+    public function index()
+    {
+        $citas = Cita::with(['paciente', 'medico', 'especialidad'])->get();
+        return view('admin.citas.index', compact('citas'));
+    }
+
+    public function create()
+    {
+        $pacientes = User::all();
+        $especialidades = EspecialidadesMedicas::where('estado', 1)->get();
+        return view('admin.citas.create', compact('pacientes', 'especialidades'));
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'paciente_id' => 'required|exists:users,id',
+            'medico_id' => 'required|exists:medicos,id',
+            'especialidad_id' => 'required|exists:especialidades_medicas,id',
+            'fecha' => 'required|date',
+            'hora_inicio' => 'required|date_format:H:i',
+            'hora_fin' => 'required|date_format:H:i|after:hora_inicio',
+            'motivo' => 'required|string',
+        ]);
+
+        Cita::create($request->all());
+
+        return redirect()->route('admin.citas.index')->with('success', 'Cita agendada correctamente.');
+    }
+
+    public function getMedicosByEspecialidad($especialidadId)
+    {
+        $medicos = Medico::where('especialidad_id', $especialidadId)->get();
+        return response()->json($medicos);
+    }
+
+    public function getDisponibilidadByMedico($medicoId, $fecha)
+    {
+        $disponibilidad = HorarioMedico::where('medicoId', $medicoId)
+                                        ->whereDate('fecha', $fecha)
+                                        ->get(['horaInicio', 'horaFin']);
+        return response()->json($disponibilidad);
+    }
+
+    public function edit(Cita $cita)
+    {
+        $pacientes = User::all();
+        $especialidades = EspecialidadesMedicas::where('estado', 1)->get();
+        $medicos = Medico::all();
+        return view('admin.citas.edit', compact('cita', 'pacientes', 'especialidades', 'medicos'));
+    }
+
+    public function update(Request $request, Cita $cita)
+    {
+        $request->validate([
+            'paciente_id' => 'required|exists:users,id',
+            'medico_id' => 'required|exists:medicos,id',
+            'especialidad_id' => 'required|exists:especialidades_medicas,id',
+            'fecha' => 'required|date',
+            'hora_inicio' => 'required|date_format:H:i',
+            'hora_fin' => 'required|date_format:H:i|after:hora_inicio',
+            'motivo' => 'required|string',
+        ]);
+
+        $cita->update($request->all());
+
+        return redirect()->route('admin.citas.index')->with('success', 'Cita actualizada correctamente.');
+    }
+
+    public function destroy(Cita $cita)
+    {
+        $cita->delete();
+        return redirect()->route('admin.citas.index')->with('success', 'Cita eliminada correctamente.');
+    }
+}

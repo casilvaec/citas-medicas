@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+
+
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Consultorio;
+use App\Exports\ConsultoriosExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ConsultoriosController extends Controller
 {
@@ -28,7 +32,10 @@ class ConsultoriosController extends Controller
             'ubicacion' => 'required',
         ]);
 
-        Consultorio::create($request->all());
+        // Crear consultorio con estado "Disponible"
+        $consultorio = new Consultorio($request->all());
+        $consultorio->estado = 'Disponible';
+        $consultorio->save();
 
         return redirect()->route('admin.consultorios.index')->with('success', 'Consultorio creado correctamente.');
     }
@@ -58,4 +65,10 @@ class ConsultoriosController extends Controller
 
         return redirect()->route('admin.consultorios.index')->with('success', 'Consultorio eliminado correctamente.');
     }
+
+    public function export()
+    {
+        return Excel::download(new ConsultoriosExport, 'consultorios.xlsx');
+    }
 }
+

@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+
+use App\Http\Requests\AssignConsultorioRequest;
 use App\Models\Consultorio;
 use App\Models\Medico;
 use App\Models\ConsultorioMedico;
+use Illuminate\Http\Request;
 
 class ConsultorioMedicoController extends Controller
 {
@@ -23,18 +24,18 @@ class ConsultorioMedicoController extends Controller
         return view('admin.consultorio_medico.create', compact('consultorios', 'medicos'));
     }
 
-    public function store(Request $request)
+    public function store(AssignConsultorioRequest $request)
     {
-        $request->validate([
-            'consultorio_id' => 'required|exists:consultorios,id',
-            'medico_id' => 'required|exists:medicos,id',
-            'fecha_asignacion' => 'required|date',
+        $validatedData = $request->validated();
+        
+        ConsultorioMedico::create([
+            'consultorio_id' => $validatedData['consultorio_id'],
+            'medico_id' => $validatedData['medico_id'],
+            'fecha_asignacion' => $validatedData['fecha_asignacion'],
         ]);
 
-        ConsultorioMedico::create($request->all());
-
         // Actualizar estado del consultorio
-        $consultorio = Consultorio::find($request->consultorio_id);
+        $consultorio = Consultorio::find($validatedData['consultorio_id']);
         $consultorio->update(['estado' => 'No disponible']);
 
         return redirect()->route('admin.consultorio_medico.index')->with('success', 'Consultorio asignado correctamente.');
