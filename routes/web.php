@@ -21,6 +21,11 @@ use App\Http\Controllers\Admin\HorarioMedicoController;
 use App\Http\Controllers\Admin\DisponibilidadMedicoController;
 use App\Http\Controllers\Admin\ConsultoriosController;
 use App\Http\Controllers\Admin\ConsultorioMedicoController;
+use App\Http\Controllers\ReportController;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\UsersExport;
+use App\Exports\ConsultoriosExport;
+use App\Http\Controllers\ConsultorioReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -139,6 +144,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('consultorios/estadisticas', [ConsultoriosController::class, 'estadisticas'])->name('consultorios.estadisticas');
 });
 
+//Route::get('consultorios/report', [ReportController::class, 'showConsultorios'])->name('consultorios.report');
+//Route::get('consultorios/export/csv', [ExportController::class, 'exportConsultoriosCsv'])->name('consultorios.export.csv');
+
 // Permisos
 Route::resource('permissions', PermissionControllerRPU::class);
 
@@ -149,5 +157,18 @@ Route::resource('roles', RoleControllerRPU::class);
 Route::resource('users', UserControllerRPU::class);
 
 
+Route::get('/export', function () {
+    return Excel::download(new UsersExport, 'users.xlsx');
+});
+
+Route::get('/export-users', function () {
+    return Excel::download(new UsersExport, 'users.xlsx');
+});
+
+Route::get('consultorios/export', function () {
+    return Excel::download(new ConsultoriosExport, 'consultorios.xlsx');
+})->name('consultorios.export');
+
+Route::get('consultorios/export-pdf', [ConsultorioReportController::class, 'exportPdf'])->name('consultorios.exportPdf');
 
 

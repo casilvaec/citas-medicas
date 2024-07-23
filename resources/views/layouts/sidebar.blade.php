@@ -114,8 +114,6 @@
 
    --}}
 
-
-
    <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <a href="{{ url('/') }}" class="brand-link">
         <img src="{{ asset('hospital-logo.png') }}" alt="Hospital Logo" class="brand-image img-circle elevation-3">
@@ -224,19 +222,30 @@
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#consultoriosSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                    <a href="#consultoriosSubmenu" class="nav-link" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
                         <i class="nav-icon fas fa-clinic-medical"></i>
                         <p>Consultorios</p>
                     </a>
                     <ul class="collapse list-unstyled" id="consultoriosSubmenu">
-                        <li>
+                        <li class="nav-item">
                             <a class="nav-link" href="{{ route('admin.consultorios.index') }}">Gestión de Consultorios</a>
                         </li>
-                        <li>
+                        <li class="nav-item">
                             <a class="nav-link" href="{{ route('admin.consultorio_medico.index') }}">Asignación de Consultorios</a>
                         </li>
-                        <li>
-                            <a class="nav-link" href="{{ route('admin.consultorios.estadisticas') }}">Estadísticas</a>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a href="#estadisticasSubmenu" class="nav-link" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                        <i class="nav-icon fas fa-chart-bar"></i>
+                        <p>Estadísticas</p>
+                    </a>
+                    <ul class="collapse list-unstyled" id="estadisticasSubmenu">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('consultorios.export') }}">Reporte de Consultorios en Excel</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('consultorios.exportPdf') }}">Reporte de Consultorios en PDF</a>
                         </li>
                     </ul>
                 </li>

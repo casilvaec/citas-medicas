@@ -12,4 +12,9 @@ class Consultorio extends Model
     protected $fillable = [
         'codigo', 'nombre', 'descripcion', 'ubicacion', 'estado',
     ];
+
+    // public function medico()
+    // {
+    //     return $this->belongsTo(Medico::class, 'medico_id');
+    // }
 }
