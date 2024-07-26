@@ -11,16 +11,16 @@ use Illuminate\Http\Request;
 class LoginController extends Controller
 {
     // Usar el trait AuthenticatesUsers para proporcionar la funcionalidad de autenticación
-    use AuthenticatesUsers;
+    //use AuthenticatesUsers;
 
     // Redirigir a esta ruta después de iniciar sesión
-    protected $redirectTo = '/dashboard';
+    protected $redirectTo = '/admin/dashboard';
 
     // Constructor para aplicar middleware
     public function __construct()
     {
         // Aplicar middleware guest para que solo usuarios no autenticados puedan acceder a estas rutas
-        $this->middleware('guest')->except('logout');
+        //$this->middleware('guest')->except('logout');
     }
 
     // Mostrar la vista de login
@@ -31,49 +31,50 @@ class LoginController extends Controller
     }
 
     // Manejar el inicio de sesión
-    public function login(LoginRequest $request)
+    public function login(Request $request)
     {
         // Validar los datos del formulario de login
-        $this->validateLogin($request);
+        //$this->validateLogin($request);
 
         // Verificar si hay demasiados intentos de inicio de sesión
-        if (method_exists($this, 'hasTooManyLoginAttempts') &&
-            $this->hasTooManyLoginAttempts($request)) {
-            $this->fireLockoutEvent($request);
+        // if (method_exists($this, 'hasTooManyLoginAttempts') &&
+        //     $this->hasTooManyLoginAttempts($request)) {
+        //     $this->fireLockoutEvent($request);
 
             // Enviar respuesta de bloqueo si hay demasiados intentos
-            return $this->sendLockoutResponse($request);
-        }
+            return redirect($this->redirectTo);
+            //$this->sendLockoutResponse($request);
+        //}
 
         // Intentar iniciar sesión con las credenciales proporcionadas
-        if ($this->attemptLogin($request)) {
-            // Si el inicio de sesión es exitoso, enviar respuesta de éxito
-            return $this->sendLoginResponse($request);
-        }
+        // if ($this->attemptLogin($request)) {
+        //     // Si el inicio de sesión es exitoso, enviar respuesta de éxito
+        //     return $this->sendLoginResponse($request);
+       // }
 
         // Incrementar el contador de intentos de inicio de sesión fallidos
-        $this->incrementLoginAttempts($request);
+        //$this->incrementLoginAttempts($request);
 
         // Enviar una respuesta indicando que el inicio de sesión falló
-        return $this->sendFailedLoginResponse($request);
+        //return $this->sendFailedLoginResponse($request);
     }
 
     // Validar los datos del formulario de login
-    protected function validateLogin(Request $request)
-    {
-        // Requerir que el nombre de usuario y la contraseña estén presentes y sean válidos
-        $request->validate([
-            'username' => 'required|string',
-            'password' => 'required|string',
-        ]);
-    }
+    // protected function validateLogin(Request $request)
+    // {
+    //     // Requerir que el nombre de usuario y la contraseña estén presentes y sean válidos
+    //     $request->validate([
+    //         'username' => 'required|string',
+    //         'password' => 'required|string',
+    //     ]);
+    // }
 
     // Definir que el campo de nombre de usuario es 'username'
-    public function username()
-    {
-        // Usar el campo 'username' como nombre de usuario
-        return 'username';
-    }
+    // public function username()
+    // {
+    //     // Usar el campo 'username' como nombre de usuario
+    //     return 'username';
+    // }
 
     /**
      * Cerrar la sesión del usuario en la aplicación.
@@ -84,13 +85,13 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         // Cerrar sesión
-        Auth::logout();
+        //Auth::logout();
 
         // Invalidar la sesión
-        $request->session()->invalidate();
+        //$request->session()->invalidate();
 
         // Regenerar el token de la sesión
-        $request->session()->regenerateToken();
+        //$request->session()->regenerateToken();
 
         // Redirigir a la página de inicio de sesión después de cerrar sesión
         return redirect('/login');
@@ -103,30 +104,30 @@ class LoginController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\RedirectResponse
      */
-    protected function authenticated(Request $request, $user)
-    {
-        // Obtener los IDs de los roles
-        $adminRoleId = 7;
-        $patientRoleId = 1;
-        // Otros roles pueden ser añadidos aquí si es necesario
+    // protected function authenticated(Request $request, $user)
+    // {
+    //     // Obtener los IDs de los roles
+    //     $adminRoleId = 7;
+    //     $patientRoleId = 1;
+    //     // Otros roles pueden ser añadidos aquí si es necesario
 
-        // Verificar si el estado del usuario es igual a 1
-        if ($user->estadoId == 1) {
-            // Redirigir a la página de edición de perfil
-            return redirect()->route('profile.edit');
-        }
+    //     // Verificar si el estado del usuario es igual a 1
+    //     if ($user->estadoId == 1) {
+    //         // Redirigir a la página de edición de perfil
+    //         return redirect()->route('profile.edit');
+    //     }
 
-        // Verificar si el estado del usuario es igual a 2
-        if ($user->estadoId == 2) {
-            // Redirección basada en el rol del usuario
-            if ($user->roles->contains($adminRoleId)) {
-                return redirect()->route('admin.dashboard');
-            } elseif ($user->roles->contains($patientRoleId)) {
-                return redirect()->route('patient.dashboard');
-            }
-        }
+    //     // Verificar si el estado del usuario es igual a 2
+    //     if ($user->estadoId == 2) {
+    //         // Redirección basada en el rol del usuario
+    //         if ($user->roles->contains($adminRoleId)) {
+    //             return redirect()->route('admin.dashboard');
+    //         } elseif ($user->roles->contains($patientRoleId)) {
+    //             return redirect()->route('patient.dashboard');
+    //         }
+    //     }
 
-        // Redirección por defecto
-        return redirect()->route('home');
-    }
+    //     // Redirección por defecto
+    //     return redirect()->route('home');
+    // }
 }

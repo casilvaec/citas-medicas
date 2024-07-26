@@ -55,9 +55,9 @@ class Kernel extends HttpKernel
      * @var array<string, class-string|string>
      */
     protected $routeMiddleware = [
-        'auth' => \App\Http\Middleware\Authenticate::class, // Middleware para autenticar usuarios
-        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class, // Middleware para autenticar con autenticación básica
-        'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class, // Middleware para autenticar sesión
+        //'auth' => \App\Http\Middleware\Authenticate::class, // Middleware para autenticar usuarios
+        //'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class, // Middleware para autenticar con autenticación básica
+        //'auth.session' => \Illuminate\Session\Middleware\AuthenticateSession::class, // Middleware para autenticar sesión
         'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class, // Middleware para establecer encabezados de caché
         'can' => \Illuminate\Auth\Middleware\Authorize::class, // Middleware para autorizar acciones
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class, // Middleware para redirigir si está autenticado

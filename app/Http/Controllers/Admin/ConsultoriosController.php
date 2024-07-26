@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
-
-
-
-
+use App\Exports\ConsultoriosExport;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Consultorio;
@@ -64,6 +62,12 @@ class ConsultoriosController extends Controller
 
         return redirect()->route('admin.consultorios.index')->with('success', 'Consultorio eliminado correctamente.');
     }
+
+    public function export()
+    {
+        return Excel::download(new ConsultoriosExport, 'consultorios.xlsx');
+    }
 }
+
 
 
