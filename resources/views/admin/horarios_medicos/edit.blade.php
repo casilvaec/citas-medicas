@@ -1,4 +1,4 @@
-@extends('layouts.app')
+{{-- @extends('layouts.app')
 
 @section('content')
 <div class="container">
@@ -98,4 +98,66 @@
     });
 </script>
 @endpush
+@endsection --}}
+
+
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <h1>Editar Horario Médico</h1>
+    <form action="{{ route('admin.horarios_medicos.update', $horarioMedico->id) }}" method="POST">
+        @csrf
+        @method('PUT')
+        <div class="form-group">
+            <label for="medicoId">Médico</label>
+            <select id="medicoId" name="medicoId" class="form-control select2">
+                @foreach($medicos as $id => $full_name)
+                    <option value="{{ $id }}" {{ $horarioMedico->medicoId == $id ? 'selected' : '' }}>
+                        {{ $full_name }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="fecha">Fecha</label>
+            <input type="text" id="fecha" name="fecha" class="form-control" value="{{ $horarioMedico->fecha }}" readonly>
+        </div>
+        <div class="form-group">
+            <label for="horarios">Seleccione el horario</label>
+            <div class="checkbox">
+                <labe>><input type="checkbox" name="horarios[]" value="1" {{ $horarioMedico->horaInicio == '09:00:00' && $horarioMedico->horaFin == '12:00:00' ? 'checked' : '' }}>09:00 - 12:00</labe>
+            </div>
+            <div class="checkbox">
+                <labe>><input type="checkbox" name="horarios[]" value="2" {{ $horarioMedico->horaInicio == '16:00:00' && $horarioMedico->horaFin == '18:00:00' ? 'checked' : '' }}>16:00 - 18:00</labe>
+            </div>
+            {{-- <label for="horaInicio">Hora de Inicio</label>
+            <select id="horaInicio" name="horaInicio" class="form-control">
+                <option value="09:00:00" {{ $horarioMedico->horaInicio == '09:00:00' ? 'selected' : '' }}>09:00</option>
+                <option value="16:00:00" {{ $horarioMedico->horaInicio == '16:00:00' ? 'selected' : '' }}>16:00</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="horaFin">Hora de Fin</label>
+            <select id="horaFin" name="horaFin" class="form-control">
+                <option value="12:00:00" {{ $horarioMedico->horaFin == '12:00:00' ? 'selected' : '' }}>12:00</option>
+                <option value="18:00:00" {{ $horarioMedico->horaFin == '18:00:00' ? 'selected' : '' }}>18:00</option>
+            </select> --}}
+        </div>
+        <button type="submit" class="btn btn-primary">Actualizar</button>
+    </form>
+</div>
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        $('#medicoId').select2({
+            placeholder: "Seleccione un médico",
+        });
+
+        $('.select2').select2();
+    });
+</script>
+@endpush
 @endsection
+
