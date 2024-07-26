@@ -97,7 +97,7 @@ class HorarioMedicoController extends Controller
     {
         $request->validate([
             'medicoId' => 'required|exists:medicos,id',
-            'fecha' => 'required|date',
+            //'fecha' => 'required|date',
             'horarios' => 'required|array',
         ]);
 
@@ -106,7 +106,7 @@ class HorarioMedicoController extends Controller
         foreach ($request->horarios as $horario) {
             $horarios[] = [
                 'medicoId' => $request->medicoId,
-                'fecha' => $request->fecha,
+                'fecha' => now()->format('Y-m-d'),
                 'horaInicio' => $horario == '1' ? '09:00:00' : '16:00:00',
                 'horaFin' => $horario == '1' ? '12:00:00' : '18:00:00',
                 'created_at' => now(),

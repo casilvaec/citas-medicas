@@ -118,10 +118,10 @@
                     @endforeach
                 </select>
             </div>
-            <div class="form-group">
+            {{-- <div class="form-group">
                 <label for="fecha">Fecha</label>
                 <input type="text" name="fecha" id="fecha" class="form-control datepicker">
-            </div>
+            </div> --}}
             <div class="form-group">
                 <label for="horarios">Seleccione el Horario</label>
                 <div class="checkbox">
@@ -144,12 +144,12 @@
                 //allowClear: true
             });
 
-            $('#fecha').datepicker({
-                dateformat: 'yyyy-mm-dd',
-                autoclose: true,
-                minDate: 0,
-                beforeShowDay: $.datepicker.noWeekends
-            });
+            //$('#fecha').datepicker({
+                //dateformat: 'yy-mm-dd',
+                //autoclose: true,
+                //minDate: 0,
+                //beforeShowDay: $.datepicker.noWeekends
+            //});
 
             $('.select2').select2();
         });
