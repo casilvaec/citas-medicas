@@ -24,7 +24,7 @@
             @foreach($horarios as $horario)
             <tr>
                 <td>{{ $horario->id }}</td>
-                <td>{{ $horario->medico->nombre }} {{ $horario->medico->apellido }}</td>
+                <td>{{ $horario->medico->user->nombre }} {{ $horario->medico->user->apellidos }}</td>
                 <td>{{ $horario->fecha }}</td>
                 <td>{{ $horario->horaInicio }}</td>
                 <td>{{ $horario->horaFin }}</td>
