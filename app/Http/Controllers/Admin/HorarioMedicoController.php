@@ -65,6 +65,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\HorarioMedico;
+use App\Models\DisponibilidadMedico;
 use Carbon\Carbon;
 use App\Models\Medico;
 use Illuminate\Support\Facades\DB;
@@ -101,23 +102,75 @@ class HorarioMedicoController extends Controller
             'horarios' => 'required|array',
         ]);
 
-        $horarios = [];
+        //$horarios = [];
+        // Generar disponibilidad para los próximos 3 meses
+        $startDate = now();
+        $endDate = now()->addMonths(3);
 
         $currentDate = now()->format('Y-m-d');
 
+        // foreach ($request->horarios as $horario) {
+        //     $horarios[] = [
+        //         'medicoId' => $request->medicoId,
+        //         //'fecha' => now()->format('Y-m-d'),
+        //         'fecha' => $currentDate,
+        //         'horaInicio' => $horario == '1' ? '09:00:00' : '16:00:00',
+        //         'horaFin' => $horario == '1' ? '12:00:00' : '18:00:00',
+        //         'created_at' => now(),
+        //         'updated_at' => now(),
+        //     ];
+        // }
+
         foreach ($request->horarios as $horario) {
-            $horarios[] = [
+            $horarioMedico = HorarioMedico::create([
                 'medicoId' => $request->medicoId,
                 //'fecha' => now()->format('Y-m-d'),
-                'fecha' => $currentDate,
+                'fecha' => $startDate->format('Y-m-d'),
                 'horaInicio' => $horario == '1' ? '09:00:00' : '16:00:00',
                 'horaFin' => $horario == '1' ? '12:00:00' : '18:00:00',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ];
+                //'created_at' => now(),
+                //'updated_at' => now(),
+            ]);
+
+              // Generar bloques de tiempo para cada día en el rango de fechas
+              $currentDate = $startDate->copy();  
+
+            //   $start = Carbon::createFromFormat('Y-m-d H:i:s', $currentDate . ' ' . $horarioMedico->horaInicio);
+            //   $end = Carbon::createFromFormat('Y-m-d H:i:s', $currentDate . ' ' . $horarioMedico->horaFin);
+  
+            //   while ($start->lt($end)) {
+            //       DisponibilidadMedico::create([
+            //           'medicoId' => $horarioMedico->medicoId,
+            //           'fecha' => $currentDate,
+            //           'horaInicio' => $start->format('H:i:s'),
+            //           'horaFin' => $start->copy()->addMinutes(30)->format('H:i:s'),
+            //           'disponible' => 1, // Estado inicial: disponible
+            //       ]);
+            //       $start->addMinutes(30);
+            //   }
+            while ($currentDate->lte($endDate)) {
+                $start = Carbon::createFromFormat('Y-m-d H:i:s', $currentDate->format('Y-m-d') . ' ' . $horarioMedico->horaInicio);
+                $end = Carbon::createFromFormat('Y-m-d H:i:s', $currentDate->format('Y-m-d') . ' ' . $horarioMedico->horaFin);
+
+                while ($start->lt($end)) {
+                    DisponibilidadMedico::create([
+                        'medicoId' => $horarioMedico->medicoId,
+                        'fecha' => $currentDate->format('Y-m-d'),
+                        'horaInicio' => $start->format('H:i:s'),
+                        'horaFin' => $start->copy()->addMinutes(30)->format('H:i:s'),
+                        'disponible' => 1, // Estado inicial: disponible
+                    ]);
+                    $start->addMinutes(30);
+                }
+
+                $currentDate->addDay();
+            }
+
+
+
         }
 
-        HorarioMedico::insert($horarios);
+        //HorarioMedico::insert($horarios);
 
         return redirect()->route('admin.horarios_medicos.index')->with('success', 'Horario médico asignado correctamente.');
 

@@ -360,7 +360,8 @@ use App\Http\Controllers\Catalogo\CiudadResidenciaController;
 use App\Http\Controllers\Admin\EspecialidadesMedicasController;
 use App\Http\Controllers\Admin\MedicosController;
 use App\Http\Controllers\Admin\HorarioMedicoController;
-use App\Http\Controllers\Admin\DisponibilidadMedicoController;
+//use App\Http\Controllers\Admin\DisponibilidadMedicoController;
+use App\Http\Controllers\Admin\DisponibilidadController;
 use App\Http\Controllers\Admin\ConsultoriosController;
 use App\Http\Controllers\Admin\ConsultorioMedicoController;
 use App\Http\Controllers\Admin\CitasController;
@@ -442,7 +443,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('medicos', MedicosController::class);
 
     Route::resource('horarios_medicos', HorarioMedicoController::class);
-    Route::resource('disponibilidad_medicos', DisponibilidadMedicoController::class);
+    Route::resource('disponibilidad_medicos', DisponibilidadController::class);
+    Route::get('disponibilidad/fetch', [DisponibilidadController::class, 'fetch'])->name('disponibilidad.fetch');
 
     Route::get('/medicos/search', [MedicosController::class, 'search'])->name('medicos.search');
 
