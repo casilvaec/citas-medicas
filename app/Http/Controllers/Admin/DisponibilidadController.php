@@ -57,16 +57,31 @@ class DisponibilidadController extends Controller
         return view('admin.disponibilidad.index', compact('medicos'));
     }
 
+    // public function fetch(Request $request)
+    // {
+    //     $medicoId = $request->input('medicoId');
+    //     $fecha = $request->input('fecha');
+
+    //     $disponibilidades = DisponibilidadMedico::where('medicoId', $medicoId)
+    //         ->where('fecha', $fecha)
+    //         ->with('medico.user')
+    //         ->get();
+
+    //     return view('admin.disponibilidad.partials.table', compact('disponibilidades'))->render();
+    // }
     public function fetch(Request $request)
     {
         $medicoId = $request->input('medicoId');
-        $fecha = $request->input('fecha');
+        // $fecha = $request->input('fecha');
 
+        // Obtener la disponibilidad del médico en la fecha seleccionada
         $disponibilidades = DisponibilidadMedico::where('medicoId', $medicoId)
-            ->where('fecha', $fecha)
+            // ->whereDate('fecha', '=', $fecha)
+            ->orderBy('fecha')
+            ->orderBy('horaInicio')
             ->with('medico.user')
             ->get();
 
-        return view('admin.disponibilidad.partials.disponibilidad', compact('disponibilidades'))->render();
+        return view('admin.disponibilidad.partials.table', compact('disponibilidades'))->render();
     }
 }

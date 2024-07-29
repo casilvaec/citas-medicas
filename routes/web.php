@@ -462,6 +462,37 @@ Route::prefix('admin')->name('admin.')->group(function () {
     
 });
 
+
+
+// Route::prefix('admin')->name('admin.')->group(function () {
+//     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+//     Route::get('/rpu', [RpuController::class, 'index'])->name('rpu.index');
+
+//     Route::resource('tipos-identificacion', TipoIdentificacionController::class);
+//     Route::resource('generos', GeneroController::class);
+//     Route::resource('ciudades-residencia', CiudadResidenciaController::class, ['parameters' => ['ciudades-residencia' => 'ciudad']]);
+
+//     Route::resource('especialidades', EspecialidadesMedicasController::class);
+//     Route::resource('medicos', MedicosController::class);
+
+//     Route::resource('horarios_medicos', HorarioMedicoController::class);
+
+//     Route::get('disponibilidad', [DisponibilidadController::class, 'index'])->name('disponibilidad.index');
+//     Route::get('disponibilidad/fetch', [DisponibilidadController::class, 'fetch'])->name('disponibilidad.fetch');
+
+//     Route::resource('consultorios', ConsultoriosController::class);
+//     Route::get('consultorios/export', [ConsultoriosController::class, 'export'])->name('consultorios.export');
+
+//     Route::resource('consultorio_medico', ConsultorioMedicoController::class);
+
+//     Route::get('consultorios/estadisticas', [ConsultoriosController::class, 'estadisticas'])->name('consultorios.estadisticas');
+
+//     Route::resource('citas', CitasController::class);
+//     Route::get('citas/{id}/cancel', [CitasController::class, 'cancel'])->name('citas.cancel');
+//     Route::get('citas/{id}/reschedule', [CitasController::class, 'reschedule'])->name('citas.reschedule');
+// });
+
+
 Route::prefix('medico')->name('medico.')->group(function() {
     Route::get('agenda', [MedicoController::class, 'agenda'])->name('agenda');
     Route::get('atencion', [MedicoController::class, 'atencion'])->name('atencion');

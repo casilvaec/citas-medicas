@@ -106,11 +106,16 @@
         </select>
     </div>
 
-    <!-- Selector de Fecha -->
+    <!-- Botón para consultar disponibilidad -->
+    <div class="form-group">
+        <button id="consultarDisponibilidad" class="btn btn-primary">Consultar Disponibilidad</button>
+    </div>
+
+    {{-- <!-- Selector de Fecha -->
     <div class="form-group">
         <label for="fecha">Seleccionar Fecha</label>
-        <input type="text" id="fecha" name="fecha" class="form-control datepicker">
-    </div>
+        <input type="text" id="fecha" name="fecha" class="form-control datepicker" value="{{ date('Y-m-d') }}">
+    </div> --}}
 
     <!-- Tabla de Disponibilidad -->
     <table class="table table-bordered mt-3">
@@ -138,26 +143,69 @@
             placeholder: "Seleccione un médico",
         });
 
-        $('.datepicker').datepicker({
-            dateFormat: 'yy-mm-dd',
+        // $('.datepicker').datepicker({
+        //     dateFormat: 'yy-mm-dd',
+        // });
+
+        // $('#medicoId, #fecha').on('change', function() {
+        //     var medicoId = $('#medicoId').val();
+        //     var fecha = $('#fecha').val();
+        //     if (medicoId && fecha) {
+        //         $.ajax({
+        //             url: '{{ route("admin.disponibilidad.fetch") }}',
+        //             type: 'GET',
+        //             data: { medicoId: medicoId, fecha: fecha },
+        //             success: function(data) {
+        //                 $('#disponibilidadBody').html(data);
+        //             }
+        //         });
+        //     } else {
+        //         $('#disponibilidadBody').html('');
+        //     }
+        // });
+
+
+        // function fetchDisponibilidad() {
+        //         var medicoId = $('#medicoId').val();
+        //         var fecha = $('#fecha').val();
+        //         if (medicoId && fecha) {
+        //             $.ajax({
+        //                 url: '{{ route("admin.disponibilidad.fetch") }}',
+        //                 type: 'GET',
+        //                 data: { medicoId: medicoId, fecha: fecha },
+        //                 success: function(data) {
+        //                     $('#disponibilidadBody').html(data);
+        //                 }
+        //             });
+        //         } else {
+        //             $('#disponibilidadBody').html('');
+        //         }
+        // }
+
+        $('#consultarDisponibilidad').on('click', function() {
+                var medicoId = $('#medicoId').val();
+                if (medicoId) {
+                    $.ajax({
+                        url: '{{ route("admin.disponibilidad.fetch") }}',
+                        type: 'GET',
+                        data: { medicoId: medicoId },
+                        success: function(data) {
+                            $('#disponibilidadBody').html(data);
+                        }
+                    });
+                } else {
+                    $('#disponibilidadBody').html('');
+                }
+            });
+
+        // // Fetch disponibilidad al cargar la página con valores por defecto
+        // fetchDisponibilidad();
+
+        // // Fetch disponibilidad cuando se cambie el médico o la fecha
+        // $('#medicoId, #fecha').on('change', function() {
+        //     fetchDisponibilidad();
+
         });
 
-        $('#medicoId, #fecha').on('change', function() {
-            var medicoId = $('#medicoId').val();
-            var fecha = $('#fecha').val();
-            if (medicoId && fecha) {
-                $.ajax({
-                    url: '{{ route("admin.disponibilidad.fetch") }}',
-                    type: 'GET',
-                    data: { medicoId: medicoId, fecha: fecha },
-                    success: function(data) {
-                        $('#disponibilidadBody').html(data);
-                    }
-                });
-            } else {
-                $('#disponibilidadBody').html('');
-            }
-        });
-    });
 </script>
 @endpush
