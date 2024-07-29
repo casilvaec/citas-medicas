@@ -388,10 +388,10 @@
             <p>Hora de Fin: <span id="selected_hora_fin"></span></p>
         </div>
         <input type="hidden" name="disponibilidad_id" id="disponibilidad_id">
-        <div class="form-group">
+        {{-- <div class="form-group">
             <label for="motivo">Motivo</label>
             <input type="text" name="motivo" id="motivo" class="form-control">
-        </div>
+        </div> --}}
         <button type="submit" class="btn btn-primary">Agendar Cita</button>
     </form>
 </div>
