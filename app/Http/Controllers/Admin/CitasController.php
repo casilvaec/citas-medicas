@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Medico;
 use App\Models\EspecialidadesMedicas;
 use App\Models\DisponibilidadMedico;
+use Illuminate\Support\Facades\DB;
 
 class CitasController extends Controller
 {
@@ -136,22 +137,44 @@ class CitasController extends Controller
         return view('admin.citas.reschedule', compact('cita', 'pacientes', 'especialidades', 'medicos'));
     }
 
+    // public function fetchMedicos(Request $request)
+    // {
+    //     $especialidad_id = $request->input('especialidad_id');
+    //     $medicos = Medico::join('medico_especialidades', 'medicos.id', '=', 'medico_especialidades.medicoId')
+    //         ->join('users', 'medicos.usuarioId', '=', 'users.id')
+    //         ->where('medico_especialidades.especialidadId', $especialidad_id)
+    //         ->select('medicos.id', 'users.nombre', 'users.apellidos')
+    //         ->get();
+
+    //     $options = '<option value="">Seleccione un médico</option>';
+    //     foreach ($medicos as $medico) {
+    //         $options .= '<option value="' . $medico->id . '">' . $medico->nombre . ' ' . $medico->apellidos . '</option>';
+    //     }
+
+    //     return response()->json($options);
+    // }
+
     public function fetchMedicos(Request $request)
     {
         $especialidad_id = $request->input('especialidad_id');
-        $medicos = Medico::join('medico_especialidades', 'medicos.id', '=', 'medico_especialidades.medicoId')
-            ->join('users', 'medicos.usuarioId', '=', 'users.id')
+
+        $medicos = User::join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+            ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+            ->leftJoin('medicos', 'users.id', '=', 'medicos.usuarioId')
+            ->join('medico_especialidades', 'medicos.id', '=', 'medico_especialidades.medicoId')
+            ->where('roles.name', 'medico')
             ->where('medico_especialidades.especialidadId', $especialidad_id)
-            ->select('medicos.id', 'users.nombre', 'users.apellidos')
-            ->get();
+            ->select(DB::raw("CONCAT(users.nombre, ' ', users.apellidos) as full_name, medicos.id AS medico_id"))
+            ->pluck('full_name', 'medico_id');
 
         $options = '<option value="">Seleccione un médico</option>';
-        foreach ($medicos as $medico) {
-            $options .= '<option value="' . $medico->id . '">' . $medico->nombre . ' ' . $medico->apellidos . '</option>';
+        foreach ($medicos as $id => $full_name) {
+            $options .= '<option value="' . $id . '">' . $full_name . '</option>';
         }
 
         return response()->json($options);
     }
+
 
 }
 
