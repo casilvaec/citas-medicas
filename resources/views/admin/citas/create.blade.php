@@ -219,7 +219,7 @@
 @endpush
  --}}
 
-
+{{-- 
  @extends('layouts.app')
 
  @section('content')
@@ -263,6 +263,7 @@
                          <th>Hora de Inicio</th>
                          <th>Hora de Fin</th>
                          <th>Estado</th>
+                         <th>Seleccionar</th>
                      </tr>
                  </thead>
                  <tbody id="disponibilidadBody">
@@ -326,4 +327,138 @@
      });
  </script>
  @endpush
- 
+  --}}
+
+
+  @extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <h1>Agendar Nueva Cita</h1>
+    <form action="{{ route('admin.citas.store') }}" method="POST">
+        @csrf
+        <div class="form-group">
+            <label for="paciente_id">Paciente</label>
+            <select name="paciente_id" id="paciente_id" class="form-control select2">
+                @foreach($pacientes as $paciente)
+                    <option value="{{ $paciente->id }}">{{ $paciente->nombre }} {{ $paciente->apellidos }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="especialidad_id">Especialidad</label>
+            <select name="especialidad_id" id="especialidad_id" class="form-control select2">
+                <option value="">Seleccione una especialidad</option>
+                @foreach($especialidades as $especialidad)
+                    <option value="{{ $especialidad->id }}">{{ $especialidad->nombre }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="medico_id">Médico</label>
+            <select name="medico_id" id="medico_id" class="form-control select2">
+                <option value="">Seleccione un médico</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <button type="button" id="consultar_disponibilidad" class="btn btn-primary">Consultar Disponibilidad</button>
+        </div>
+        <div id="disponibilidad_section" style="display: none;">
+            <table class="table table-bordered mt-3">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Médico</th>
+                        <th>Fecha</th>
+                        <th>Hora de Inicio</th>
+                        <th>Hora de Fin</th>
+                        <th>Estado</th>
+                        <th>Seleccionar</th>
+                    </tr>
+                </thead>
+                <tbody id="disponibilidadBody">
+                    <!-- Aquí se cargarán los datos de disponibilidad -->
+                </tbody>
+            </table>
+        </div>
+        <div id="selected_disponibilidad" style="display: none;">
+            <h4>Disponibilidad Seleccionada:</h4>
+            <p>Fecha: <span id="selected_fecha"></span></p>
+            <p>Hora de Inicio: <span id="selected_hora_inicio"></span></p>
+            <p>Hora de Fin: <span id="selected_hora_fin"></span></p>
+        </div>
+        <input type="hidden" name="disponibilidad_id" id="disponibilidad_id">
+        <div class="form-group">
+            <label for="motivo">Motivo</label>
+            <input type="text" name="motivo" id="motivo" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary">Agendar Cita</button>
+    </form>
+</div>
+@endsection
+
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        // Inicializar select2
+        $('.select2').select2({
+            width: '100%'
+        });
+
+        // Cambiar el evento para el selector de especialidad
+        $('#especialidad_id').on('change', function() {
+            var especialidadId = $(this).val();
+            if (especialidadId) {
+                $.ajax({
+                    url: '{{ route("admin.citas.fetch_medicos") }}',
+                    type: 'GET',
+                    data: { especialidad_id: especialidadId },
+                    success: function(data) {
+                        $('#medico_id').empty().append(data).trigger('change'); // Asegúrate de limpiar y añadir las opciones
+                    },
+                    error: function(xhr) {
+                        console.log(xhr.responseText);
+                    }
+                });
+            } else {
+                $('#medico_id').html('<option value="">Seleccione un médico</option>').trigger('change');
+            }
+        });
+
+        // Mostrar sección de disponibilidad al consultar
+        $('#consultar_disponibilidad').on('click', function() {
+            var medicoId = $('#medico_id').val();
+            if (medicoId) {
+                $.ajax({
+                    url: '{{ route("admin.citas.fetch_disponibilidad") }}',
+                    type: 'GET',
+                    data: { medico_id: medicoId },
+                    success: function(data) {
+                        $('#disponibilidadBody').html(data); // Mostrar las opciones de disponibilidad
+                        $('#disponibilidad_section').show();
+                    },
+                    error: function(xhr) {
+                        console.log(xhr.responseText);
+                    }
+                });
+            } else {
+                alert('Seleccione un médico primero');
+            }
+        });
+
+        // Seleccionar disponibilidad
+        $(document).on('click', '.seleccionar-disponibilidad', function() {
+            var disponibilidadId = $(this).data('id');
+            var fecha = $(this).data('fecha');
+            var horaInicio = $(this).data('inicio');
+            var horaFin = $(this).data('fin');
+
+            $('#disponibilidad_id').val(disponibilidadId);
+            $('#selected_fecha').text(fecha);
+            $('#selected_hora_inicio').text(horaInicio);
+            $('#selected_hora_fin').text(horaFin);
+            $('#selected_disponibilidad').show();
+        });
+    });
+</script>
+@endpush
