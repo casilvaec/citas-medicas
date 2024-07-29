@@ -8,19 +8,23 @@
         <div class="form-group">
             <label for="paciente_id">Paciente</label>
             <select name="paciente_id" id="paciente_id" class="form-control">
-                <!-- Lógica para listar pacientes -->
+                @foreach($pacientes as $paciente)
+                    <option value="{{ $paciente->id }}">{{ $paciente->nombre }} {{ $paciente->apellidos }}</option>
+                @endforeach
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="especialidad_id">Especialidad</label>
+            <select name="especialidad_id" id="especialidad_id" class="form-control">
+                @foreach($especialidades as $especialidad)
+                    <option value="{{ $especialidad->id }}">{{ $especialidad->nombre }}</option>
+                @endforeach
             </select>
         </div>
         <div class="form-group">
             <label for="medico_id">Médico</label>
             <select name="medico_id" id="medico_id" class="form-control">
                 <!-- Lógica para listar médicos -->
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="especialidad_id">Especialidad</label>
-            <select name="especialidad_id" id="especialidad_id" class="form-control">
-                <!-- Lógica para listar especialidades -->
             </select>
         </div>
         <div class="form-group">
@@ -43,3 +47,33 @@
     </form>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+        
+
+        $(document).ready(function() {
+        $('.select2').select2({
+            width: '100%'
+        });
+
+    $(document).ready(function() {
+        $('#especialidad_id').on('change', function() {
+            var especialidadId = $(this).val();
+            if (especialidadId) {
+                $.ajax({
+                    url: '{{ route("admin.citas.fetch_medicos") }}',
+                    type: 'GET',
+                    data: { especialidad_id: especialidadId },
+                    success: function(data) {
+                        $('#medico_id').html(data);
+                        $('#medico_id').trigger('change'); // Recargar select2
+                    }
+                });
+            } else {
+                $('#medico_id').html('<option value="">Seleccione un médico</option>');
+            }
+        });
+    });
+</script>
+@endpush

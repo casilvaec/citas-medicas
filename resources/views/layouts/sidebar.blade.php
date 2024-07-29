@@ -577,7 +577,7 @@
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Cancelar Cita</p>
                             </a>
-                        </li> --}}
+                        </li>  --}}
                         {{-- <li class="nav-item">
                             <a href="{{ route('admin.citas.reschedule') }}" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>

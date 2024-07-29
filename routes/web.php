@@ -456,6 +456,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('consultorios/estadisticas', [ConsultoriosController::class, 'estadisticas'])->name('consultorios.estadisticas');
 
     Route::resource('citas', CitasController::class);
+    Route::get('citas/fetch_medicos', [CitasController::class, 'fetchMedicos'])->name('citas.fetch_medicos');
+
     Route::get('citas/{id}/cancel', [CitasController::class, 'cancel'])->name('citas.cancel');
     Route::get('citas/{id}/reschedule', [CitasController::class, 'reschedule'])->name('citas.reschedule');
 
