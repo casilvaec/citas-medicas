@@ -457,6 +457,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::resource('citas', CitasController::class)->except(['show']);
     Route::get('citas/fetch_medicos', [CitasController::class, 'fetchMedicos'])->name('citas.fetch_medicos');
+    Route::get('citas/fetch_disponibilidad', [CitasController::class, 'fetchDisponibilidad'])->name('citas.fetch_disponibilidad');
 
     Route::get('citas/{id}/cancel', [CitasController::class, 'cancel'])->name('citas.cancel');
     Route::get('citas/{id}/reschedule', [CitasController::class, 'reschedule'])->name('citas.reschedule');

@@ -137,22 +137,19 @@ class CitasController extends Controller
         return view('admin.citas.reschedule', compact('cita', 'pacientes', 'especialidades', 'medicos'));
     }
 
-    // public function fetchMedicos(Request $request)
-    // {
-    //     $especialidad_id = $request->input('especialidad_id');
-    //     $medicos = Medico::join('medico_especialidades', 'medicos.id', '=', 'medico_especialidades.medicoId')
-    //         ->join('users', 'medicos.usuarioId', '=', 'users.id')
-    //         ->where('medico_especialidades.especialidadId', $especialidad_id)
-    //         ->select('medicos.id', 'users.nombre', 'users.apellidos')
-    //         ->get();
+    public function fetchDisponibilidad(Request $request)
+    {
+        $medicoId = $request->input('medico_id');
 
-    //     $options = '<option value="">Seleccione un médico</option>';
-    //     foreach ($medicos as $medico) {
-    //         $options .= '<option value="' . $medico->id . '">' . $medico->nombre . ' ' . $medico->apellidos . '</option>';
-    //     }
+        $disponibilidades = DisponibilidadMedico::where('medicoId', $medicoId)
+            ->where('disponible', 1)
+            ->orderBy('fecha')
+            ->orderBy('horaInicio')
+            ->with('medico.user')
+            ->get();
 
-    //     return response()->json($options);
-    // }
+        return view('admin.citas.partials.disponibilidad', compact('disponibilidades'))->render();
+    }
 
     public function fetchMedicos(Request $request)
     {
@@ -174,7 +171,4 @@ class CitasController extends Controller
 
         return response()->json($options);
     }
-
-
 }
-
