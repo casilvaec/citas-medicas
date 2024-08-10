@@ -1,4 +1,4 @@
-@extends('layouts.app')
+{{-- @extends('layouts.app')
 
 
 
@@ -39,4 +39,38 @@
         });
     </script>
 
+@endsection --}}
+
+
+@extends('layouts.app')
+
+@section('content')
+    <div class="container">
+        <h1>Editar asignación</h1>
+        <form action="{{ route('admin.medicos.update', $medico->id) }}" method="POST">
+            @csrf
+            @method('PUT')
+
+            <div class="form-group">
+                <label for="usuario">Médico</label>
+                <input type="text" class="form-control" id="usuario" value="{{ $medico->user->nombre }} {{ $medico->user->apellidos }}" disabled>
+                <input type="hidden" name="usuarioId" value="{{ $medico->usuarioId }}">
+            </div>
+
+            <div class="form-group">
+                <label for="especialidades">Especialidades</label>
+                <div>
+                    @foreach ($especialidades as $especialidad)
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" name="especialidades[]" value="{{ $especialidad->id }}"
+                                   {{ $medico->especialidades->contains($especialidad->id) ? 'checked' : '' }}>
+                            <label class="form-check-label">{{ $especialidad->nombre }}</label>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Actualizar</button>
+        </form>
+    </div>
 @endsection

@@ -14,13 +14,13 @@ class Kernel extends HttpKernel
      * @var array<int, class-string|string>
      */
     protected $middleware = [
-        // \App\Http\Middleware\TrustHosts::class,
-        \App\Http\Middleware\TrustProxies::class,
-        \Illuminate\Http\Middleware\HandleCors::class,
-        \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
-        \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
-        \App\Http\Middleware\TrimStrings::class,
-        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        // \App\Http\Middleware\TrustHosts::class, // Este middleware verifica los hosts de confianza (desactivado por ahora)
+        \App\Http\Middleware\TrustProxies::class, // Maneja proxies de confianza, como para redirigir solicitudes HTTPS
+        \Illuminate\Http\Middleware\HandleCors::class, // Gestiona la política de CORS (Cross-Origin Resource Sharing)
+        \App\Http\Middleware\PreventRequestsDuringMaintenance::class, // Previene solicitudes durante el mantenimiento
+        \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class, // Valida el tamaño del POST (limita el tamaño de la carga de archivos)
+        \App\Http\Middleware\TrimStrings::class, // Elimina espacios en blanco de los valores de entrada
+        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class, // Convierte cadenas vacías en NULL
     ];
 
     /**
@@ -36,7 +36,7 @@ class Kernel extends HttpKernel
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class, // Middleware para agregar cookies a la respuesta
             \Illuminate\Session\Middleware\StartSession::class, // Middleware para iniciar sesión
             \Illuminate\View\Middleware\ShareErrorsFromSession::class, // Middleware para compartir errores de la sesión con las vistas
-            \App\Http\Middleware\VerifyCsrfToken::class, // Middleware para verificar el token CSRF
+            // \App\Http\Middleware\VerifyCsrfToken::class, // Middleware para verificar el token CSRF
             \Illuminate\Routing\Middleware\SubstituteBindings::class, // Middleware para sustituir enlaces de ruta
         ],
 

@@ -52,10 +52,15 @@ class Cita extends Model
         'pacienteId', 'medicoId', 'especialidad_id', 'fecha', 'hora_inicio', 'hora_fin', 'estado'
     ];
 
+    // public function paciente()
+    // {
+    //     return $this->belongsTo(User::class, 'pacienteId');
+    // }
     public function paciente()
     {
-        return $this->belongsTo(User::class, 'pacienteId');
+        return $this->belongsTo(Paciente::class, 'paciente_id');
     }
+
 
     public function medico()
     {

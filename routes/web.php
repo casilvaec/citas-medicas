@@ -442,6 +442,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::resource('especialidades', EspecialidadesMedicasController::class);
     Route::resource('medicos', MedicosController::class);
 
+    //Route::delete('medicos/{medicoId}/especialidades/{especialidadId}', [MedicosController::class, 'destroy'])->name('medicos.especialidades.destroy');
+
     Route::resource('horarios_medicos', HorarioMedicoController::class);
     Route::resource('disponibilidad_medicos', DisponibilidadController::class);
     Route::get('disponibilidad/fetch', [DisponibilidadController::class, 'fetch'])->name('disponibilidad.fetch');

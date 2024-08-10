@@ -691,11 +691,18 @@ use Illuminate\Support\Facades\DB;
 
 class CitasController extends Controller
 {
-    public function index()
-    {
-        $citas = Cita::all();
+    // public function index()
+    // {
+    //     $citas = Cita::all();
+    //     return view('admin.citas.index', compact('citas'));
+    // }
+
+    public function index() {
+        $citas = Cita::with(['paciente.user', 'medico.user', 'especialidad'])->get();
         return view('admin.citas.index', compact('citas'));
     }
+    
+
 
     public function create()
     {

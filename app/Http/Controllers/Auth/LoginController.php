@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\LoginRequest;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
-
+use App\Models\User;
 class LoginController extends Controller
 {
     // Usar el trait AuthenticatesUsers para proporcionar la funcionalidad de autenticación
@@ -33,6 +33,23 @@ class LoginController extends Controller
     // Manejar el inicio de sesión
     public function login(Request $request)
     {
+
+        // No validamos las credenciales, simplemente tomamos el usuario por el username
+        $user = User::where('username', $request->input('username'))->first();
+
+        // Si el usuario existe, procedemos a verificar el estado
+        if ($user) {
+            // Autenticar manualmente al usuario (sin verificar la contraseña)
+            Auth::login($user);
+
+            // Llamar al método authenticated para verificar su estado
+            return $this->authenticated($request, $user);
+        }
+
+        // Si no se encuentra el usuario, redirigir de vuelta al login con un mensaje de error
+        return redirect()->back()->withErrors([
+            'username' => 'Usuario no encontrado.',
+        ]);
         // Validar los datos del formulario de login
         //$this->validateLogin($request);
 
@@ -42,7 +59,7 @@ class LoginController extends Controller
         //     $this->fireLockoutEvent($request);
 
             // Enviar respuesta de bloqueo si hay demasiados intentos
-            return redirect($this->redirectTo);
+            //return redirect($this->redirectTo);
             //$this->sendLockoutResponse($request);
         //}
 
@@ -104,30 +121,33 @@ class LoginController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\RedirectResponse
      */
-    // protected function authenticated(Request $request, $user)
-    // {
+    protected function authenticated(Request $request, $user)
+    {
     //     // Obtener los IDs de los roles
     //     $adminRoleId = 7;
     //     $patientRoleId = 1;
     //     // Otros roles pueden ser añadidos aquí si es necesario
 
     //     // Verificar si el estado del usuario es igual a 1
-    //     if ($user->estadoId == 1) {
-    //         // Redirigir a la página de edición de perfil
-    //         return redirect()->route('profile.edit');
-    //     }
+    if ($user->estadoId == 1) {
+    //      Redirigir a la página de edición de perfil
+            return redirect()->route('profile.edit');
+    }
 
-    //     // Verificar si el estado del usuario es igual a 2
-    //     if ($user->estadoId == 2) {
+    //     Verificar si el estado del usuario es igual a 2
+    if ($user->estadoId == 2) {
+        return redirect()->route('admin.dashboard');
     //         // Redirección basada en el rol del usuario
-    //         if ($user->roles->contains($adminRoleId)) {
+    //if ($user->roles->contains($adminRoleId)) {
     //             return redirect()->route('admin.dashboard');
     //         } elseif ($user->roles->contains($patientRoleId)) {
     //             return redirect()->route('patient.dashboard');
     //         }
     //     }
 
-    //     // Redirección por defecto
-    //     return redirect()->route('home');
-    // }
+    // Redirección por defecto
+    
+    }
+    return redirect()->route('home');
+}
 }

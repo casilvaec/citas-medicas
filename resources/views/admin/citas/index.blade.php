@@ -119,7 +119,7 @@
             @foreach($citas as $cita)
             <tr>
                 <td>{{ $cita->id }}</td>
-                <td>{{ $cita->paciente->nombre }} {{ $cita->paciente->apellidos }}</td>
+                <td>{{ $cita->pacientes->nombre }} {{ $cita->pacientes->apellidos }}</td>
                 <td>{{ $cita->medico->user->nombre }} {{ $cita->medico->user->apellidos }}</td>
                 <td>{{ $cita->especialidad->nombre }}</td>
                 <td>{{ $cita->fecha }}</td>

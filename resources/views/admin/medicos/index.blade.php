@@ -4,8 +4,8 @@
 
 @section('content')
     <div class="container">
-        <h1>Gestión de Médicos</h1>
-        <a href="{{ route('admin.medicos.create') }}" class="btn btn-primary mb-3">Agregar Médico</a>
+        <h1>Gestión de asignación de especialidades a médicos</h1>
+        <a href="{{ route('admin.medicos.create') }}" class="btn btn-primary mb-3">Asignar especialidad a médico</a>
         
         <table class="table">
             <thead>
