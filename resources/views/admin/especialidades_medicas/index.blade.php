@@ -7,7 +7,7 @@
         <h1>Especialidades Médicas</h1>
         <a href="{{ route('admin.especialidades.create') }}" class="btn btn-primary mb-3">Agregar Especialidad</a>
        
-        <table class="table">
+        <table id="especialidades-table" class="table mt-3">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -38,3 +38,16 @@
         </table>
     </div>
 @endsection
+
+<!-- Modificación: Añadir el script para inicializar DataTables -->
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        $('#especialidades-table').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.10.21/i18n/Spanish.json'
+            }
+        });
+    });
+</script>
+@endpush

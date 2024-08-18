@@ -6,7 +6,7 @@
         <h1>Tipos de Identificación</h1>
         <a href="{{ route('admin.tipos-identificacion.create') }}" class="btn btn-primary">Agregar Tipo de Identificación</a>
 
-        <table class="table mt-3">
+        <table id="tipos-identificacion-table" class="table mt-3">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -34,4 +34,16 @@
     </div>
 @endsection
 
+<!-- script para inicializar DataTables -->
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        $('#tipos-identificacion-table').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.10.21/i18n/Spanish.json'
+            }
+        });
+    });
+</script>
+@endpush
 

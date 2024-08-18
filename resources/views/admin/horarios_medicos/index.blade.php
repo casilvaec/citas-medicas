@@ -9,7 +9,7 @@
             {{ session('success') }}
         </div>
     @endif --}}
-    <table class="table mt -3">
+    <table id="horarios_medicos-table" class="table mt -3">
         <thead>
             <tr>
                 <th>ID</th>
@@ -42,3 +42,16 @@
     </table>
 </div>
 @endsection
+
+<!-- script para inicializar DataTables -->
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        $('#horarios_medicos-table').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.10.21/i18n/Spanish.json'
+            }
+        });
+    });
+</script>
+@endpush
