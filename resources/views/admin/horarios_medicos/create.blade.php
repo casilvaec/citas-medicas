@@ -131,7 +131,7 @@
                     <label><input type="checkbox" name="horarios[]" value="2"> 16:00 - 18:00</label>
                 </div>
             </div>
-            <button type="submit" class="btn btn-primary">Guardar</button>
+            <button type="submit" class="btn btn-primary">Asignar</button>
         </form>
     </div>
 @endsection

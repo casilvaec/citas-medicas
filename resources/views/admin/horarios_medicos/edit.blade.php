@@ -101,7 +101,7 @@
 @endsection --}}
 
 
-@extends('layouts.app')
+{{-- @extends('layouts.app')
 
 @section('content')
 <div class="container">
@@ -143,7 +143,7 @@
                 <option value="12:00:00" {{ $horarioMedico->horaFin == '12:00:00' ? 'selected' : '' }}>12:00</option>
                 <option value="18:00:00" {{ $horarioMedico->horaFin == '18:00:00' ? 'selected' : '' }}>18:00</option>
             </select> --}}
-        </div>
+        {{-- </div>
         <button type="submit" class="btn btn-primary">Actualizar</button>
     </form>
 </div>
@@ -158,6 +158,42 @@
         $('.select2').select2();
     });
 </script>
-@endpush
+@endpush --}}
+{{-- @endsection --}}
+
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <h1>Editar Horario Médico</h1>
+    <form action="{{ route('admin.horarios_medicos.update', $horarioMedico->id) }}" method="POST">
+        @csrf
+        @method('PUT')
+        
+        <!-- Mostrar el nombre del médico, sin permitir cambios -->
+        <div class="form-group">
+            <label for="medico">Médico</label>
+            <input type="text" class="form-control" id="medico" value="{{ $horarioMedico->medico->user->nombre }} {{ $horarioMedico->medico->user->apellidos }}" disabled>
+        </div>
+        
+        <!-- Mostrar solo el horario que está siendo editado -->
+        <div class="form-group">
+            <label for="horario">Horario Asignado</label>
+            @if($horarioMedico->horaInicio == '09:00:00' && $horarioMedico->horaFin == '12:00:00')
+                <div>
+                    <input type="checkbox" id="horario1" name="horario" value="1" checked>
+                    <label for="horario1">09:00 - 12:00</label>
+                </div>
+            @elseif($horarioMedico->horaInicio == '16:00:00' && $horarioMedico->horaFin == '18:00:00')
+                <div>
+                    <input type="checkbox" id="horario2" name="horario" value="2" checked>
+                    <label for="horario2">16:00 - 18:00</label>
+                </div>
+            @endif
+        </div>
+
+        <button type="submit" class="btn btn-primary">Actualizar</button>
+    </form>
+</div>
 @endsection
 
