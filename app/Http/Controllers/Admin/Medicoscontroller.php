@@ -30,28 +30,59 @@ class MedicosController extends Controller
     // Guardar un nuevo médico
     public function store(Request $request)
     {
+        
+        // Verificar si se seleccionó un médico
+        if (empty($request->usuarioId)) {
+            return redirect()->back()->with('error', 'Debe seleccionar un médico.');
+        }
+
         $request->validate([
             'usuarioId' => 'required|exists:users,id',
-            'especialidades' => 'required|array',
+            'especialidades' => 'nullable|array',
         ]);
 
-        $medico = Medico::create(['usuarioId' => $request->usuarioId]);
-        $medico->especialidades()->sync($request->especialidades);
+        // Verificar si se seleccionó al menos una especialidad
+        if (empty($request->especialidades)) {
+            return redirect()->back()->with('error', 'Debe seleccionar al menos una especialidad.');
+        }
 
-        return redirect()->route('admin.medicos.index')->with('success', 'Médico creado correctamente.');
+        
+        // Verificar si ya hay un registro de asignación del médico, si no, crearlo
+        $medico = Medico::firstOrCreate(['usuarioId' => $request->usuarioId]);
+
+        $especialidadesNuevas = [];
+        $especialidadesExistentes = 0;
+
+        if (!empty($request->especialidades)) {
+            foreach ($request->especialidades as $especialidad) {
+                if (!$medico->especialidades()->where('especialidadId', $especialidad)->exists()) {
+                    $especialidadesNuevas[] = $especialidad;
+                } else {
+                    $especialidadesExistentes++;
+                }
+            }
+        }
+    
+        // Asignar las nuevas especialidades
+        if (!empty($especialidadesNuevas)) {
+            $medico->especialidades()->attach($especialidadesNuevas);
+        }
+
+        // Determinar el mensaje a mostrar
+        if ($especialidadesExistentes > 0 && empty($especialidadesNuevas)) {
+            return redirect()->route('admin.medicos.index')->with('warning', 'El médico ya tenía asignadas las especialidades seleccionadas. No se realizaron cambios.');
+        } elseif (!empty($especialidadesNuevas)) {
+            return redirect()->route('admin.medicos.index')->with('success', 'Especialidades asignadas correctamente.');
+        } else {
+            return redirect()->route('admin.medicos.index')->with('info', 'No se seleccionaron nuevas especialidades para asignar.');
+        }
+
+        
     }
 
-    // Mostrar el formulario para editar un médico
-    // public function edit($id)
-    // {
-    //     $medico = Medico::findOrFail($id);
-    //     $roleMedico = Role::where('name', 'medico')->first();
-    //     $usuarios = User::role($roleMedico)->get();                              
-    //     $especialidades = EspecialidadesMedicas::where('estado', 1)->get(); //obtiene solo especialidades activas
-    //     return view('admin.medicos.edit', compact('medico', 'usuarios', 'especialidades'));
-    // }
+    
 
-    // Mostrar el formulario para editar un médico
+    // Mostrar el formulario para editar la asignación de un médico
     public function edit($id)
     {
         // Obtener el médico específico por su ID junto con sus especialidades y usuario

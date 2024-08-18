@@ -4,11 +4,11 @@
 
 @section('content')
     <div class="container">
-        <h1>Agregar Nuevo Médico</h1>
+        <h1>Asignar Especialidad a Médico</h1>
         <form action="{{ route('admin.medicos.store') }}" method="POST">
             @csrf
             <div class="form-group">
-                <label for="usuarioId">Usuario</label>
+                <label for="usuarioId">Médico</label>
                 <select name="usuarioId" id="usuarioId" class="form-control select2">
                     @foreach ($usuarios as $usuario)
                         <option value="{{ $usuario->id }}">{{ $usuario->nombre }} {{ $usuario->apellidos }}</option>
@@ -23,7 +23,7 @@
                     @endforeach
                 </select>
             </div>
-            <button type="submit" class="btn btn-primary">Guardar</button>
+            <button type="submit" class="btn btn-primary">Asignar</button>
             
         </form>
     </div>

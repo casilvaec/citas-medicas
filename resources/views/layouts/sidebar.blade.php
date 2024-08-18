@@ -505,13 +505,13 @@
                         <li class="nav-item">
                             <a href="{{ route('admin.medicos.index') }}" class="nav-link">
                                 <i class="fas fa-user-md nav-icon"></i>
-                                <p>Médicos</p>
+                                <p>Gestión de Especialidades a Médicos</p>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="{{ route('admin.horarios_medicos.index') }}" class="nav-link">
                                 <i class="nav-icon fas fa-clock"></i>
-                                <p>Horarios</p>
+                                <p>Gestión de Horarios a Médicos</p>
                             </a>
                         </li>
                         <li class="nav-item">

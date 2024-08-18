@@ -44,19 +44,14 @@ class HorarioMedicoController extends Controller
     public function store(Request $request)
     {
         
-
         if (empty($request->medicoId)) {
             return redirect()->back()->with('error', 'Debe seleccionar un médico.');
         }
-
-        
 
         $request->validate([
             'medicoId' => 'required|exists:medicos,id',
             'horarios' => 'nullable|array',
         ]);
-
-        
 
         // * Se obtiene el objeto médico usando el ID.
         $medico = Medico::findOrFail($request->medicoId);
@@ -77,15 +72,11 @@ class HorarioMedicoController extends Controller
             if ($horario == '1') {
                 $horaInicio = '09:00:00';
                 $horaFin = '12:00:00';
-
-                
     
                 $horarioExistente = HorarioMedico::where('medicoId', $medico->id)
                     ->where('horaInicio', $horaInicio)
                     ->exists();
 
-                
-    
                 if (!$horarioExistente) {
                     HorarioMedico::create([
                         'medicoId' => $medico->id,
@@ -104,14 +95,10 @@ class HorarioMedicoController extends Controller
                 $horaInicio = '16:00:00';
                 $horaFin = '18:00:00';
 
-                
-    
                 $horarioExistente = HorarioMedico::where('medicoId', $medico->id)
                     ->where('horaInicio', $horaInicio)
                     ->exists();
 
-                
-    
                 if (!$horarioExistente) {
                     HorarioMedico::create([
                         'medicoId' => $medico->id,
@@ -127,8 +114,6 @@ class HorarioMedicoController extends Controller
 
             
         }
-
-        
 
         if ($horarioNuevoAsignado == 1 && $horarioYaAsignado == 1) {
             // Caso 1: Uno de los horarios ya estaba asignado, pero se asignó un nuevo horario
@@ -161,8 +146,6 @@ class HorarioMedicoController extends Controller
                 ->with('error', 'Hubo un problema al asignar los horarios.');
         }
         
-        
-
         
 
     }
