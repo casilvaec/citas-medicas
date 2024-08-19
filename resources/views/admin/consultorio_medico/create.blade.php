@@ -29,10 +29,13 @@
             </select>
         </div>
 
-        <div class="form-group">
+        <!-- Campo de fecha oculto -->
+        <input type="hidden" name="fecha_asignacion" value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}">
+        
+        {{-- <div class="form-group">
             <label for="fecha_asignacion">Fecha de Asignación</label>
             <input type="date" name="fecha_asignacion" id="fecha_asignacion" class="form-control" required>
-        </div>
+        </div> --}}
 
         <button type="submit" class="btn btn-primary">Asignar</button>
     </form>

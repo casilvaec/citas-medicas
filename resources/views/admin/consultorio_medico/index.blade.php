@@ -25,7 +25,7 @@
                     <td>{{ $cm->fecha_asignacion }}</td>
                     <td>
                         <!-- Aquí puedes añadir botones de acción como editar o eliminar -->
-                        <a href="{{ route('admin.consultorio_medico.edit', $cm->id) }}" class="btn btn-primary">Editar</a>
+                        <a href="{{ route('admin.consultorio_medico.edit', $cm->id) }}" class="btn btn-warning">Editar</a>
                         <form action="{{ route('admin.consultorio_medico.destroy', $cm->id) }}" method="POST" style="display:inline;">
                             @csrf
                             @method('DELETE')

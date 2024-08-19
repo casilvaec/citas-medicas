@@ -51,10 +51,11 @@
             <label for="ubicacion">Ubicación</label>
             <input type="text" name="ubicacion" id="ubicacion" class="form-control" required>
         </div>
-        <div class="form-group" style="display: none;">
+        <input type="hidden" name="estado" value="Disponible">
+        {{-- <div class="form-group">
             <label for="estado">Estado</label>
             <input type="text" name="estado" id="estado" class="form-control" value="Disponible" readonly>
-        </div>
+        </div> --}}
         <button type="submit" class="btn btn-primary">Guardar</button>
     </form>
 </div>

@@ -523,23 +523,35 @@
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a href="#consultoriosSubmenu" class="nav-link" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                    <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-clinic-medical"></i>
-                        <p>Consultorios</p>
+                        <p>
+                            Consultorios
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
                     </a>
-                    <ul class="collapse list-unstyled" id="consultoriosSubmenu">
+                    <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('admin.consultorios.index') }}">Gestión de Consultorios</a>
+                            <a class="nav-link" href="{{ route('admin.consultorios.index') }}">
+                                <i class="fas fa-door-open nav-icon"></i>
+                                <p>Gestión de Consultorios</p>
+                            </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('admin.consultorio_medico.index') }}">Asignación de Consultorios</a>
+                            <a class="nav-link" href="{{ route('admin.consultorio_medico.index') }}">
+                                <i class="fas fa-bed nav-icon"></i>
+                                <p>Asignación de Consultorios</p>
+                            </a>
                         </li>
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a href="#estadisticasSubmenu" class="nav-link" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">
+                    <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-chart-bar"></i>
-                        <p>Estadísticas</p>
+                        <p>
+                            Estadísticas
+                            <i class="right fas fa-angle-left"></i>
+                        </p>
                     </a>
                     <ul class="collapse list-unstyled" id="estadisticasSubmenu">
                         {{-- <li class="nav-item">

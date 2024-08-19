@@ -60,9 +60,20 @@ class ConsultorioMedicoController extends Controller
     public function edit($id)
     {
         $consultorioMedico = ConsultorioMedico::findOrFail($id);
-        $consultorios = Consultorio::pluck('nombre', 'id');
-        $medicos = Medico::with('user')->get()->pluck('user.full_name', 'id');
-        return view('admin.consultorio_medico.edit', compact('consultorioMedico', 'consultorios', 'medicos'));
+
+        // Obtener todos los médicos que tienen un usuario asociado, similar a cómo se hace en 'create'
+        $medicos = Medico::with('user')->get()->filter(function ($medico) {
+            return $medico->user !== null;
+        })->mapWithKeys(function ($medico) {
+            return [$medico->id => $medico->user->nombre . ' ' . $medico->user->apellidos];
+        });
+
+        // No permitimos la edición del consultorio y la fecha de asignación
+        return view('admin.consultorio_medico.edit', compact('consultorioMedico', 'medicos'));
+
+        // $consultorios = Consultorio::pluck('nombre', 'id');
+        // $medicos = Medico::with('user')->get()->pluck('user.full_name', 'id');
+        //return view('admin.consultorio_medico.edit', compact('consultorioMedico', 'consultorios', 'medicos'));
     }
 
     public function update(AssignConsultorioRequest $request, $id)
