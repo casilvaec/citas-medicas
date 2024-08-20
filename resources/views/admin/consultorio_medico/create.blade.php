@@ -13,8 +13,11 @@
             <label for="consultorio_id">Consultorio</label>
             <select name="consultorio_id" id="consultorio_id" class="form-control" required>
                 <option value="">Seleccione un consultorio</option>
-                @foreach($consultorios as $id => $nombre)
+                {{-- @foreach($consultorios as $id => $nombre)
                     <option value="{{ $id }}">{{ $nombre }}</option>
+                @endforeach --}}
+                @foreach($consultorios as $id => $consultorio)
+                    <option value="{{ $id }}">{{ $consultorio['codigo'] }} - {{ $consultorio['nombre'] }}</option>
                 @endforeach
             </select>
         </div>

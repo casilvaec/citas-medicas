@@ -11,7 +11,7 @@
         <!-- Campo consultorio: Solo para mostrar, no editable -->
         <div class="form-group">
           <label for="consultorio_id">Consultorio</label>
-          <input type="text" class="form-control" value="{{ $consultorioMedico->consultorio->nombre }}" disabled>
+          <input type="text" class="form-control" value="{{ $consultorioMedico->consultorio->codigo }} - {{ $consultorioMedico->consultorio->nombre }}" disabled>
           <input type="hidden" name="consultorio_id" value="{{ $consultorioMedico->consultorio_id }}">
         </div>
 

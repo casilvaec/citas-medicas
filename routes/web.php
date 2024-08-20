@@ -366,6 +366,7 @@ use App\Http\Controllers\Admin\ConsultoriosController;
 use App\Http\Controllers\Admin\ConsultorioMedicoController;
 use App\Http\Controllers\Admin\CitasController;
 use App\Http\Controllers\Medico\MedicoController;
+use Maatwebsite\Excel\Facades\Excel;
 
 Route::get('/', function () {
     return view('welcome');
@@ -450,8 +451,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/medicos/search', [MedicosController::class, 'search'])->name('medicos.search');
 
-    Route::resource('consultorios', ConsultoriosController::class);
+    // Route::resource('consultorios', ConsultoriosController::class);
     Route::get('consultorios/export', [ConsultoriosController::class, 'export'])->name('consultorios.export');
+    Route::resource('consultorios', ConsultoriosController::class);
 
     Route::resource('consultorio_medico', ConsultorioMedicoController::class);
 

@@ -23,11 +23,20 @@ class ConsultoriosController extends Controller
 
     public function store(Request $request)
     {
+        // $request->validate([
+        //     'codigo' => 'required|unique:consultorios',
+        //     'nombre' => 'required',
+        //     'descripcion' => 'nullable',
+        //     'ubicacion' => 'required',
+        // ]);
+
         $request->validate([
-            'codigo' => 'required|unique:consultorios',
-            'nombre' => 'required',
-            'descripcion' => 'nullable',
-            'ubicacion' => 'required',
+            'codigo' => 'required|unique:consultorios,codigo',
+            'nombre' => 'required|string|max:255',
+            'descripcion' => 'required|string',
+            'ubicacion' => 'required|string',
+        ], [
+            'codigo.unique' => 'El código ingresado ya está en uso. Por favor, elija otro.',
         ]);
 
         $consultorio = new Consultorio($request->all());

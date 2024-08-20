@@ -23,17 +23,36 @@ class ConsultorioMedicoController extends Controller
     //     $medicos = Medico::with('user')->get()->pluck('user.full_name', 'id');
     //     return view('admin.consultorio_medico.create', compact('consultorios', 'medicos'));
     // }
+    // public function create()
+    // {
+    //     $consultorios = Consultorio::where('estado', 'Disponible')->pluck('nombre', 'id');
+    //     $medicos = Medico::with('user')->get()->filter(function ($medico) {
+    //         return $medico->user !== null;
+    //     })->mapWithKeys(function ($medico) {
+    //         return [$medico->id => $medico->user->nombre . ' ' . $medico->user->apellidos];
+    //     });
+
+    //     return view('admin.consultorio_medico.create', compact('consultorios', 'medicos'));
+    // }
+
     public function create()
     {
-        $consultorios = Consultorio::where('estado', 'Disponible')->pluck('nombre', 'id');
+        // Obtener los consultorios disponibles, incluyendo tanto el código como el nombre
+        $consultorios = Consultorio::where('estado', 'Disponible')->get()->mapWithKeys(function ($consultorio) {
+            return [$consultorio->id => ['codigo' => $consultorio->codigo, 'nombre' => $consultorio->nombre]];
+        });
+
+        // Obtener los médicos con sus nombres completos
         $medicos = Medico::with('user')->get()->filter(function ($medico) {
             return $medico->user !== null;
         })->mapWithKeys(function ($medico) {
             return [$medico->id => $medico->user->nombre . ' ' . $medico->user->apellidos];
         });
 
+        // Retornar la vista con los datos necesarios
         return view('admin.consultorio_medico.create', compact('consultorios', 'medicos'));
     }
+
     
 
     public function store(AssignConsultorioRequest $request)
@@ -96,8 +115,17 @@ class ConsultorioMedicoController extends Controller
 
     public function destroy($id)
     {
+        // Obtener la asignación de consultorio-médico
         $consultorioMedico = ConsultorioMedico::findOrFail($id);
+
+        // Obtener el consultorio relacionado
+        $consultorio = Consultorio::findOrFail($consultorioMedico->consultorio_id);
+
+        // Eliminar la asignación de consultorio-médico
         $consultorioMedico->delete();
+
+        // Cambiar el estado del consultorio a "Disponible"
+        $consultorio->update(['estado' => 'Disponible']);
 
         return redirect()->route('admin.consultorio_medico.index')->with('success', 'Asignación de consultorio eliminada correctamente.');
     }

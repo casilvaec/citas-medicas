@@ -58,7 +58,8 @@ class ConsultoriosExport implements FromCollection, WithHeadings
             ->leftJoin('medico_especialidades', 'medico_especialidades.medicoId', '=', 'medicos.id')
             ->leftJoin('especialidades_medicas', 'especialidades_medicas.id', '=', 'medico_especialidades.especialidadId')
             ->select(
-                'consultorios.codigo as Consultorio',
+                'consultorios.codigo as Código',
+                'consultorios.nombre as Consultorio',
                 DB::raw('CONCAT(users.nombre, " ", users.apellidos) as Doctor'),
                 'especialidades_medicas.nombre as Especialidad',
                 'consultorio_medico.created_at as Fecha_de_Asignacion',
@@ -70,6 +71,7 @@ class ConsultoriosExport implements FromCollection, WithHeadings
     public function headings(): array
     {
         return [
+            'Código',
             'Consultorio',
             'Doctor',
             'Especialidad',

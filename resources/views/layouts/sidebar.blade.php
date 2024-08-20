@@ -545,7 +545,7 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item has-treeview">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-chart-bar"></i>
                         <p>
@@ -553,13 +553,13 @@
                             <i class="right fas fa-angle-left"></i>
                         </p>
                     </a>
-                    <ul class="collapse list-unstyled" id="estadisticasSubmenu">
-                        {{-- <li class="nav-item">
-                            <a class="nav-link" href="{{ route('consultorios.export') }}">
+                    <ul class="nav-treeview">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.consultorios.export') }}">
                                 <i class="fas fa-file-excel nav-icon"></i>
                                 <p>Reporte de Consultorios en Excel</p>
                             </a>
-                        </li> --}}
+                        </li>
                     </ul>
                 </li>
                 <!-- Añadiendo la sección de Gestión de Citas -->
