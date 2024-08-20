@@ -6,7 +6,7 @@
 <div class="container">
     <h1>Asignación de Consultorios</h1>
     <a href="{{ route('admin.consultorio_medico.create') }}" class="btn btn-primary">Asignar Consultorio</a>
-    <table class="table table-bordered">
+    <table id="consultorio_medico-table" class="table mt-3">
         <thead>
             <tr>
                 <th>ID</th>
@@ -38,3 +38,16 @@
     </table>
 </div>
 @endsection
+
+<!-- script para inicializar DataTables -->
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        $('#consultorio_medico-table').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.10.21/i18n/Spanish.json'
+            }
+        });
+    });
+</script>
+@endpush

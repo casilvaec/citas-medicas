@@ -4,7 +4,7 @@
 <div class="container">
     <h1>Gestión de Consultorios</h1>
     <a href="{{ route('admin.consultorios.create') }}" class="btn btn-primary">Agregar Consultorio</a>
-    <table class="table">
+    <table id="consultorios-table"class="table mt-3">
         <thead>
             <tr>
                 <th>Código</th>
@@ -37,3 +37,16 @@
     </table>
 </div>
 @endsection
+
+<!-- script para inicializar DataTables -->
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        $('#consultorios-table').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.10.21/i18n/Spanish.json'
+            }
+        });
+    });
+</script>
+@endpush
