@@ -12,7 +12,7 @@ class DisponibilidadMedico extends Model
     protected $table = 'disponibilidad_medicos';
 
     protected $fillable = [
-        'medico_id',
+        'medicoId',
         'fecha',
         'horaInicio',
         'horaFin',

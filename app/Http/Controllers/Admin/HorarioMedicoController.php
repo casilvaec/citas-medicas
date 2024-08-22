@@ -85,6 +85,8 @@ class HorarioMedicoController extends Controller
                         'horaFin' => $horaFin,
                     ]);
                     $horarioNuevoAsignado++;
+                    // * Aquí agregamos la lógica para crear las disponibilidades
+                    $this->crearDisponibilidad($medico->id, $horaInicio, $horaFin);
                 } else {
                     $horarioYaAsignado++;
                 }
@@ -107,6 +109,8 @@ class HorarioMedicoController extends Controller
                         'horaFin' => $horaFin,
                     ]);
                     $horarioNuevoAsignado++;
+                    // * Aquí agregamos la lógica para crear las disponibilidades
+                    $this->crearDisponibilidad($medico->id, $horaInicio, $horaFin);
                 } else {
                     $horarioYaAsignado++;
                 }
@@ -148,6 +152,41 @@ class HorarioMedicoController extends Controller
         
         
 
+    }
+
+
+    /**
+     * Método privado para crear disponibilidades basadas en un horario dado.
+     */
+    private function crearDisponibilidad($medico_id, $horaInicio, $horaFin)
+    {
+        //dd($medico_id);
+        $fechaInicio = Carbon::now(); // Fecha de inicio para generar las disponibilidades
+        $fechaFin = Carbon::now()->addMonths(6); // Disponibilidades generadas para los próximos 6 meses
+
+        while ($fechaInicio->lte($fechaFin)) {
+            // * Solo crear disponibilidad para días laborables (lunes a viernes)
+            if ($fechaInicio->isWeekday()) {
+                $horaActual = strtotime($horaInicio);
+                $horaFinTime = strtotime($horaFin);
+
+                while ($horaActual < $horaFinTime) {
+                    $horaInicioFormat = date('H:i:s', $horaActual);
+                    $horaSiguiente = date('H:i:s', strtotime('+30 minutes', $horaActual));
+
+                    DisponibilidadMedico::create([
+                        'medicoId' => $medico_id,
+                        'fecha' => $fechaInicio->format('Y-m-d'),
+                        'horaInicio' => $horaInicioFormat,
+                        'horaFin' => $horaSiguiente,
+                        'disponible' => true,
+                    ]);
+
+                    $horaActual = strtotime('+30 minutes', $horaActual);
+                }
+            }
+            $fechaInicio->addDay();
+        }
     }
 
         

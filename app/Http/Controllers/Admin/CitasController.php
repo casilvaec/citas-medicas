@@ -971,9 +971,12 @@ class CitasController extends Controller
 
         // Obtener el ID del usuario (paciente) desde la solicitud
         $usuario_id = $request->input('usuario_id');
+        
+
+        $medico_id = $request->input('medico_id');
 
         // Retornar la vista con la lista de médicos y el ID del usuario para continuar el proceso de agendamiento
-        return view('admin.citas.seleccionar-medico', compact('medicos', 'usuario_id', 'especialidad_id'));
+        return view('admin.citas.seleccionar-medico', compact('medicos', 'usuario_id', 'especialidad_id', 'medico_id'));
     }
 
 
