@@ -1,87 +1,163 @@
 <?php
 
-// App\Http\Controllers\Admin\DisponibilidadController.php
-
-// App\Http\Controllers\Admin\DisponibilidadController.php
-
-// namespace App\Http\Controllers\Admin;
-
-// use App\Http\Controllers\Controller;
-// use Illuminate\Http\Request;
-// use App\Models\DisponibilidadMedico;
-// use App\Models\Medico;
-
-// class DisponibilidadController extends Controller
-// {
-//     public function index()
-//     {
-//         $medicos = Medico::all()->pluck('full_name', 'id');
-//         return view('admin.disponibilidad.index', compact('medicos'));
-//     }
-
-//     public function fetch(Request $request)
-//     {
-//         $disponibilidades = DisponibilidadMedico::where('medicoId', $request->medicoId)
-//             ->where('fecha', $request->fecha)
-//             ->get();
-
-//         return view('admin.disponibilidad.partials.table', compact('disponibilidades'))->render();
-//     }
-// }
-
-
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\User;
 use App\Models\DisponibilidadMedico;
-use App\Models\Medico;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Models\Role;
+
 
 class DisponibilidadController extends Controller
 {
-    public function index()
+
+    // * Método para generar disponibilidad masiva para un médico en los próximos X meses
+    public function generarDisponibilidadMasiva($medico_id, $meses = 6) // Puedes ajustar los meses aquí
     {
-        // Obtener todos los médicos con el rol de médico
-        $role = Role::where('name', 'medico')->first();
-
-        $medicos = User::join('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
-            ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
-            ->leftJoin('medicos', 'users.id', '=', 'medicos.usuarioId')
-            ->where('roles.name', 'medico')
-            ->select(DB::raw("CONCAT(users.nombre, ' ', users.apellidos) as full_name, medicos.id AS medico_id"))
-            ->pluck('full_name', 'medico_id');
-
-        return view('admin.disponibilidad.index', compact('medicos'));
-    }
-
-    // public function fetch(Request $request)
-    // {
-    //     $medicoId = $request->input('medicoId');
-    //     $fecha = $request->input('fecha');
-
-    //     $disponibilidades = DisponibilidadMedico::where('medicoId', $medicoId)
-    //         ->where('fecha', $fecha)
-    //         ->with('medico.user')
-    //         ->get();
-
-    //     return view('admin.disponibilidad.partials.table', compact('disponibilidades'))->render();
-    // }
-    public function fetch(Request $request)
-    {
-        $medicoId = $request->input('medicoId');
-        // $fecha = $request->input('fecha');
-
-        // Obtener la disponibilidad del médico en la fecha seleccionada
-        $disponibilidades = DisponibilidadMedico::where('medicoId', $medicoId)
-            // ->whereDate('fecha', '=', $fecha)
-            ->orderBy('fecha')
-            ->orderBy('horaInicio')
-            ->with('medico.user')
+        // * Obtener los horarios por defecto asignados al médico desde la tabla horarios_medicos
+        $horariosDefecto = DB::table('horarios_medicos')
+            ->where('medicoId', $medico_id)
             ->get();
 
-        return view('admin.disponibilidad.partials.table', compact('disponibilidades'))->render();
+        // * Generar las fechas para los próximos X meses
+        $fechaInicio = new \DateTime();
+        $fechaFin = (new \DateTime())->modify("+{$meses} months");
+
+        // * Iterar sobre cada día en el rango de fechas
+        while ($fechaInicio <= $fechaFin) {
+            $diaSemana = $fechaInicio->format('N'); // Lunes = 1, Domingo = 7
+
+            // * Solo crear disponibilidad para días laborables (lunes a viernes)
+            if ($diaSemana <= 5) {
+                foreach ($horariosDefecto as $horario) {
+                    $horaActual = strtotime($horario->horaInicio);
+                    $horaFin = strtotime($horario->horaFin);
+
+                    while ($horaActual < $horaFin) {
+                        $horaInicio = date('H:i:s', $horaActual);
+                        $horaSiguiente = date('H:i:s', strtotime('+30 minutes', $horaActual));
+
+                        // ! Verifica si ya existe una entrada de disponibilidad para ese horario en la fecha dada
+                        $existeDisponibilidad = DisponibilidadMedico::where('medico_id', $medico_id)
+                            ->where('fecha', $fechaInicio->format('Y-m-d'))
+                            ->where('horaInicio', $horaInicio)
+                            ->exists();
+
+                        // * Si no existe, la crea
+                        if (!$existeDisponibilidad) {
+                            DisponibilidadMedico::create([
+                                'medico_id' => $medico_id,
+                                'fecha' => $fechaInicio->format('Y-m-d'),
+                                'horaInicio' => $horaInicio,
+                                'horaFin' => $horaSiguiente,
+                                'disponible' => true,
+                            ]);
+                        }
+
+                        $horaActual = strtotime('+30 minutes', $horaActual);
+                    }
+                }
+            }
+
+            // * Avanzar al siguiente día
+            $fechaInicio->modify('+1 day');
+        }
+
+        // No se retorna ningún mensaje, ya que esto es un proceso interno
     }
+
+    // * Método para mostrar las disponibilidades de un médico específico en una fecha determinada
+    public function mostrarDisponibilidad($medico_id, $fecha)
+    {
+        // * Obtener la disponibilidad actualizada para la fecha dada
+        $disponibilidades = DisponibilidadMedico::where('medico_id', $medico_id)
+            ->where('fecha', $fecha)
+            ->where('disponible', true)
+            ->get();
+
+        // * Retornar la disponibilidad como respuesta en formato JSON
+        return response()->json($disponibilidades);
+    }
+
+    // * Método para reservar una cita, marcando el horario como no disponible
+    public function reservarCita(Request $request)
+    {
+        // ? Busca la disponibilidad específica del médico en la fecha y hora dadas
+        $disponibilidad = DisponibilidadMedico::where('medico_id', $request->medico_id)
+            ->where('fecha', $request->fecha)
+            ->where('horaInicio', $request->horaInicio)
+            ->first();
+
+        // ! Si se encuentra la disponibilidad, se marca como no disponible
+        if ($disponibilidad) {
+            $disponibilidad->disponible = false;
+            $disponibilidad->save();
+
+            // * Retorna un mensaje de éxito y los detalles de la cita reservada
+            return response()->json(['success' => true, 'message' => 'Cita reservada exitosamente', 'cita' => $disponibilidad]);
+        }
+
+        // ! Si no se encuentra la disponibilidad, retorna un mensaje de error
+        return response()->json(['success' => false, 'message' => 'Error al reservar la cita'], 400);
+    }
+    // * Método para marcar un horario como no disponible
+    // * Método para mostrar las disponibilidades de un médico específico en una fecha determinada
+    // public function mostrarDisponibilidad($medico_id, $fecha)
+    // {
+    //     // * Obtener los horarios por defecto asignados al médico desde la tabla horarios_medicos
+    //     $horariosDefecto = DB::table('horarios_medicos')
+    //         ->where('medicoId', $medico_id)
+    //         ->get();
+
+    //     // * Crear entradas de disponibilidad en la tabla disponibilidad_medicos si no existen para la fecha dada
+    //     foreach ($horariosDefecto as $horario) {
+    //         // * Verifica si ya existe una entrada de disponibilidad para ese horario en la fecha dada
+    //         $existeDisponibilidad = DisponibilidadMedico::where('medico_id', $medico_id)
+    //             ->where('fecha', $fecha)
+    //             ->where('horaInicio', $horario->horaInicio)
+    //             ->exists();
+
+    //         // * Si no existe, la crea
+    //         if (!$existeDisponibilidad) {
+    //             DisponibilidadMedico::create([
+    //                 'medico_id' => $medico_id,
+    //                 'fecha' => $fecha,
+    //                 'horaInicio' => $horario->horaInicio,
+    //                 'horaFin' => $horario->horaFin,
+    //                 'disponible' => true,
+    //             ]);
+    //         }
+    //     }
+
+    //     // * Obtener la disponibilidad actualizada para la fecha dada
+    //     $disponibilidades = DisponibilidadMedico::where('medico_id', $medico_id)
+    //         ->where('fecha', $fecha)
+    //         ->where('disponible', true)
+    //         ->get();
+
+    //     // * Retornar la disponibilidad como respuesta en formato JSON
+    //     return response()->json($disponibilidades);
+    // }
+
+    // * Método para marcar un horario como no disponible
+    // public function reservarHorario(Request $request)
+    // {
+    //     // * Busca la disponibilidad específica del médico en la fecha y hora dadas
+    //     $disponibilidad = DisponibilidadMedico::where('medico_id', $request->medico_id)
+    //         ->where('fecha', $request->fecha)
+    //         ->where('horaInicio', $request->horaInicio)
+    //         ->first();
+
+    //     // * Si se encuentra la disponibilidad, se marca como no disponible
+    //     if ($disponibilidad) {
+    //         $disponibilidad->disponible = false;
+    //         $disponibilidad->save();
+
+    //         // * Retorna un mensaje de éxito
+    //         return response()->json(['message' => 'Horario reservado exitosamente']);
+    //     }
+
+    //     // * Si no se encuentra la disponibilidad, retorna un mensaje de error
+    //     return response()->json(['message' => 'Error al reservar el horario'], 400);
+    // }
 }

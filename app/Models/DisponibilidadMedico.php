@@ -11,10 +11,17 @@ class DisponibilidadMedico extends Model
 
     protected $table = 'disponibilidad_medicos';
 
-    protected $fillable = ['medicoId', 'fecha', 'horaInicio', 'horaFin', 'disponible'];
+    protected $fillable = [
+        'medico_id',
+        'fecha',
+        'horaInicio',
+        'horaFin',
+        'disponible',
+    ];
 
+    // Relación con el modelo Medico
     public function medico()
     {
-        return $this->belongsTo(Medico::class, 'medicoId');
+        return $this->belongsTo(Medico::class);
     }
 }

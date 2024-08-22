@@ -483,7 +483,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/citas/mostrar-calendario', [CitasController::class, 'mostrarCalendario'])->name('citas.mostrarCalendario');
     Route::post('/citas/confirmacion', [CitasController::class, 'confirmarCita'])->name('citas.confirmarCita');
 
-    
+    Route::get('disponibilidad/generar/{medico_id}/{meses?}', [DisponibilidadController::class, 'generarDisponibilidadMasiva'])->name('disponibilidad.generar');
+    Route::get('disponibilidad/{medico_id}/{fecha}', [DisponibilidadController::class, 'mostrarDisponibilidad'])->name('disponibilidad.mostrar');
+        
+
+    Route::post('disponibilidad/reservar', [DisponibilidadController::class, 'reservarCita'])->name('disponibilidad.reservar');
+       
 });
 
 

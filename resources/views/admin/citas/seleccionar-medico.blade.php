@@ -111,8 +111,10 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
       var calendarEl = document.getElementById('calendar');
+      var medico_id = {{ $medico_id }}; // Obtiene el ID del médico seleccionado
+
       var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
+        initialView: 'dayGridMonth', // Muestra el calendario en la vista de mes completo
         selectable: true,
         locale: 'es',
         // headerToolbar: {
@@ -123,10 +125,60 @@
         buttonText: {
             today: 'Hoy', // Cambia "today" a "Hoy"
         },
+
+        events: function(fetchInfo, successCallback, failureCallback) {
+                // Consultar la disponibilidad desde el servidor para el médico seleccionado
+                fetch(`/admin/disponibilidad/${medico_id}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Mapea la disponibilidad obtenida a eventos que FullCalendar puede mostrar
+                        var events = data.map(disponibilidad => {
+                            return {
+                                title: 'Disponible', // Título del evento
+                                start: `${disponibilidad.fecha}T${disponibilidad.horaInicio}`, // Hora de inicio
+                                end: `${disponibilidad.fecha}T${disponibilidad.horaFin}`, // Hora de fin
+                                backgroundColor: '#28a745', // Color de fondo
+                                borderColor: '#28a745' // Color del borde
+                            };
+                        });
+                        successCallback(events); // Muestra los eventos en el calendario
+                    });
+            },
+
+        // dateClick: function(info) {
+        //   document.getElementById('fecha_cita').value = info.dateStr;
+        //   alert('Fecha seleccionada: ' + info.dateStr);
+        // }
+
         dateClick: function(info) {
-          document.getElementById('fecha_cita').value = info.dateStr;
-          alert('Fecha seleccionada: ' + info.dateStr);
-        }
+                // Maneja el clic en una fecha/hora específica
+                var fecha = info.dateStr.split('T')[0]; // Obtiene la fecha seleccionada
+                var horaInicio = info.dateStr.split('T')[1]; // Obtiene la hora seleccionada
+                
+                // Realizar la reserva del horario seleccionado
+                fetch('{{ route("admin.disponibilidad.reservar") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}' // Añade el token CSRF para seguridad
+                    },
+                    body: JSON.stringify({
+                        medico_id: medico_id, // ID del médico
+                        fecha: fecha, // Fecha seleccionada
+                        horaInicio: horaInicio // Hora seleccionada
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Cita reservada exitosamente'); // Muestra un mensaje de éxito
+                        calendar.refetchEvents(); // Refresca el calendario para mostrar los horarios actualizados
+                    } else {
+                        alert('Error al reservar la cita'); // Muestra un mensaje de error
+                    }
+                });
+            } 
+
       });
       calendar.render();
     });
