@@ -330,7 +330,7 @@
   --}}
 
 
-  @extends('layouts.app')
+  {{-- @extends('layouts.app')
 
 @section('content')
 <div class="container">
@@ -392,7 +392,7 @@
             <label for="motivo">Motivo</label>
             <input type="text" name="motivo" id="motivo" class="form-control">
         </div> --}}
-        <button type="submit" class="btn btn-primary">Agendar Cita</button>
+        {{-- <button type="submit" class="btn btn-primary">Agendar Cita</button>
     </form>
 </div>
 @endsection
@@ -423,9 +423,9 @@
             } else {
                 $('#medico_id').html('<option value="">Seleccione un médico</option>').trigger('change');
             }
-        });
+        }); --}}
 
-        // Mostrar sección de disponibilidad al consultar
+        {{-- // Mostrar sección de disponibilidad al consultar
         $('#consultar_disponibilidad').on('click', function() {
             var medicoId = $('#medico_id').val();
             if (medicoId) {
@@ -461,4 +461,32 @@
         });
     });
 </script>
-@endpush
+@endpush --}}
+
+
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <h1>Agendar Cita Médica</h1>
+
+    <form action="{{ route('admin.citas.buscarPaciente') }}" method="POST" id="buscar-paciente-form">
+        @csrf
+        <div class="form-group">
+            <label for="busquedaPaciente">Buscar Paciente:</label>
+            <input type="text" name="busquedaPaciente" id="busquedaPaciente" class="form-control" placeholder="Ingrese nombre, apellido o número de identificación">
+        </div>
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+
+    <hr>
+
+    <div id="resultados-paciente">
+        {{-- Aquí se mostrarán los resultados de la búsqueda --}}
+    </div>
+
+    <div id="registrar-paciente">
+        <a href="{{ route('admin.pacientes.create') }}" class="btn btn-success">Registrar Nuevo Paciente</a>
+    </div>
+</div>
+@endsection

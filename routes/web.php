@@ -459,12 +459,29 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::get('consultorios/estadisticas', [ConsultoriosController::class, 'estadisticas'])->name('consultorios.estadisticas');
 
-    Route::resource('citas', CitasController::class)->except(['show']);
-    Route::get('citas/fetch_medicos', [CitasController::class, 'fetchMedicos'])->name('citas.fetch_medicos');
-    Route::get('citas/fetch_disponibilidad', [CitasController::class, 'fetchDisponibilidad'])->name('citas.fetch_disponibilidad');
+    // Route::resource('citas', CitasController::class)->except(['show']);
+    // Route::get('citas/fetch_medicos', [CitasController::class, 'fetchMedicos'])->name('citas.fetch_medicos');
+    // Route::get('citas/fetch_disponibilidad', [CitasController::class, 'fetchDisponibilidad'])->name('citas.fetch_disponibilidad');
 
-    Route::get('citas/{id}/cancel', [CitasController::class, 'cancel'])->name('citas.cancel');
-    Route::get('citas/{id}/reschedule', [CitasController::class, 'reschedule'])->name('citas.reschedule');
+    // Route::get('citas/{id}/cancel', [CitasController::class, 'cancel'])->name('citas.cancel');
+    // Route::get('citas/{id}/reschedule', [CitasController::class, 'reschedule'])->name('citas.reschedule');
+
+    Route::get('/citas/agendar', [CitasController::class, 'agendar'])->name('citas.create'); // Para agendar citas
+    Route::get('/citas', [CitasController::class, 'index'])->name('citas.index'); // Para ver las citas
+    Route::get('/citas/cancel', [CitasController::class, 'cancel'])->name('citas.cancel'); // Para cancelar citas
+    Route::get('/citas/reschedule', [CitasController::class, 'reschedule'])->name('citas.reschedule'); // Para reprogramar citas
+
+    Route::get('/citas/obtener-especialidades', [CitasController::class, 'obtenerEspecialidades']);
+    // Definir la ruta para crear un nuevo paciente
+    Route::get('/pacientes/create', [PacientesController::class, 'create'])->name('pacientes.create');
+
+    Route::post('/citas/buscar-paciente', [CitasController::class, 'buscarPaciente'])->name('citas.buscarPaciente');
+    
+    Route::get('/citas/seleccionar-paciente/{id}', [CitasController::class, 'seleccionarPaciente'])->name('citas.seleccionarPaciente');
+    Route::get('/citas/especialidad', [CitasController::class, 'seleccionarEspecialidad'])->name('citas.especialidad');
+    Route::post('/citas/medicos', [CitasController::class, 'mostrarMedicos'])->name('citas.medicos');
+    Route::post('/citas/mostrar-calendario', [CitasController::class, 'mostrarCalendario'])->name('citas.mostrarCalendario');
+    Route::post('/citas/confirmacion', [CitasController::class, 'confirmarCita'])->name('citas.confirmarCita');
 
     
 });

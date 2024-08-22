@@ -573,33 +573,51 @@
                     </a>
                     <ul class="nav nav-treeview">
                         <li class="nav-item">
-                            <a href="{{ route('admin.citas.index') }}" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Ver Citas</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
                             <a href="{{ route('admin.citas.create') }}" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
+                                <i class="far fa-calendar-plus nav-icon"></i>
                                 <p>Agendar Cita</p>
                             </a>
                         </li>
-                        {{-- <li class="nav-item">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.citas.index') }}" class="nav-link">
+                                <i class="far fa-calendar-check nav-icon"></i>
+                                <p>Ver Citas Médicas</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{ route('admin.citas.cancel') }}" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
+                                <i class="far fa-calendar-times nav-icon"></i>
                                 <p>Cancelar Cita</p>
                             </a>
-                        </li>  --}}
-                        {{-- <li class="nav-item">
+                        </li> 
+                        <li class="nav-item">
                             <a href="{{ route('admin.citas.reschedule') }}" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
+                                <i class="far fa-calendar-alt nav-icon"></i>
                                 <p>Reprogramar Cita</p>
                             </a>
-                        </li> --}}
+                        </li>
+                        {{-- <li class="nav-item">
+                            <a href="{{ route('admin.medico.agenda') }}" class="nav-link">
+                                <i class="far fa-calendar-alt nav-icon"></i>
+                                <p>Agenda Médica</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('admin.medico.atencion') }}" class="nav-link">
+                                <i class="far fa-clipboard nav-icon"></i>
+                                <p>Registro de Atención</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('medico.historial') }}" class="nav-link">
+                                <i class="far fa-file-medical nav-icon"></i>
+                                <p>Historial Médico</p>
+                            </a>
+                        </li>   
                     </ul>
-                </li>
+                </li> --}}
                 <!-- Añadiendo la sección de Médico -->
-                <li class="nav-item has-treeview">
+                {{-- <li class="nav-item has-treeview">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-user-md"></i>
                         <p>
@@ -608,26 +626,26 @@
                         </p>
                     </a>
                     <ul class="nav nav-treeview">
-                        <li class="nav-item">
+                        <li class="nav-item"> --}}
                             {{-- <a href="{{ route('medico.agenda') }}" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Revisar Agenda</p>
                             </a> --}}
-                        </li>
-                        <li class="nav-item">
+                        {{-- </li>
+                        <li class="nav-item"> --}}
                             {{-- <a href="{{ route('medico.atencion') }}" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Registrar Atención</p>
                             </a> --}}
-                        </li>
-                        <li class="nav-item">
+                        {{-- </li>
+                        <li class="nav-item"> --}}
                             {{-- <a href="{{ route('medico.historial') }}" class="nav-link">
                                 <i class="far fa-circle nav-icon"></i>
                                 <p>Revisar Historial</p>
                             </a> --}}
-                        </li>
+                        {{-- </li>
                     </ul>
-                </li>
+                </li> --}}
                 <!-- Otros enlaces de menú -->
             </ul>
         </nav>
