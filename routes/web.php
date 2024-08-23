@@ -484,11 +484,21 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/citas/confirmacion', [CitasController::class, 'confirmarCita'])->name('citas.confirmarCita');
 
     Route::get('disponibilidad/generar/{medico_id}/{meses?}', [DisponibilidadController::class, 'generarDisponibilidadMasiva'])->name('disponibilidad.generar');
-    Route::get('disponibilidad/{medico_id}/{fecha}', [DisponibilidadController::class, 'mostrarDisponibilidad'])->name('disponibilidad.mostrar');
+    
         
 
+    
+    
+    // Ruta para mostrar las disponibilidades por días
+    // Devuelve la disponibilidad diaria de un médico específico, agrupada por fecha. Se utiliza en el calendario mensual para colorear los días según su disponibilidad.
+    Route::get('disponibilidad/dias/{medico_id}', [DisponibilidadController::class, 'mostrarDisponibilidadDias'])->name('disponibilidad.dias');
+
+    // Ruta para mostrar las disponibilidades por horarios en un día específico
+    // devuelve los horarios disponibles en un día específico para un médico determinado. Se utiliza cuando se hace clic en un día específico del calendario para mostrar los horarios disponibles en ese día.
+    Route::get('disponibilidad/horarios/{medico_id}/{fecha}', [DisponibilidadController::class, 'mostrarDisponibilidadHorarios'])->name('disponibilidad.horarios');
+
+    // Gestiona la reserva de una cita, marcando la disponibilidad como ocupada
     Route::post('disponibilidad/reservar', [DisponibilidadController::class, 'reservarCita'])->name('disponibilidad.reservar');
-       
 });
 
 
