@@ -15,6 +15,6 @@ class EspecialidadesMedicas extends Model
 
     public function medicos()
     {
-        return $this->belongsToMany(Medico::class, 'medico_especialidades', 'especialidadId', 'medicoId');
+        return $this->belongsToMany(Medico::class, 'medico_especialidades', 'especialidadId', 'medicoId')->onDelete('cascade');
     }
 }

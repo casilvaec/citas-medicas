@@ -15,6 +15,6 @@ class HorarioMedico extends Model
 
     public function medico()
     {
-        return $this->belongsTo(Medico::class, 'medicoId');
+        return $this->belongsTo(Medico::class, 'medicoId')->onDelete('cascade');
     }
 }
