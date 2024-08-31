@@ -222,7 +222,9 @@
             console.log('Calendario renderizado correctamente.');
         }
 
-        // * Evento de clic en el botón "Confirmar Médico"
+        
+    
+        //Evento de clic en el botón "Confirmar Médico"
         var confirmarMedicoBtn = document.getElementById('confirmarMedicoBtn');
         if (confirmarMedicoBtn) {
             console.log('Botón "Confirmar Médico" encontrado:', confirmarMedicoBtn);

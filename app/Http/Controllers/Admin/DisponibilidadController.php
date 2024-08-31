@@ -94,15 +94,20 @@ class DisponibilidadController extends Controller
     }
 
 
+    public function mostrarDisponibilidadHorarios($usuarioId, $fecha) 
+{
+    // Obtener el ID del médico desde la tabla 'medicos' usando 'usuarioId'
+    Log::info('Obteniendo ID del médico desde la tabla medicos para usuario ID: ' . $usuarioId);
     
+    $medico = Medico::where('usuarioId', $usuarioId)->first();
 
-    public function mostrarDisponibilidadHorarios($medicoId, $fecha) // Cambio en el parámetro: $medicoId en lugar de $usuarioId
-    {
-        Log::info('Obteniendo disponibilidad de horarios para médico ID: ' . $medicoId . ' en la fecha: ' . $fecha);
-    
+    if ($medico) {
+        $medicoId = $medico->id; // ID del médico desde la tabla 'medicos'
+        Log::info('Médico encontrado con ID: ' . $medicoId);
+
         // * Realizar la consulta para obtener las disponibilidades horarias
         try {
-            $disponibilidades = DisponibilidadMedico::where('medicoId', $medicoId) // Usando medicoId directamente
+            $disponibilidades = DisponibilidadMedico::where('medicoId', $medicoId)
                 ->where('fecha', $fecha)
                 ->where('disponible', true)
                 ->get();
@@ -121,7 +126,40 @@ class DisponibilidadController extends Controller
             Log::error('Error al obtener los horarios: ' . $e->getMessage());
             return response()->json(['error' => 'Error al obtener los horarios'], 500);
         }
+    } else {
+        // * Manejar el caso donde no se encuentra el médico
+        Log::warning('Médico no encontrado para usuario ID: ' . $usuarioId);
+        return response()->json(['error' => 'Médico no encontrado'], 404);
     }
+}
+
+
+    // public function mostrarDisponibilidadHorarios($medicoId, $fecha) // Cambio en el parámetro: $medicoId en lugar de $usuarioId
+    // {
+    //     Log::info('Obteniendo disponibilidad de horarios para médico ID: ' . $medicoId . ' en la fecha: ' . $fecha);
+    
+    //     // * Realizar la consulta para obtener las disponibilidades horarias
+    //     try {
+    //         $disponibilidades = DisponibilidadMedico::where('medicoId', $medicoId) // Usando medicoId directamente
+    //             ->where('fecha', $fecha)
+    //             ->where('disponible', true)
+    //             ->get();
+    
+    //         // * Verificar si no hay disponibilidades
+    //         if ($disponibilidades->isEmpty()) {
+    //             Log::warning('No hay disponibilidad para la fecha: ' . $fecha . ' para el médico ID: ' . $medicoId);
+    //             return response()->json(['error' => 'No hay disponibilidad para esta fecha.'], 404);
+    //         }
+    
+    //         // * Retornar la disponibilidad encontrada en formato JSON
+    //         Log::info('Disponibilidades horarias obtenidas con éxito para el médico ID: ' . $medicoId);
+    //         return response()->json($disponibilidades);
+    //     } catch (\Exception $e) {
+    //         // * Registrar el error y retornar un mensaje de error JSON
+    //         Log::error('Error al obtener los horarios: ' . $e->getMessage());
+    //         return response()->json(['error' => 'Error al obtener los horarios'], 500);
+    //     }
+    // }
     
 
     

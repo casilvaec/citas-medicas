@@ -149,4 +149,19 @@ class MedicosController extends Controller
 
         return response()->json($response);
     }
+
+    // public function obtenerMedicoId($usuarioId)
+    // {
+    //     // Busca el médico utilizando el usuarioId en la tabla 'medicos'
+    //     $medico = Medico::where('usuarioId', $usuarioId)->first();
+
+    //     if ($medico) {
+    //         // Si se encuentra el médico, devolver el ID
+    //         return response()->json(['medico_id' => $medico->id]);
+    //     } else {
+    //         // Si no se encuentra, devolver un error
+    //         return response()->json(['error' => 'Médico no encontrado'], 404);
+    //     }
+    // }
+
 }
