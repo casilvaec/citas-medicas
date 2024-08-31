@@ -14,68 +14,70 @@ use Illuminate\Support\Facades\Log;
 class DisponibilidadController extends Controller
 {
 
-    // public function mostrarDisponibilidadDias($medico_id)
-    // {
-    //     //dd('Entrando a mostrarDisponibilidadDias');
-    //     //dd($medico_id);
-    //     try {
-    //         // Realizar la consulta a la base de datos
-    //         $disponibilidades = DisponibilidadMedico::select('fecha', DB::raw('COUNT(*) as total_disponibilidades'))
-    //             ->where('medicoId', $medico_id)
-    //             ->where('disponible', true)
-    //             ->groupBy('fecha')
-    //             ->get();
+    
 
-    //         // Retornar la respuesta en formato JSON
-    //         return response()->json($disponibilidades);
-    //     } catch (\Exception $e) {
-    //         // Registrar el error y retornar un mensaje de error JSON
-    //         Log::error('Error al obtener las disponibilidades: ' . $e->getMessage());
-    //         return response()->json(['error' => 'Error al obtener las disponibilidades'], 500);
-    //     }
-    // }
-
-    // public function seleccionarMedico($usuarioId)
-    // {
-    //     // Obtener el ID del médico basado en el ID del usuario
-    //     $medico = Medico::where('usuarioId', $usuarioId)->first();
-
-    //     // Verificar si el médico existe
-    //     if ($medico) {
-    //         $medicoId = $medico->id;
-    //         dd($medicoId); // Detiene la ejecución y muestra el ID del médico
-
-    //         // Pasar el ID del médico a la vista
-    //         return view('admin.citas.seleccionar-medico', compact('medicoId'));
-    //     } else {
-    //         // Manejar el caso donde no se encuentra el médico
-    //         return redirect()->back()->with('error', 'Médico no encontrado');
-    //     }
-    // }
-
-    // Método para mostrar la disponibilidad de días de un médico
-    public function mostrarDisponibilidadDias($usuarioId)
+    public function mostrarDisponibilidadDias($medicoId) // Usando medicoId directamente como parámetro
     {
-        // * Obtener el ID del médico basado en el ID del usuario
-        Log::info('Obteniendo ID del médico para usuario ID: ' . $usuarioId);
-        $medico = Medico::where('usuarioId', $usuarioId)->first();
+        Log::info('Obteniendo disponibilidad por días para el médico ID: ' . $medicoId);
 
-        // * Verificar si el médico existe
+        try {
+            // * Realizar la consulta utilizando el medicoId recibido
+            $disponibilidades = DisponibilidadMedico::select('fecha', DB::raw('COUNT(*) as total_disponibilidades'))
+                ->where('medicoId', $medicoId) // Usando medicoId directamente
+                ->whereDate('fecha', '>=', date('Y-m-d')) // Disponibilidad futura
+                ->where('disponible', true) // Filtrar por disponibilidad
+                ->groupBy('fecha') // Agrupar resultados por fecha
+                ->get();
+
+            // Verificar si se obtuvieron resultados
+            if ($disponibilidades->isEmpty()) {
+                Log::warning('No se encontraron disponibilidades para el médico ID: ' . $medicoId);
+                return response()->json(['error' => 'No se encontraron disponibilidades'], 404);
+            }
+
+            Log::info('Disponibilidades obtenidas con éxito para el médico ID: ' . $medicoId);
+            
+            // * Retornar la respuesta en formato JSON
+            return response()->json($disponibilidades);
+        } catch (\Exception $e) {
+            // * Registrar el error y retornar un mensaje de error JSON
+            Log::error('Error al obtener las disponibilidades: ' . $e->getMessage());
+            return response()->json(['error' => 'Error al obtener las disponibilidades'], 500);
+        }
+    }
+
+    public function mostrarDisponibilidadDiasPorMedico($usuarioId)
+    {
+        // Primero, obtener el ID del médico desde la tabla 'medicos' usando 'usuarioId'
+        Log::info('Obteniendo ID del médico desde la tabla medicos para usuario ID: ' . $usuarioId);
+        
+        $medico = Medico::where('usuarioId', $usuarioId)->first();  // Asegúrate de que esto sea correcto
+        
+        
+
         if ($medico) {
-            $medicoId = $medico->id;
+            $medicoId = $medico->id; // ID del médico desde la tabla 'medicos'
             Log::info('Médico encontrado con ID: ' . $medicoId);
 
             try {
-                // * Realizar la consulta utilizando el medicoId obtenido
+                
+                // Usar el ID del médico en la consulta de disponibilidad
                 $disponibilidades = DisponibilidadMedico::select('fecha', DB::raw('COUNT(*) as total_disponibilidades'))
-                    ->where('medicoId', $medicoId) // Usar el ID del médico
+                    ->where('medicoId', $medicoId) // Usar el ID del médico de la tabla `disponibilidad_medicos`
+                    ->whereDate('fecha', '>=', date('Y-m-d')) // Disponibilidad futura
                     ->where('disponible', true) // Filtrar por disponibilidad
                     ->groupBy('fecha') // Agrupar resultados por fecha
                     ->get();
 
-                 // * Pasar el ID del médico a la vista (sin reemplazar la respuesta JSON)
-                session()->put('medico_id', $medicoId);
-                Log::info('Disponibilidades obtenidas con éxito');
+                // Verificar si se obtuvieron resultados
+                if ($disponibilidades->isEmpty()) {
+                    Log::warning('No se encontraron disponibilidades para el médico ID: ' . $medicoId);
+                    return response()->json(['error' => 'No se encontraron disponibilidades'], 404);
+                }
+
+                
+                Log::info('Disponibilidades obtenidas con éxito para el médico ID: ' . $medicoId);
+                Log::info('Disponibilidades obtenidas con éxito:', $disponibilidades->toArray());
                 
                 // * Retornar la respuesta en formato JSON
                 return response()->json($disponibilidades);
@@ -91,63 +93,38 @@ class DisponibilidadController extends Controller
         }
     }
 
-    // Método para mostrar la disponibilidad horaria en un día específico
-    public function mostrarDisponibilidadHorarios($usuarioId, $fecha)
+
+    
+
+    public function mostrarDisponibilidadHorarios($medicoId, $fecha) // Cambio en el parámetro: $medicoId en lugar de $usuarioId
     {
-        // * Obtener el ID del médico basado en el ID del usuario
-        Log::info('Obteniendo ID del médico para usuario ID: ' . $usuarioId);
-        $medico = Medico::where('usuarioId', $usuarioId)->first();
-        
-
-        if ($medico) {
-            $medicoId = $medico->id; // * Este es el ID del médico que necesitamos para las consultas
-            Log::info('Médico encontrado con ID: ' . $medicoId);
-
-            // * Realizar la consulta para obtener las disponibilidades horarias
-            try {
-                Log::info('Consultando disponibilidades horarias para médico ID: ' . $medicoId . ' y fecha: ' . $fecha);
-                $disponibilidades = DisponibilidadMedico::where('medicoId', $medicoId)
-                    ->where('fecha', $fecha)
-                    ->where('disponible', true)
-                    ->get();
-
-                // * Verificar si no hay disponibilidades
-                if ($disponibilidades->isEmpty()) {
-                    Log::warning('No hay disponibilidad para la fecha: ' . $fecha);
-                    return response()->json(['error' => 'No hay disponibilidad para esta fecha.'], 404);
-                }
-
-                // * Retornar la disponibilidad encontrada en formato JSON
-                Log::info('Disponibilidades horarias obtenidas con éxito');
-                return response()->json($disponibilidades);
-            } catch (\Exception $e) {
-                // * Registrar el error y retornar un mensaje de error JSON
-                Log::error('Error al obtener los horarios: ' . $e->getMessage());
-                return response()->json(['error' => 'Error al obtener los horarios'], 500);
+        Log::info('Obteniendo disponibilidad de horarios para médico ID: ' . $medicoId . ' en la fecha: ' . $fecha);
+    
+        // * Realizar la consulta para obtener las disponibilidades horarias
+        try {
+            $disponibilidades = DisponibilidadMedico::where('medicoId', $medicoId) // Usando medicoId directamente
+                ->where('fecha', $fecha)
+                ->where('disponible', true)
+                ->get();
+    
+            // * Verificar si no hay disponibilidades
+            if ($disponibilidades->isEmpty()) {
+                Log::warning('No hay disponibilidad para la fecha: ' . $fecha . ' para el médico ID: ' . $medicoId);
+                return response()->json(['error' => 'No hay disponibilidad para esta fecha.'], 404);
             }
-        } else {
-            // * Manejar el caso donde no se encuentra el médico
-            Log::warning('Médico no encontrado para usuario ID: ' . $usuarioId);
-            return response()->json(['error' => 'Médico no encontrado'], 404);
+    
+            // * Retornar la disponibilidad encontrada en formato JSON
+            Log::info('Disponibilidades horarias obtenidas con éxito para el médico ID: ' . $medicoId);
+            return response()->json($disponibilidades);
+        } catch (\Exception $e) {
+            // * Registrar el error y retornar un mensaje de error JSON
+            Log::error('Error al obtener los horarios: ' . $e->getMessage());
+            return response()->json(['error' => 'Error al obtener los horarios'], 500);
         }
     }
+    
 
-
-
-    // Método para mostrar la disponibilidad horaria en un día específico
-    // public function mostrarDisponibilidadHorarios($medico_id, $fecha)
-    // {
-    //     //dd($fecha);
-    //     $disponibilidades = DisponibilidadMedico::where('medicoId', $medico_id)
-    //         ->where('fecha', $fecha)
-    //         ->where('disponible', true)
-    //         ->get();
-
-    //         //dd($disponibilidades);
-            
-    //     return response()->json($disponibilidades);
-    // }
-
+    
     // Método para reservar una cita
     public function reservarCita(Request $request)
     {

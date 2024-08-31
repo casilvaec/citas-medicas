@@ -155,6 +155,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Devuelve la disponibilidad diaria de un médico específico, agrupada por fecha. Se utiliza en el calendario mensual para colorear los días según su disponibilidad.
     Route::get('disponibilidad/dias/{usuarioId}', [DisponibilidadController::class, 'mostrarDisponibilidadDias'])->name('disponibilidad.dias');
 
+    // Nueva ruta para mostrar la disponibilidad por días utilizando medico_id directamente
+    Route::get('disponibilidad/dias-medico/{medico_id}', [DisponibilidadController::class, 'mostrarDisponibilidadDiasPorMedico'])->name('disponibilidad.dias.medico');
+
     // Ruta para mostrar las disponibilidades por horarios en un día específico
     // devuelve los horarios disponibles en un día específico para un médico determinado. Se utiliza cuando se hace clic en un día específico del calendario para mostrar los horarios disponibles en ese día.
     Route::get('disponibilidad/horarios/{medico_id}/{fecha}', [DisponibilidadController::class, 'mostrarDisponibilidadHorarios'])->name('disponibilidad.horarios');

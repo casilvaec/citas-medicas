@@ -170,11 +170,23 @@ class CitasController extends Controller
 
 
         // Consultar disponibilidad del médico
-        Log::info('Consultando disponibilidad del médico');
-        $disponibilidad = DB::table('disponibilidad_medicos')
-            ->where('medicoId', $medico_id)
-            ->get();
-        Log::info('Disponibilidad del médico: ' . json_encode($disponibilidad));
+        // Log::info('Consultando disponibilidad del médico');
+        // $disponibilidad = DB::table('disponibilidad_medicos')
+        //     ->where('medicoId', $medico_id)
+        //     ->get();
+        // Log::info('Disponibilidad del médico: ' . json_encode($disponibilidad));
+
+        // Usar DisponibilidadController para obtener la disponibilidad correcta
+        // $disponibilidadController = new DisponibilidadController();
+        // $disponibilidadResponse = $disponibilidadController->mostrarDisponibilidadDiasPorMedico($medico_id_usuario);
+
+        // // Si la respuesta no es válida o hay un error, mostrar un mensaje de error
+        // if ($disponibilidadResponse->getStatusCode() != 200) {
+        //     return redirect()->back()->with('error', 'Error al obtener la disponibilidad del médico.');
+        // }
+
+        // // Convertir la respuesta a JSON
+        // $disponibilidad = json_decode($disponibilidadResponse->getContent());
 
         // Simula la disponibilidad del médico para la demostración
         // Log::info('Simulando disponibilidad del médico');
@@ -182,20 +194,20 @@ class CitasController extends Controller
         // Log::info('Disponibilidad simulada: ' . json_encode($disponibilidad));
 
         // Información adicional del médico y usuario
-        Log::info('Obteniendo información adicional del médico y usuario');
-        $medico = User::find($medico_id);
-        Log::info('Médico encontrado: ' . json_encode($medico));
+        // Log::info('Obteniendo información adicional del médico y usuario');
+        // $medico = Medico::find($medico_id);
+        // Log::info('Médico encontrado: ' . json_encode($medico));
         $usuario = User::find($usuario_id);
         Log::info('Usuario encontrado: ' . json_encode($usuario));
 
-        // Verifica que ambos existan
-        Log::info('Verificando que médico y usuario existan');
-        if (!$medico || !$usuario) {
-            Log::warning('Datos del médico o usuario no encontrados');
-            Log::warning('Médico ID: ' . $medico_id);
-            Log::warning('Usuario ID: ' . $usuario_id);
-            return redirect()->back()->with('error', 'Datos del médico o usuario no encontrados.');
-        }
+        // // Verifica que ambos existan
+        // Log::info('Verificando que médico y usuario existan');
+        // if (!$medico || !$usuario) {
+        //     Log::warning('Datos del médico o usuario no encontrados');
+        //     Log::warning('Médico ID: ' . $medico_id);
+        //     Log::warning('Usuario ID: ' . $usuario_id);
+        //     return redirect()->back()->with('error', 'Datos del médico o usuario no encontrados.');
+        // }
 
         // Indicamos que queremos mostrar el calendario
         Log::info('Mostrando calendario');
@@ -204,7 +216,7 @@ class CitasController extends Controller
         // Retornar la vista de selección de médico, pero ahora con el calendario visible
         Log::info('Retornando vista con calendario');
         return view('admin.citas.seleccionar-medico', compact(
-            'medico_id', 'usuario_id', 'medicos', 'disponibilidad', 'calendario', 'especialidad_id'
+            'medico_id', 'usuario_id', 'medicos', 'calendario', 'especialidad_id'
         ))->with('medico_nombre', $medico->nombre)
         ->with('medico_apellidos', $medico->apellidos)
         ->with('usuario_nombre', $usuario->nombre)

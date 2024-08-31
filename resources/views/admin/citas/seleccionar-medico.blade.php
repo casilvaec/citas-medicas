@@ -25,7 +25,7 @@
             <input type="hidden" name="especialidad_id" value="{{ $especialidad_id }}">
             
 
-            <button type="submit" class="btn btn-primary">Confirmar Médico</button>
+            <button type="submit" id="confirmarMedicoBtn" class="btn btn-primary">Confirmar Médico</button>
         </form>
     @endif
 
@@ -89,17 +89,178 @@
 {{-- <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/locales/es.global.min.js"></script> --}}
 
 
-
-
 <script>
+
+
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM cargado');
+
+        var calendarEl = document.getElementById('calendar');
+        var calendar; // Variable para almacenar la instancia del calendario
+        
+
+        if (!calendarEl) {
+            console.error('Elemento de calendario no encontrado');
+            return; // Detener ejecución si no hay elemento de calendario
+        } else {
+            console.log('Elemento de calendario encontrado:', calendarEl);
+        }
+
+        
+
+        // * Función para inicializar el calendario
+        function inicializarCalendario(medico_id) {
+            console.log(`Inicializando calendario para el médico con ID: ${medico_id}`);
+
+            
+
+            // if (!calendarEl) {
+            //     console.error('Elemento de calendario no encontrado durante la inicialización');
+            //     return;
+            // }
+
+            if (calendar) {
+                console.log('Destruyendo instancia previa del calendario');
+                calendar.destroy(); // Destruye la instancia del calendario actual para evitar duplicados
+            }
+
+            console.log(`Inicializando calendario para el médico con ID: ${medico_id}`);
+
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                
+                initialView: 'dayGridMonth', // Muestra el calendario en la vista de mes completo
+                selectable: true, // Permite seleccionar fechas en el calendario
+                locale: 'es',
+                buttonText: {
+                    today: 'Hoy', // Cambia "today" a "Hoy"
+                },
+                // * Función para obtener eventos (disponibilidades) del servidor
+                events: function(fetchInfo, successCallback, failureCallback) {
+                    //fetch(`/admin/disponibilidad/dias/${medico_id}`) // Usa el medico_id seleccionado
+                    console.log(`Solicitando disponibilidad de días para el médico con ID: ${medico_id}`);
+                    fetch(`/admin/disponibilidad/dias-medico/${medico_id}`) // Usar la nueva ruta con el `medico_id`
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Error en la respuesta de la red');
+                            }
+                            return response.json(); // Convierte la respuesta a formato JSON
+                        })
+                        .then(data => {
+                            // if (data.length === 0) {
+                            //     console.warn('No hay disponibilidades para este médico.');
+                            // }
+                            console.log('Disponibilidades recibidas:', data); // Log de los datos recibidos
+                            
+                            if (!data.error) {
+                            var events = data.map(disponibilidad => {
+                                return {
+                                    title: disponibilidad.total_disponibilidades > 0 ? 'Disponible' : 'No Disponible',
+                                    start: disponibilidad.fecha,
+                                    backgroundColor: disponibilidad.total_disponibilidades > 0 ? '#28a745' : '#dc3545',
+                                    borderColor: disponibilidad.total_disponibilidades > 0 ? '#28a745' : '#dc3545'
+                                };
+                            });
+                            successCallback(events);
+                            } else {
+                                console.error('Error al recibir las disponibilidades del backend:', data.error);
+                                failureCallback(data.error);
+                            }
+
+                        })
+
+                        .catch(error => {
+                            console.error('Error al obtener las disponibilidades:', error);
+                            failureCallback(error);
+                        });
+                },
+                // * Función que se ejecuta cuando se hace clic en una fecha
+                dateClick: function(info) {
+                    var fecha = info.dateStr; // Fecha seleccionada
+                    console.log('Fecha seleccionada:', fecha);
+                    console.log(`Fecha seleccionada: ${fecha} para médico ID: ${medico_id}`);
+
+                    fetch(`/admin/disponibilidad/horarios/${medico_id}/${fecha}`) // Usa el medico_id seleccionado
+                        .then(response => {
+                            if (!response.ok) {
+                                console.error('Error en la respuesta de la red al obtener horarios.');
+                                throw new Error('Error en la respuesta de la red');
+                            }
+                            return response.json(); // Convierte la respuesta a formato JSON
+                        })
+                        .then(data => {
+                            console.log('Horarios recibidos:', data); // Log de los horarios recibidos
+                            if (!data.error && data.length > 0) {
+                                calendar.getEventSources().forEach(eventSource => {
+                                    eventSource.remove(); // Elimina las fuentes de eventos anteriores
+                                });
+
+                                var events = data.map(horario => {
+                                    return {
+                                        title: 'Disponible',
+                                        start: `${horario.fecha}T${horario.horaInicio}`,
+                                        end: `${horario.fecha}T${horario.horaFin}`,
+                                        backgroundColor: '#28a745',
+                                        borderColor: '#28a745'
+                                    };
+                                });
+
+                                calendar.addEventSource(events);
+                                calendar.changeView('timeGridDay', fecha);
+                            } else {
+                                console.warn('No hay disponibilidad para esta fecha o error en la respuesta.');
+                                alert('No hay disponibilidad para esta fecha.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error al obtener los horarios:', error);
+                            alert('Error al obtener los horarios.');
+                        });
+                }
+            });
+            calendar.render();
+            console.log('Calendario renderizado correctamente.');
+        }
+
+        // * Evento de clic en el botón "Confirmar Médico"
+        var confirmarMedicoBtn = document.getElementById('confirmarMedicoBtn');
+        if (confirmarMedicoBtn) {
+            console.log('Botón "Confirmar Médico" encontrado:', confirmarMedicoBtn);
+
+            var selectMedico = document.getElementById('medico_id'); // Elemento select de médico
+            var medico_id = selectMedico.options[selectMedico.selectedIndex].value; // Captura el valor del médico seleccionado
+
+            confirmarMedicoBtn.addEventListener('click', function(event) {
+                event.preventDefault(); // Prevenir que el formulario se envíe y la página se recargue
+                var medico_id = document.getElementById('medico_id').value; // Cambiado a medico_id
+                console.log('Médico confirmado:', medico_id);
+                if (medico_id) { // Si se selecciona un médico válido
+                    inicializarCalendario(medico_id); // Inicializa el calendario con el nuevo médico
+                } else {
+                    console.warn('No se ha seleccionado un médico válido.');
+                }
+            });
+        } else {
+            console.error('Botón "Confirmar Médico" no encontrado.');
+        }
+
+    });
+
+    
+</script>
+
+
+{{-- <script>
     // * Asegura que el DOM esté completamente cargado antes de ejecutar el script
     document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM cargado');
 
       //alert('Valor interpolado de medico_id: {{ $medico_id }}');
       var calendarEl = document.getElementById('calendar');
+      console.log('Elemento calendario:', calendarEl);
       //var medico_id = {{ $medico_id }}; // Obtiene el ID del médico seleccionado
-      var medico_id = {{ session()->get('medico_id') }};  
-      console.log('El ID del médico es: ' + {{ session()->get('medico_id') }});
+      var medico_id = {{ json_encode(session()->get('medico_id')) }};  
+      console.log('ID del médico:', medico_id);
     //   if (medico_id !== null && medico_id !== undefined) {
     //         dd(medico_id);
     //     } else {
@@ -107,6 +268,12 @@
     //     }
       //alert('El ID del médico es: ' + medico_id);
       //dd(medico_id); // Verificar el valor de medico_id
+
+      fetch(`/admin/disponibilidad/dias/${medico_id}`) 
+        .then(response => response.json())
+        .then(respuesta => {
+            const medicoId = respuesta.medicoId; // Obtener el ID del médico desde la respuesta
+            console.log('Médico ID:', medicoId);
 
       // * Inicializa el calendario utilizando FullCalendar
       var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -118,7 +285,8 @@
             today: 'Hoy', // Cambia "today" a "Hoy"
         },
 
-         // * Función para obtener eventos (disponibilidades) del servidor
+
+        // * Función para obtener eventos (disponibilidades) del servidor
         events: function(fetchInfo, successCallback, failureCallback) {
             // Realiza la solicitud al servidor para obtener la disponibilidad diaria
             fetch(`/admin/disponibilidad/dias/${medico_id}`)
@@ -203,7 +371,7 @@
                     });
             }
 
-
+           
 
         
         // // * Función que se ejecuta cuando se hace clic en una fechav
@@ -234,8 +402,10 @@
 
       });
       calendar.render();
+        });
+
     });
-  </script>
+  </script> --}}
   
 
 
