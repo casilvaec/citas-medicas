@@ -144,6 +144,10 @@ class DisponibilidadController extends Controller
     {
         $horario_id = $request->input('horario_id'); // Recibe el ID del horario (id en la tabla disponibilidad_medicos)
         $usuario_id = $request->input('usuario_id'); // Recibe el ID del usuario (id en la tabla users)
+        $especialidad_id = $request->input('especialidad_id'); // Recibe el ID de la especialidad (id en la tabla especialidades_medicas)
+
+        // * Registrar en el log los datos recibidos de la solicitud
+        Log::info('Datos recibidos para reserva de cita', ['horario_id' => $horario_id, 'usuario_id' => $usuario_id, 'especialidad_id' => $especialidad_id]);
 
         try {
             // ! Buscar la disponibilidad del horario en la base de datos utilizando el ID proporcionado
@@ -155,24 +159,37 @@ class DisponibilidadController extends Controller
                 return response()->json(['success' => false, 'message' => 'El horario ya está reservado.']);
             }
 
+            DB::beginTransaction(); // * Inicia una transacción de base de datos
+
             // * Marcar el horario como no disponible
             $disponibilidad->disponible = 2; // Cambiar el estado a 2 para indicar que no está disponible
             $disponibilidad->save(); // * Guardar los cambios en la base de datos
 
+            // * Log después de cambiar la disponibilidad
+            Log::info('Disponibilidad marcada como no disponible', ['horario_id' => $horario_id]);
+
             // TODO: Crear una nueva cita con la información proporcionada
             $cita = new Cita();
-            $cita->usuario_id = $usuario_id; // * Asigna el ID del usuario proporcionado en la solicitud
+            $cita->pacienteId = $usuario_id; // En tabla citas, pacienteId es el ID del usuario
             $cita->medicoId = $disponibilidad->medicoId; // * Asigna el ID del médico del horario
-            $cita->especialidad_id = $disponibilidad->especialidad_id; // * Asigna la especialidad de la disponibilidad
+            $cita->especialidad_id = $especialidad_id; // * Asigna la especialidad de la disponibilidad
             $cita->fecha = $disponibilidad->fecha; // * Fecha de la cita
             $cita->hora_inicio = $disponibilidad->horaInicio; // * Hora de inicio de la cita
             $cita->hora_fin = $disponibilidad->horaFin; // * Hora de fin de la cita
             $cita->estado = 'Agendada'; // * Estado por defecto al agendar
             $cita->save(); // * Guardar la nueva cita en la base de datos
 
+            // * Log después de guardar la cita
+            Log::info('Cita creada exitosamente', ['cita_id' => $cita->id]);
+
+            DB::commit(); // * Confirmar la transacción de la base de datos
+
             // * Devolver una respuesta de éxito con el ID de la cita
             return response()->json(['success' => true, 'message' => 'Cita agendada con éxito.', 'cita_id' => $cita->id]);
+
         } catch (\Exception $e) {
+            DB::rollBack(); // * Revertir la transacción en caso de error
+            Log::error('Error al reservar la cita:', ['error' => $e->getMessage()]); // * Log del error
             // ? Manejo de errores generales y devolución de mensaje de error
             return response()->json(['success' => false, 'message' => 'Error al reservar la cita.']);
         }

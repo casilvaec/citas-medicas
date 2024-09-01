@@ -41,7 +41,7 @@
         <!-- Formulario para seleccionar la fecha y el horario -->
         
         {{-- <form id="form-confirmar-cita" action="{{ route('admin.citas.mostrarCalendario') }}" method="POST"> --}}
-        <form id="form-confirmar-cita" action="{{ route('admin.citas.confirmarCita') }}" method="POST">
+        {{-- <form id="form-confirmar-cita" action="{{ route('admin.citas.confirmarCita') }}" method="POST"> --}}
             
             <!-- Cambiar la ruta para pasar el ID del médico -->
             {{-- <form id="form-confirmar-cita" action="{{ route('admin.citas.confirmarCita', ['medicoId' => $medico_id]) }}" method="POST">
@@ -77,7 +77,7 @@
           <input type="hidden" name="medico_apellidos" value="{{ $medico_apellidos }}">
           {{-- <input type="hidden" name="especialidad" value="{{ $especialidad }}">  --}}
         {{-- <input type="date" id="fecha_cita" name="fecha_cita" class="form-control" min="{{ date('Y-m-d') }}" required> --}}
-        <button type="submit" class="btn btn-success mt-3">Confirmar Cita</button>
+        {{-- <button type="submit" class="btn btn-success mt-3">Confirmar Cita</button> --}}
         </form>
       </div>
     @endif
@@ -179,7 +179,7 @@
                 },
                 // * Función que se ejecuta cuando se hace clic en una fecha
                 dateClick: function(info) {
-                    var fecha = info.dateStr; // Fecha seleccionada
+                    var fecha = info.dateStr.split('T')[0]; // Fecha seleccionada
                     console.log('Fecha seleccionada:', fecha);
                     console.log(`Fecha seleccionada: ${fecha} para médico ID: ${medico_id}`);
 
@@ -236,6 +236,11 @@
                 eventClick: function(info) {
                     // ** Cuando un paciente hace clic en un horario disponible
                     var horarioId = info.event.extendedProps.horarioId; // Recuperar el ID del horario
+                    var usuarioId = {{ $usuario_id }};
+                    console.log(usuarioId); // Verifica si 'usuarioId' está definido
+                    var especialidadId = {{ $especialidad_id }};
+                    console.log(especialidadId); // Verifica si 'especialidadId' está definido
+                    
                     var confirmacion = confirm('¿Deseas confirmar esta cita?'); // Preguntar al usuario si quiere confirmar
 
                     if (confirmacion) {
@@ -246,7 +251,7 @@
                                 'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
                             },
-                            body: JSON.stringify({ horario_id: horarioId })
+                            body: JSON.stringify({ horario_id: horarioId, usuario_id: usuarioId, especialidad_id: especialidadId })
                         })
                         .then(response => response.json())
                         .then(data => {
