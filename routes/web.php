@@ -142,8 +142,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/citas/seleccionar-paciente/{id}', [CitasController::class, 'seleccionarPaciente'])->name('citas.seleccionarPaciente');
     Route::get('/citas/especialidad', [CitasController::class, 'seleccionarEspecialidad'])->name('citas.especialidad');
     Route::post('/citas/medicos', [CitasController::class, 'mostrarMedicos'])->name('citas.medicos');
+    Route::post('/citas/mostrar-dia', [CitasController::class, 'mostrarDia'])->name('citas.mostrarDia');
+
     Route::post('/citas/mostrar-calendario', [CitasController::class, 'mostrarCalendario'])->name('citas.mostrarCalendario');
-    Route::post('/citas/confirmacion', [CitasController::class, 'confirmarCita'])->name('citas.confirmarCita');
+    // Route::post('/citas/confirmacion', [CitasController::class, 'confirmarCita'])->name('citas.confirmarCita');
+    Route::get('/citas/confirmacion/{cita_id}', [CitasController::class, 'mostrarConfirmacion'])->name('citas.confirmacion');
+
 
     Route::get('disponibilidad/generar/{medico_id}/{meses?}', [DisponibilidadController::class, 'generarDisponibilidadMasiva'])->name('disponibilidad.generar');
     

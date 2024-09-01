@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Medico;
 use App\Models\DisponibilidadMedico;
 use Illuminate\Http\Request;
+use App\Models\Cita;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -134,51 +135,48 @@ class DisponibilidadController extends Controller
 }
 
 
-    // public function mostrarDisponibilidadHorarios($medicoId, $fecha) // Cambio en el parámetro: $medicoId en lugar de $usuarioId
-    // {
-    //     Log::info('Obteniendo disponibilidad de horarios para médico ID: ' . $medicoId . ' en la fecha: ' . $fecha);
-    
-    //     // * Realizar la consulta para obtener las disponibilidades horarias
-    //     try {
-    //         $disponibilidades = DisponibilidadMedico::where('medicoId', $medicoId) // Usando medicoId directamente
-    //             ->where('fecha', $fecha)
-    //             ->where('disponible', true)
-    //             ->get();
-    
-    //         // * Verificar si no hay disponibilidades
-    //         if ($disponibilidades->isEmpty()) {
-    //             Log::warning('No hay disponibilidad para la fecha: ' . $fecha . ' para el médico ID: ' . $medicoId);
-    //             return response()->json(['error' => 'No hay disponibilidad para esta fecha.'], 404);
-    //         }
-    
-    //         // * Retornar la disponibilidad encontrada en formato JSON
-    //         Log::info('Disponibilidades horarias obtenidas con éxito para el médico ID: ' . $medicoId);
-    //         return response()->json($disponibilidades);
-    //     } catch (\Exception $e) {
-    //         // * Registrar el error y retornar un mensaje de error JSON
-    //         Log::error('Error al obtener los horarios: ' . $e->getMessage());
-    //         return response()->json(['error' => 'Error al obtener los horarios'], 500);
-    //     }
-    // }
     
 
     
+ 
     // Método para reservar una cita
     public function reservarCita(Request $request)
     {
-        $disponibilidad = DisponibilidadMedico::where('medicoId', $request->medico_id)
-            ->where('fecha', $request->fecha)
-            ->where('horaInicio', $request->horaInicio)
-            ->first();
+        $horario_id = $request->input('horario_id'); // Recibe el ID del horario (id en la tabla disponibilidad_medicos)
+        $usuario_id = $request->input('usuario_id'); // Recibe el ID del usuario (id en la tabla users)
 
-        if ($disponibilidad) {
-            $disponibilidad->disponible = false;
-            $disponibilidad->save();
+        try {
+            // ! Buscar la disponibilidad del horario en la base de datos utilizando el ID proporcionado
+            $disponibilidad = DisponibilidadMedico::findOrFail($horario_id); // Utiliza findOrFail para simplificar
 
-            return response()->json(['success' => true, 'message' => 'Cita reservada exitosamente']);
+            // ? Verificar si el horario ya está reservado (disponible = 1 significa disponible)
+            if ($disponibilidad->disponible != 1) {
+                // ? Si el horario no está disponible, se devuelve un mensaje de error
+                return response()->json(['success' => false, 'message' => 'El horario ya está reservado.']);
+            }
+
+            // * Marcar el horario como no disponible
+            $disponibilidad->disponible = 2; // Cambiar el estado a 2 para indicar que no está disponible
+            $disponibilidad->save(); // * Guardar los cambios en la base de datos
+
+            // TODO: Crear una nueva cita con la información proporcionada
+            $cita = new Cita();
+            $cita->usuario_id = $usuario_id; // * Asigna el ID del usuario proporcionado en la solicitud
+            $cita->medicoId = $disponibilidad->medicoId; // * Asigna el ID del médico del horario
+            $cita->especialidad_id = $disponibilidad->especialidad_id; // * Asigna la especialidad de la disponibilidad
+            $cita->fecha = $disponibilidad->fecha; // * Fecha de la cita
+            $cita->hora_inicio = $disponibilidad->horaInicio; // * Hora de inicio de la cita
+            $cita->hora_fin = $disponibilidad->horaFin; // * Hora de fin de la cita
+            $cita->estado = 'Agendada'; // * Estado por defecto al agendar
+            $cita->save(); // * Guardar la nueva cita en la base de datos
+
+            // * Devolver una respuesta de éxito con el ID de la cita
+            return response()->json(['success' => true, 'message' => 'Cita agendada con éxito.', 'cita_id' => $cita->id]);
+        } catch (\Exception $e) {
+            // ? Manejo de errores generales y devolución de mensaje de error
+            return response()->json(['success' => false, 'message' => 'Error al reservar la cita.']);
         }
-
-        return response()->json(['success' => false, 'message' => 'Error al reservar la cita'], 400);
     }
+
     
 }

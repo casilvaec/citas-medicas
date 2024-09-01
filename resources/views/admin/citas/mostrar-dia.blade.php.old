@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mostrar Día</title>
+    <!-- Incluye los estilos de FullCalendar -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.1/main.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.1/main.min.js"></script>
+</head>
+<body>
+    <!-- Contenedor del calendario -->
+    <div id="calendar"></div>
+
+    <!-- Botón para volver a la vista de mes -->
+    <button id="volverMes" onclick="window.close()">Seleccionar otra fecha</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+
+            // Inicializar FullCalendar en la vista de día
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridDay',
+                headerToolbar: {
+                    left: '',
+                    center: 'title',
+                    right: ''  // Sin botones de navegación
+                },
+                locale: 'es',
+                events: function(fetchInfo, successCallback, failureCallback) {
+                    fetch(`/admin/disponibilidad/horarios/${{{ $medico_id }}}/{{{ $fecha }}}`)
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Error al obtener los horarios.');
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (!data.error && data.length > 0) {
+                                var events = data.map(horario => {
+                                    return {
+                                        title: 'Disponible',
+                                        start: `${horario.fecha}T${horario.horaInicio}`,
+                                        end: `${horario.fecha}T${horario.horaFin}`,
+                                        backgroundColor: '#28a745',
+                                        borderColor: '#28a745'
+                                    };
+                                });
+                                successCallback(events);
+                            } else {
+                                alert('No hay disponibilidad para esta fecha.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error al obtener los horarios:', error);
+                            alert('Error al obtener los horarios.');
+                        });
+                },
+            });
+
+            calendar.render();
+        });
+    </script>
+</body>
+</html>
+

@@ -169,45 +169,12 @@ class CitasController extends Controller
             ->pluck('nombre_completo', 'users.id');
 
 
-        // Consultar disponibilidad del médico
-        // Log::info('Consultando disponibilidad del médico');
-        // $disponibilidad = DB::table('disponibilidad_medicos')
-        //     ->where('medicoId', $medico_id)
-        //     ->get();
-        // Log::info('Disponibilidad del médico: ' . json_encode($disponibilidad));
-
-        // Usar DisponibilidadController para obtener la disponibilidad correcta
-        // $disponibilidadController = new DisponibilidadController();
-        // $disponibilidadResponse = $disponibilidadController->mostrarDisponibilidadDiasPorMedico($medico_id_usuario);
-
-        // // Si la respuesta no es válida o hay un error, mostrar un mensaje de error
-        // if ($disponibilidadResponse->getStatusCode() != 200) {
-        //     return redirect()->back()->with('error', 'Error al obtener la disponibilidad del médico.');
-        // }
-
-        // // Convertir la respuesta a JSON
-        // $disponibilidad = json_decode($disponibilidadResponse->getContent());
-
-        // Simula la disponibilidad del médico para la demostración
-        // Log::info('Simulando disponibilidad del médico');
-        // $disponibilidad = ['09:00', '10:00', '11:00', '12:00']; // Este es un ejemplo estático
-        // Log::info('Disponibilidad simulada: ' . json_encode($disponibilidad));
-
-        // Información adicional del médico y usuario
-        // Log::info('Obteniendo información adicional del médico y usuario');
-        // $medico = Medico::find($medico_id);
-        // Log::info('Médico encontrado: ' . json_encode($medico));
+        
         $usuario = User::find($usuario_id);
         Log::info('Usuario encontrado: ' . json_encode($usuario));
 
         // // Verifica que ambos existan
-        // Log::info('Verificando que médico y usuario existan');
-        // if (!$medico || !$usuario) {
-        //     Log::warning('Datos del médico o usuario no encontrados');
-        //     Log::warning('Médico ID: ' . $medico_id);
-        //     Log::warning('Usuario ID: ' . $usuario_id);
-        //     return redirect()->back()->with('error', 'Datos del médico o usuario no encontrados.');
-        // }
+        
 
         // Indicamos que queremos mostrar el calendario
         Log::info('Mostrando calendario');
@@ -225,27 +192,66 @@ class CitasController extends Controller
     }
 
 
+    // public function mostrarDia(Request $request)
+    // {
+    //     // Obtener los parámetros de la URL
+    //     $medico_id = $request->query('medico_id');
+    //     $fecha = $request->query('fecha');
+
+    //     // Asegurarse de que el ID del médico sea válido
+    //     Log::info('Obteniendo disponibilidad para el médico con ID: ' . $medico_id . ' en la fecha: ' . $fecha);
+
+    //     // Obtener el médico desde la tabla `medicos` usando el `medico_id`
+    //     $medico = Medico::find($medico_id);
+
+    //     if (!$medico) {
+    //         Log::warning('No se encontró el médico con ID: ' . $medico_id);
+    //         return redirect()->back()->with('error', 'Médico no encontrado.');
+    //     }
+
+    //     // Recuperar los horarios disponibles para el médico en la fecha seleccionada
+    //     try {
+    //         $disponibilidades = DisponibilidadMedico::where('medicoId', $medico_id)
+    //             ->where('fecha', $fecha)
+    //             ->where('disponible', true)
+    //             ->get();
+
+    //         // Verificar si hay disponibilidades
+    //         if ($disponibilidades->isEmpty()) {
+    //             Log::warning('No hay disponibilidad para la fecha: ' . $fecha . ' para el médico ID: ' . $medico_id);
+    //             return view('admin.citas.mostrar-dia', compact('medico_id', 'fecha'))->with('no_disponibilidad', true);
+    //         }
+
+    //         Log::info('Disponibilidades horarias obtenidas con éxito para el médico ID: ' . $medico_id);
+
+    //         // Pasar los valores necesarios a la vista junto con las disponibilidades
+    //         return view('admin.citas.mostrar-dia', compact('medico_id', 'fecha', 'disponibilidades'));
+    //     } catch (\Exception $e) {
+    //         Log::error('Error al obtener los horarios: ' . $e->getMessage());
+    //         return redirect()->back()->with('error', 'Error al obtener los horarios.');
+    //     }
+    // }
+
+
     public function seleccionarPaciente($id)
     {
         $paciente = Paciente::findOrFail($id);
         return view('admin.citas.especialidad', compact('paciente'));
     }
 
-    public function confirmarCita(Request $request)
+    public function mostrarConfirmacion($cita_id)
     {
-        // Obtenemos los datos directamente de la solicitud, que ya han sido pasados desde la vista anterior.
-        $usuario_nombre = $request->input('usuario_nombre');
-        $usuario_apellidos = $request->input('usuario_apellidos');
-        $medico_nombre = $request->input('medico_nombre');
-        $medico_apellidos = $request->input('medico_apellidos');
-        $especialidad = $request->input('especialidad');
-        $fecha_cita = $request->input('fecha_cita');
-        $horario_cita = $request->input('horario_cita');
-        
-        // Retornar la vista de confirmación con los datos ya obtenidos
-        return view('admin.citas.confirmacion', compact('usuario_nombre', 'usuario_apellidos', 'medico_nombre', 'medico_apellidos', 'especialidad', 'fecha_cita', 'horario_cita'));
-        //return view('admin.citas.confirmacion', compact('usuario_id', 'medico_id', 'fecha_cita', 'horario_cita'));
+        // Recuperar la cita basada en su ID
+        $cita = Cita::with(['paciente', 'medico', 'especialidad'])->find($cita_id);
+    
+        if (!$cita) {
+            return redirect()->back()->with('error', 'Cita no encontrada.');
+        }
+    
+        // Pasar los detalles de la cita a la vista de confirmación
+        return view('admin.citas.confirmacion', compact('cita'));
     }
+    
 
     public function especialidad()
     {

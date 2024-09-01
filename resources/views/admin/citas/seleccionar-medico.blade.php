@@ -91,7 +91,7 @@
 
 <script>
 
-
+        
     
     document.addEventListener('DOMContentLoaded', function() {
         console.log('DOM cargado');
@@ -114,12 +114,6 @@
             console.log(`Inicializando calendario para el médico con ID: ${medico_id}`);
 
             
-
-            // if (!calendarEl) {
-            //     console.error('Elemento de calendario no encontrado durante la inicialización');
-            //     return;
-            // }
-
             if (calendar) {
                 console.log('Destruyendo instancia previa del calendario');
                 calendar.destroy(); // Destruye la instancia del calendario actual para evitar duplicados
@@ -135,9 +129,20 @@
                 buttonText: {
                     today: 'Hoy', // Cambia "today" a "Hoy"
                 },
+
+                views: {
+                    timeGridDay: { // Aplica específicamente a la vista de día
+                        headerToolbar: {
+                            left: '', // Sin botones en la izquierda
+                            center: 'title',
+                            right: 'customReturnButton' // Botón personalizado para volver a la vista de mes
+                        }
+                    }
+                },
+
                 // * Función para obtener eventos (disponibilidades) del servidor
                 events: function(fetchInfo, successCallback, failureCallback) {
-                    //fetch(`/admin/disponibilidad/dias/${medico_id}`) // Usa el medico_id seleccionado
+                    
                     console.log(`Solicitando disponibilidad de días para el médico con ID: ${medico_id}`);
                     fetch(`/admin/disponibilidad/dias-medico/${medico_id}`) // Usar la nueva ruta con el `medico_id`
                         .then(response => {
@@ -147,9 +152,7 @@
                             return response.json(); // Convierte la respuesta a formato JSON
                         })
                         .then(data => {
-                            // if (data.length === 0) {
-                            //     console.warn('No hay disponibilidades para este médico.');
-                            // }
+                            
                             console.log('Disponibilidades recibidas:', data); // Log de los datos recibidos
                             
                             if (!data.error) {
@@ -201,12 +204,23 @@
                                         start: `${horario.fecha}T${horario.horaInicio}`,
                                         end: `${horario.fecha}T${horario.horaFin}`,
                                         backgroundColor: '#28a745',
-                                        borderColor: '#28a745'
+                                        borderColor: '#28a745',
+                                        extendedProps: { // * Agregar propiedades adicionales para manejar el ID del horario
+                                            horarioId: horario.id
+                                        }
                                     };
                                 });
 
                                 calendar.addEventSource(events);
                                 calendar.changeView('timeGridDay', fecha);
+
+                                // **Desactivar botones de navegación**
+                                calendar.setOption('headerToolbar', {
+                                    left: '',
+                                    center: 'title',
+                                    right: 'customReturnButton' // Botón personalizado para volver al mes
+                                });
+
                             } else {
                                 console.warn('No hay disponibilidad para esta fecha o error en la respuesta.');
                                 alert('No hay disponibilidad para esta fecha.');
@@ -216,13 +230,61 @@
                             console.error('Error al obtener los horarios:', error);
                             alert('Error al obtener los horarios.');
                         });
+                },
+
+                // * Manejar el clic en los eventos de horarios disponibles
+                eventClick: function(info) {
+                    // ** Cuando un paciente hace clic en un horario disponible
+                    var horarioId = info.event.extendedProps.horarioId; // Recuperar el ID del horario
+                    var confirmacion = confirm('¿Deseas confirmar esta cita?'); // Preguntar al usuario si quiere confirmar
+
+                    if (confirmacion) {
+                        // * Reservar la cita (bloquear temporalmente el horario) usando fetch
+                        fetch(`/admin/disponibilidad/reservar`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: JSON.stringify({ horario_id: horarioId })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                alert('¡Cita agendada con éxito!');
+                                // Redirigir a la vista de confirmación con detalles de la cita
+                                window.location.href = `/admin/citas/confirmacion/${data.cita_id}`;
+                            } else {
+                                alert('Error al agendar la cita. Intente nuevamente.');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error al reservar la cita:', error);
+                            alert('Error al reservar la cita.');
+                        });
+                    }
+                },
+
+                customButtons: {
+                customReturnButton: {
+                    text: 'Seleccionar otra fecha', // Texto personalizado
+                    click: function() {
+                        calendar.changeView('dayGridMonth'); // Volver a la vista de mes
+                        recargarCalendario(); // * Cambiar para recargar y mostrar las disponibilidades
+                    }
                 }
+            },
+
             });
             calendar.render();
             console.log('Calendario renderizado correctamente.');
         }
 
-        
+       // * Nueva función para recargar el calendario en la vista de mes
+    function recargarCalendario() {
+        calendar.destroy();
+        inicializarCalendario(medico_id); // Llamar a la inicialización del calendario con el ID correcto
+    }
     
         //Evento de clic en el botón "Confirmar Médico"
         var confirmarMedicoBtn = document.getElementById('confirmarMedicoBtn');
@@ -252,163 +314,6 @@
 </script>
 
 
-{{-- <script>
-    // * Asegura que el DOM esté completamente cargado antes de ejecutar el script
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM cargado');
-
-      //alert('Valor interpolado de medico_id: {{ $medico_id }}');
-      var calendarEl = document.getElementById('calendar');
-      console.log('Elemento calendario:', calendarEl);
-      //var medico_id = {{ $medico_id }}; // Obtiene el ID del médico seleccionado
-      var medico_id = {{ json_encode(session()->get('medico_id')) }};  
-      console.log('ID del médico:', medico_id);
-    //   if (medico_id !== null && medico_id !== undefined) {
-    //         dd(medico_id);
-    //     } else {
-    //         echo "El valor de medico_id es null o undefined";
-    //     }
-      //alert('El ID del médico es: ' + medico_id);
-      //dd(medico_id); // Verificar el valor de medico_id
-
-      fetch(`/admin/disponibilidad/dias/${medico_id}`) 
-        .then(response => response.json())
-        .then(respuesta => {
-            const medicoId = respuesta.medicoId; // Obtener el ID del médico desde la respuesta
-            console.log('Médico ID:', medicoId);
-
-      // * Inicializa el calendario utilizando FullCalendar
-      var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth', // Muestra el calendario en la vista de mes completo
-        selectable: true, // Permite seleccionar fechas en el calendario
-        locale: 'es',
-        
-        buttonText: {
-            today: 'Hoy', // Cambia "today" a "Hoy"
-        },
-
-
-        // * Función para obtener eventos (disponibilidades) del servidor
-        events: function(fetchInfo, successCallback, failureCallback) {
-            // Realiza la solicitud al servidor para obtener la disponibilidad diaria
-            fetch(`/admin/disponibilidad/dias/${medico_id}`)
-                .then(response => {
-                    // Verifica si la respuesta HTTP fue exitosa
-                    if (!response.ok) {
-                        throw new Error('Error en la respuesta de la red');
-                    }
-                    return response.json(); // Convierte la respuesta a formato JSON
-                })
-                .then(data => {
-                    // Mapea los datos obtenidos para crear los eventos en el calendario
-                    var events = data.map(disponibilidad => {
-                        return {
-                            title: disponibilidad.total_disponibilidades > 0 ? 'Disponible' : 'No Disponible',
-                            start: disponibilidad.fecha,
-                            backgroundColor: disponibilidad.total_disponibilidades > 0 ? '#28a745' : '#dc3545',
-                            borderColor: disponibilidad.total_disponibilidades > 0 ? '#28a745' : '#dc3545'
-                        };
-                    });
-                    successCallback(events);
-                })
-                .catch(error => {
-                    console.error('Error al obtener las disponibilidades:', error);
-                    failureCallback(error);
-                });
-        },
-        
-        
-                    // * Función que se ejecuta cuando se hace clic en una fecha
-                dateClick: function(info) {
-                var fecha = info.dateStr; // Fecha seleccionada
-                console.log('Fecha seleccionada:', fecha);
-
-                // Cambiar la vista a timeGridDay para mostrar los horarios disponibles en el día seleccionado
-                //calendar.changeView('timeGridDay', fecha);
-
-                // Actualizar los eventos en la vista de día para mostrar solo los horarios disponibles en la fecha seleccionada
-                fetch(`/admin/disponibilidad/horarios/${medico_id}/${fecha}`)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Error en la respuesta de la red');
-                        }
-                        return response.json(); // Convierte la respuesta a formato JSON
-                    })
-                    .then(data => {
-                        if (data.length > 0) {
-                            // Limpiar eventos anteriores para evitar duplicados en la vista
-                            calendar.getEventSources().forEach(eventSource => {
-                                eventSource.remove(); // Elimina las fuentes de eventos anteriores
-                            });
-
-                            // Mapear los datos de horarios a eventos en la vista de día
-                            var events = data.map(horario => {
-                                return {
-                                    title: 'Disponible',
-                                    start: `${horario.fecha}T${horario.horaInicio}`,
-                                    end: `${horario.fecha}T${horario.horaFin}`,
-                                    backgroundColor: '#28a745',
-                                    borderColor: '#28a745'
-                                    // Propiedades adicionales para identificar el horario
-                                    // ID del horario en la base de datos
-                                    // extendedProps: {             
-                                    //     id: horario.id           
-                                    // }
-                                };
-                            });
-
-                            // Añadir los eventos al calendario
-                            calendar.addEventSource(events);
-
-                            // Cambiar a la vista de día para mostrar los horarios específicos
-                            calendar.changeView('timeGridDay', fecha);
-
-                        } else {
-                            alert('No hay disponibilidad para esta fecha.');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error al obtener los horarios:', error);
-                        alert('Error al obtener los horarios.');
-                    });
-            }
-
-           
-
-        
-        // // * Función que se ejecuta cuando se hace clic en una fechav
-        // dateClick: function(info) {
-        //     var fecha = info.dateStr; // Fecha seleccionada
-        //     fetch(`/admin/disponibilidad/horarios/${medico_id}/${fecha}`)
-        //         //.then(response => response.json())
-        //         .then(response => {
-        //                 if (!response.ok) {
-        //                     throw new Error('Error en la respuesta de la red');
-        //                 }
-        //                 return response.json();
-        //             })
-        //         .then(data => {
-        //             if (data.length > 0) {
-        //                 // Aquí puedes mostrar un modal o lista con los horarios disponibles
-        //                 console.log('Horarios disponibles:', data);
-        //             } else {
-        //                 alert('No hay disponibilidad para esta fecha.');
-        //             }
-        //         })
-        //         .catch(error => {
-        //             console.error('Error al obtener los horarios:', error);
-        //             alert('Error al obtener los horarios.');
-        //         });
-        // }
-        
-
-      });
-      calendar.render();
-        });
-
-    });
-  </script> --}}
-  
 
 
 @endsection
