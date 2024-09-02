@@ -193,6 +193,9 @@ Route::prefix('medico')->name('medico.')->group(function () {
     
     // Ruta para registrar la atención al paciente. Recibe el {cita_id} para saber a qué cita pertenece la atención registrada.
     Route::post('/registrar-atencion/{cita_id}', [MedicosController::class, 'registrarAtencion'])->name('registrarAtencion');
+
+    Route::get('/historias-clinicas', [MedicosController::class, 'consultarHistoriaClinica'])->name('consultarHistoriaClinica');
+
 });
 
 

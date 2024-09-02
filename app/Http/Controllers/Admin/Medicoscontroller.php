@@ -184,15 +184,7 @@ class MedicosController extends Controller
             ORDER BY c.fecha ASC, c.hora_inicio ASC
         ", [$medico_id]);
 
-        // Obtener el médico basado en el ID proporcionado
-        //$medico = Medico::findOrFail($medico_id);
-    
-        // Obtener todas las citas del médico
-        // $citas = Cita::with(['paciente', 'especialidad'])
-        //             ->where('medicoId', $medico->id)
-        //             ->orderBy('fecha', 'asc')
-        //             ->orderBy('hora_inicio', 'asc')
-        //             ->get();
+        
     
         // Registrar en el log el número de citas encontradas
         Log::info("Número de citas encontradas: " . count($citas));
@@ -234,16 +226,7 @@ class MedicosController extends Controller
             return redirect()->back()->with('error', 'Cita no encontrada.');
         }
         
-        // Obtener la cita con el paciente y la especialidad asociados
-        //$cita = Cita::with(['paciente', 'especialidad'])->findOrFail($cita_id);
-
-        // Asumir que estamos utilizando un ID de médico fijo
-        //$medicoIdFijo = 24; // Aquí pones el ID del médico que quieras usar para pruebas
-
-        // Verificar que la cita pertenezca al médico con el ID fijo
-        // if ($cita->medicoId !== $medicoIdFijo) {
-        //     return redirect()->back()->with('error', 'No tienes permiso para atender esta cita.');
-        // }
+       
 
         // Volver a cargar la cita como instancia de Eloquent
         $citaEloquent = Cita::findOrFail($cita_id);
@@ -262,46 +245,7 @@ class MedicosController extends Controller
     public function registrarAtencion(Request $request, $cita_id)
     {
            
-        // // Iniciar una transacción
-        // DB::beginTransaction();
-
-        // try {
-
-        //     Log::info('Recibiendo cita_id: ' . $cita_id);
-
-        //     // Obtener la cita por su ID
-        //     $cita = Cita::findOrFail($cita_id);
-
-        
-
-        //     // Crear nueva historia clínica y asociarla con la cita y el paciente
-        //     $historia = new HistoriaClinica();
-        //     $historia->pacienteId = $cita->pacienteId; 
-        //     $historia->citaId = $cita->id;
-        //     $historia->fechaHora = now();  
-        //     $historia->diagnostico = $request->input('diagnostico'); 
-        //     $historia->examenes = $request->input('examenes'); 
-        //     $historia->receta = $request->input('receta'); 
-        //     $historia->proximoControl = $request->input('proximo_control'); 
-        //     $historia->save(); 
-
-        //     // Marcar la cita como atendida en la tabla citas
-        //     $cita->estado = 'Atendida'; 
-        //     $cita->save();
-
-        //     // Confirmar la transacción
-        //     DB::commit();
-
-        //     // Redirigir a la agenda del médico con un mensaje de éxito
-        //     return redirect()->route('medico.medico.agenda', ['medico_id' => $cita->medicoId])->with('success', 'Atención registrada con éxito.');
-        // } catch (\Exception $e) {
-        //     // Deshacer la transacción en caso de error
-        //     DB::rollback();
-        //     Log::error('Error al registrar atención: ' . $e->getMessage());
-
-        //     // Redirigir con mensaje de error
-        //     return redirect()->back()->with('error', 'Hubo un error al registrar la atención.');
-        // }
+      
 
         Log::info('Registrando atención para la cita con ID: ' . $cita_id);
 
@@ -328,6 +272,48 @@ class MedicosController extends Controller
         return redirect()->route('medico.medico.agenda', ['medico_id' => $cita->medicoId])->with('success', 'Atención médica registrada con éxito.');
 
     }
+
+    public function consultarHistoriaClinica(Request $request)
+    {
+        $identificacion = $request->input('identificacion');
+
+        // Registrar el inicio del método en el log
+        Log::info("Consultando historia clínica del paciente con identificación: $identificacion");
+
+        // Consulta SQL para obtener todas las historias clínicas del paciente
+        $historiasClinicas = DB::select("
+            SELECT 
+                hc.id AS historia_id,
+                hc.fechaHora,
+                hc.diagnostico,
+                hc.examenes,
+                hc.receta,
+                hc.proximoControl,
+                c.fecha AS fecha_cita,
+                c.hora_inicio,
+                c.hora_fin,
+                e.nombre AS especialidad_nombre
+            FROM historiasclinicas hc
+            LEFT JOIN citas c ON hc.citaId = c.id
+            LEFT JOIN especialidades_medicas e ON c.especialidad_id = e.id
+            JOIN users u ON hc.pacienteId = u.id
+            WHERE u.numeroIdentificacion = ?
+            ORDER BY hc.fechaHora DESC
+        ", [$identificacion]);
+
+        // Verificar si se obtuvieron resultados
+        if (empty($historiasClinicas)) {
+            Log::info("No se encontraron historias clínicas para el paciente con identificación: $identificacion");
+            return view('medico.historias_clinicas', ['identificacion' => $identificacion])->with('error', 'No se encontraron historias clínicas para este paciente.');
+        }
+
+        // Retornar la vista con las historias clínicas
+        return view('medico.historias_clinicas', compact('historiasClinicas', 'identificacion'));
+    }
+
+
+
+
 }
 
     
