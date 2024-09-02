@@ -1,0 +1,36 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <h1>Ver Citas Médicas</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Paciente</th>
+                <th>Médico</th>
+                <th>Especialidad</th>
+                <th>Fecha</th>
+                <th>Hora de Inicio</th>
+                <th>Hora de Fin</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($citas as $cita)
+            <tr>
+                <td>{{ $cita->id }}</td>
+                <td>{{ $cita->paciente_nombre }} {{ $cita->paciente_apellido }}</td>
+                <td>{{ $cita->medico_nombre }} {{ $cita->medico_apellido }}</td>
+                <td>{{ $cita->especialidad_nombre }}</td>
+                <td>{{ $cita->fecha }}</td>
+                <td>{{ $cita->hora_inicio }}</td>
+                <td>{{ $cita->hora_fin }}</td>
+                <td>{{ $cita->estado }}</td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
+@endsection

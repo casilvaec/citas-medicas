@@ -19,8 +19,34 @@ class CitasController extends Controller
 
     public function index()
     {
+
+        // Consulta para obtener todas las citas médicas ordenadas por fecha y hora ascendente
+            $citas = DB::table('citas')
+            ->join('users as pacientes', 'citas.pacienteId', '=', 'pacientes.id')
+            ->join('especialidades_medicas as especialidades', 'citas.especialidad_id', '=', 'especialidades.id')
+            ->join('medicos', 'citas.medicoId', '=', 'medicos.id')
+            ->join('users as medicos_usuarios', 'medicos.usuarioId', '=', 'medicos_usuarios.id')
+            ->select(
+                'citas.id as cita_id',
+                'pacientes.nombre as paciente_nombre',
+                'pacientes.apellidos as paciente_apellido',
+                'medicos_usuarios.nombre as medico_nombre',
+                'medicos_usuarios.apellidos as medico_apellido',
+                'citas.fecha',
+                'citas.hora_inicio',
+                'citas.hora_fin',
+                'especialidades.nombre as especialidad_nombre',
+                'citas.estado'
+            )
+            ->orderBy('citas.fecha', 'asc')
+            ->orderBy('citas.hora_inicio', 'asc')
+            ->get();
+
+        return view('admin.citas.index', compact('citas'));
+
+        //$citas = Cita::all(); // O una consulta más específica si es necesario
         // Lógica para ver las citas
-        return view('admin.citas.index');
+        //return view('admin.citas.index');
     }
 
     public function agendar()
@@ -191,45 +217,73 @@ class CitasController extends Controller
 
 
     public function seleccionarPaciente($id)
-    {
-        $paciente = Paciente::findOrFail($id);
-        return view('admin.citas.especialidad', compact('paciente'));
-    }
+        {
+            $paciente = Paciente::findOrFail($id);
+            return view('admin.citas.especialidad', compact('paciente'));
+        }
 
     public function mostrarConfirmacion($cita_id)
-    {
-        // Obtener detalles de la cita mediante una consulta personalizada
-    $cita = Cita::select('citas.id as cita_id', 'users.nombre as usuario_nombre', 'users.apellidos as usuario_apellidos', 
-        'medicos.id as medico_id', 'mu.nombre as medico_nombre', 'mu.apellidos as medico_apellidos', 
-        'especialidades_medicas.nombre as especialidad', 'citas.fecha as fecha_cita', 
-        DB::raw("CONCAT(citas.hora_inicio, ' - ', citas.hora_fin) as horario_cita"))
-        ->join('users', 'citas.pacienteId', '=', 'users.id')  // Relación con el usuario (paciente)
-        ->join('medicos', 'citas.medicoId', '=', 'medicos.id')  // Relación con el médico
-        ->join('users as mu', 'medicos.usuarioId', '=', 'mu.id')  // Relación del médico con el usuario
-        ->join('especialidades_medicas', 'citas.especialidad_id', '=', 'especialidades_medicas.id')  // Relación con la especialidad médica
-        ->where('citas.id', $cita_id)
-        ->first();
+        {
+                // Obtener detalles de la cita mediante una consulta personalizada
+                $cita = Cita::select('citas.id as cita_id', 'users.nombre as usuario_nombre', 'users.apellidos as usuario_apellidos', 
+                'medicos.id as medico_id', 'mu.nombre as medico_nombre', 'mu.apellidos as medico_apellidos', 
+                'especialidades_medicas.nombre as especialidad', 'citas.fecha as fecha_cita', 
+                DB::raw("CONCAT(citas.hora_inicio, ' - ', citas.hora_fin) as horario_cita"))
+                ->join('users', 'citas.pacienteId', '=', 'users.id')  // Relación con el usuario (paciente)
+                ->join('medicos', 'citas.medicoId', '=', 'medicos.id')  // Relación con el médico
+                ->join('users as mu', 'medicos.usuarioId', '=', 'mu.id')  // Relación del médico con el usuario
+                ->join('especialidades_medicas', 'citas.especialidad_id', '=', 'especialidades_medicas.id')  // Relación con la especialidad médica
+                ->where('citas.id', $cita_id)
+                ->first();
 
-    if (!$cita) {
-    return redirect()->back()->with('error', 'Cita no encontrada.');
-    }
+                if (!$cita) {
+                return redirect()->back()->with('error', 'Cita no encontrada.');
+                }
 
-    // Pasar los detalles de la cita a la vista de confirmación
-    return view('admin.citas.confirmacion', [
-    'usuario_nombre' => $cita->usuario_nombre,
-    'usuario_apellidos' => $cita->usuario_apellidos,
-    'medico_nombre' => $cita->medico_nombre,
-    'medico_apellidos' => $cita->medico_apellidos,
-    'especialidad' => $cita->especialidad,
-    'fecha_cita' => $cita->fecha_cita,
-    'horario_cita' => $cita->horario_cita,
-    ]);
+                // Pasar los detalles de la cita a la vista de confirmación
+                return view('admin.citas.confirmacion', [
+                'usuario_nombre' => $cita->usuario_nombre,
+                'usuario_apellidos' => $cita->usuario_apellidos,
+                'medico_nombre' => $cita->medico_nombre,
+                'medico_apellidos' => $cita->medico_apellidos,
+                'especialidad' => $cita->especialidad,
+                'fecha_cita' => $cita->fecha_cita,
+                'horario_cita' => $cita->horario_cita,
+                ]);
+            
+            
         
-        
+            
+        }
     
+
+        // public function verCitasMedicas()
+        // {
+        //     // Obtener todas las citas médicas de la base de datos
+        //     $citas = DB::table('citas')
+        //         ->join('users as pacientes', 'citas.pacienteId', '=', 'pacientes.id')
+        //         ->join('especialidades_medicas as especialidades', 'citas.especialidad_id', '=', 'especialidades.id')
+        //         ->join('medicos', 'citas.medicoId', '=', 'medicos.id')
+        //         ->join('users as medicos', 'medicos.usuarioId', '=', 'medicos.id')
+        //         ->select(
+        //             'citas.id',
+        //             'pacientes.nombre as paciente_nombre',
+        //             'pacientes.apellidos as paciente_apellido',
+        //             'medicos.nombre as medico_nombre',
+        //             'medicos.apellidos as medico_apellido',
+        //             'citas.fecha',
+        //             'citas.hora_inicio',
+        //             'citas.hora_fin',
+        //             'especialidades.nombre as especialidad_nombre',
+        //             'citas.estado'
+        //         )
+        //         ->orderBy('citas.fecha', 'desc')
+        //         ->get();
         
-    }
-    
+        //     // Retornar la vista con las citas médicas
+        //     return view('admin.admin.citas.ver_citas', compact('citas'));
+        
+        
 
     public function especialidad()
     {
@@ -243,4 +297,5 @@ class CitasController extends Controller
     }
 
     
+
 }

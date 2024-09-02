@@ -130,6 +130,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Route::get('citas/{id}/reschedule', [CitasController::class, 'reschedule'])->name('citas.reschedule');
 
     Route::get('/citas/agendar', [CitasController::class, 'agendar'])->name('citas.create'); // Para agendar citas
+    
+    // Ruta para ver todas las citas médicas
+    //Route::get('/citas/ver', [CitasController::class, 'verCitasMedicas'])->name('citas.ver');
+    
     Route::get('/citas', [CitasController::class, 'index'])->name('citas.index'); // Para ver las citas
     Route::get('/citas/cancel', [CitasController::class, 'cancel'])->name('citas.cancel'); // Para cancelar citas
     Route::get('/citas/reschedule', [CitasController::class, 'reschedule'])->name('citas.reschedule'); // Para reprogramar citas
