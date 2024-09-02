@@ -27,6 +27,7 @@ use App\Http\Controllers\Admin\DisponibilidadController;
 use App\Http\Controllers\Admin\ConsultoriosController;
 use App\Http\Controllers\Admin\ConsultorioMedicoController;
 use App\Http\Controllers\Admin\CitasController;
+use App\Http\Controllers\Admin\PacientesController;
 
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -135,7 +136,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/citas/obtener-especialidades', [CitasController::class, 'obtenerEspecialidades']);
     // Definir la ruta para crear un nuevo paciente
-    //Route::get('/pacientes/create', [PacientesController::class, 'create'])->name('pacientes.create');
+    Route::get('/pacientes/create', [PacientesController::class, 'create'])->name('pacientes.create');
 
     Route::post('/citas/buscar-paciente', [CitasController::class, 'buscarPaciente'])->name('citas.buscarPaciente');
     

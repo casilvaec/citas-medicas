@@ -63,6 +63,12 @@
             <tbody>
                 <!-- Iterar a través de cada cita en la lista de citas -->
                 @foreach($citas as $cita)
+
+                @php
+                    // Registrar en el log el ID de la cita que se está mostrando
+                    Log::info("cita_id en la vista: " . $cita->cita_id);
+                @endphp
+
                 <tr>
                     <!-- Mostrar la fecha de la cita -->
                     <td>{{ $cita->fecha_cita }}</td>

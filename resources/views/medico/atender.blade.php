@@ -6,14 +6,21 @@
 
     <!-- Mostrar los detalles del paciente y la cita -->
     <h3>Datos del Paciente</h3>
-    <p><strong>Nombre:</strong> {{ $cita->paciente->nombre }} {{ $cita->paciente->apellidos }}</p>
+    {{-- <p><strong>Nombre:</strong> {{ $cita->paciente->nombre }} {{ $cita->paciente->apellidos }}</p>
     <p><strong>Edad:</strong> {{ \Carbon\Carbon::parse($cita->paciente->fechaNacimiento)->age }} años</p>
     <p><strong>Fecha de la Cita:</strong> {{ $cita->fecha }}</p>
     <p><strong>Hora de la Cita:</strong> {{ $cita->hora_inicio }} - {{ $cita->hora_fin }}</p>
-    <p><strong>Especialidad:</strong> {{ $cita->especialidad->nombre }}</p>
+    <p><strong>Especialidad:</strong> {{ $cita->especialidad->nombre }}</p> --}}
+
+    <p><strong>Nombre:</strong> {{ $cita->paciente_nombre }} {{ $cita->paciente_apellidos }}</p>
+    <p><strong>Edad:</strong> {{ \Carbon\Carbon::parse($cita->paciente_fechaNacimiento)->age }} años</p>
+    <p><strong>Fecha de la Cita:</strong> {{ $cita->fecha_cita }}</p>
+    <p><strong>Hora de la Cita:</strong> {{ $cita->hora_inicio }} - {{ $cita->hora_fin }}</p>
+    <p><strong>Especialidad:</strong> {{ $cita->especialidad_nombre }}</p>
+
 
     <!-- Formulario para registrar la atención -->
-    <form action="{{ route('medico.registrarAtencion', $cita->id) }}" method="POST">
+    <form action="{{ route('medico.registrarAtencion', $cita->cita_id) }}" method="POST">
         @csrf
         
         <!-- Campo para registrar el diagnóstico del paciente -->
