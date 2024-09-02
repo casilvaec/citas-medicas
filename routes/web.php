@@ -27,7 +27,7 @@ use App\Http\Controllers\Admin\DisponibilidadController;
 use App\Http\Controllers\Admin\ConsultoriosController;
 use App\Http\Controllers\Admin\ConsultorioMedicoController;
 use App\Http\Controllers\Admin\CitasController;
-use App\Http\Controllers\Medico\MedicoController;
+
 use Maatwebsite\Excel\Facades\Excel;
 
 Route::get('/', function () {
@@ -135,7 +135,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/citas/obtener-especialidades', [CitasController::class, 'obtenerEspecialidades']);
     // Definir la ruta para crear un nuevo paciente
-    Route::get('/pacientes/create', [PacientesController::class, 'create'])->name('pacientes.create');
+    //Route::get('/pacientes/create', [PacientesController::class, 'create'])->name('pacientes.create');
 
     Route::post('/citas/buscar-paciente', [CitasController::class, 'buscarPaciente'])->name('citas.buscarPaciente');
     
@@ -173,39 +173,32 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 
 
-// Route::prefix('admin')->name('admin.')->group(function () {
-//     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-//     Route::get('/rpu', [RpuController::class, 'index'])->name('rpu.index');
-
-//     Route::resource('tipos-identificacion', TipoIdentificacionController::class);
-//     Route::resource('generos', GeneroController::class);
-//     Route::resource('ciudades-residencia', CiudadResidenciaController::class, ['parameters' => ['ciudades-residencia' => 'ciudad']]);
-
-//     Route::resource('especialidades', EspecialidadesMedicasController::class);
-//     Route::resource('medicos', MedicosController::class);
-
-//     Route::resource('horarios_medicos', HorarioMedicoController::class);
-
-//     Route::get('disponibilidad', [DisponibilidadController::class, 'index'])->name('disponibilidad.index');
-//     Route::get('disponibilidad/fetch', [DisponibilidadController::class, 'fetch'])->name('disponibilidad.fetch');
-
-//     Route::resource('consultorios', ConsultoriosController::class);
-//     Route::get('consultorios/export', [ConsultoriosController::class, 'export'])->name('consultorios.export');
-
-//     Route::resource('consultorio_medico', ConsultorioMedicoController::class);
-
-//     Route::get('consultorios/estadisticas', [ConsultoriosController::class, 'estadisticas'])->name('consultorios.estadisticas');
-
-//     Route::resource('citas', CitasController::class);
-//     Route::get('citas/{id}/cancel', [CitasController::class, 'cancel'])->name('citas.cancel');
-//     Route::get('citas/{id}/reschedule', [CitasController::class, 'reschedule'])->name('citas.reschedule');
-// });
 
 
-Route::prefix('medico')->name('medico.')->group(function() {
-    Route::get('agenda', [MedicoController::class, 'agenda'])->name('agenda');
-    Route::get('atencion', [MedicoController::class, 'atencion'])->name('atencion');
-    Route::get('historial/{paciente_id}', [MedicoController::class, 'historial'])->name('historial');
-    Route::post('atencion/registrar', [MedicoController::class, 'registrarAtencion'])->name('registrarAtencion');
+
+
+
+
+
+
+// Rutas específicas para el médico fuera del prefijo 'admin'
+Route::prefix('medico')->name('medico.')->group(function () {
+       
+    // Ruta para mostrar la agenda del médico. El {medico_id} se pasa como parámetro para identificar al médico y mostrar sus citas.
+    Route::get('/agenda/{medico_id}', [MedicosController::class, 'agenda'])->name('medico.agenda');
+
+    // Ruta para atender una cita. redirigir al médico a la vista de atención para una cita específica. El {cita_id} es el identificador único de la cita que se va a atender.
+    Route::get('/atender/{cita_id}', [MedicosController::class, 'atenderCita'])->name('atenderCita');
+    
+    // Ruta para registrar la atención al paciente. Recibe el {cita_id} para saber a qué cita pertenece la atención registrada.
+    Route::post('/registrar-atencion/{cita_id}', [MedicosController::class, 'registrarAtencion'])->name('registrarAtencion');
 });
+
+
+// Route::prefix('medico')->name('medico.')->group(function() {
+//     Route::get('agenda', [MedicoController::class, 'agenda'])->name('agenda');
+//     Route::get('atencion', [MedicoController::class, 'atencion'])->name('atencion');
+//     Route::get('historial/{paciente_id}', [MedicoController::class, 'historial'])->name('historial');
+//     Route::post('atencion/registrar', [MedicoController::class, 'registrarAtencion'])->name('registrarAtencion');
+// });
 

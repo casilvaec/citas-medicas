@@ -2,12 +2,18 @@
 
 namespace App\Http\Controllers\Admin;
 
+
 use App\Models\User;
 use App\Models\Medico;
 use App\Models\EspecialidadesMedicas;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Spatie\Permission\Models\Role;
+use App\Models\Cita;
+use App\Models\HistoriaClinica;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;  // Importar DB para consultas SQL
+
 
 class MedicosController extends Controller
 {
@@ -150,18 +156,94 @@ class MedicosController extends Controller
         return response()->json($response);
     }
 
-    // public function obtenerMedicoId($usuarioId)
-    // {
-    //     // Busca el médico utilizando el usuarioId en la tabla 'medicos'
-    //     $medico = Medico::where('usuarioId', $usuarioId)->first();
+    public function agenda($medico_id)
+    {
+        // Simular el ID del médico para pruebas (usa un ID fijo)
+        //$medicoId = 24; // Cambia '1' por el ID del médico que estás probando
+    
+        Log::info('Entrando al método agenda con medico_id: ' . $medico_id);
 
-    //     if ($medico) {
-    //         // Si se encuentra el médico, devolver el ID
-    //         return response()->json(['medico_id' => $medico->id]);
-    //     } else {
-    //         // Si no se encuentra, devolver un error
-    //         return response()->json(['error' => 'Médico no encontrado'], 404);
-    //     }
-    // }
+        // Consulta SQL directa para obtener las citas con el paciente y la especialidad asociada
+        $citas = DB::select("
+            SELECT 
+                c.id AS cita_id, 
+                c.medicoId AS medico_id, 
+                c.pacienteId AS paciente_id, 
+                u.nombre AS paciente_nombre, 
+                u.apellidos AS paciente_apellidos, 
+                u.fechaNacimiento AS fecha_nacimiento, -- Agregar la fecha de nacimiento del paciente
+                c.fecha AS fecha_cita, 
+                c.hora_inicio AS hora_inicio, 
+                c.hora_fin AS hora_fin, 
+                c.especialidad_id AS especialidad_id, 
+                e.nombre AS especialidad_nombre 
+            FROM citas c
+            LEFT JOIN users u ON c.pacienteId = u.id -- Relación con el usuario (paciente)
+            LEFT JOIN especialidades_medicas e ON c.especialidad_id = e.id -- Relación con la especialidad médica
+            WHERE c.medicoId = ?
+            ORDER BY c.fecha ASC, c.hora_inicio ASC
+        ", [$medico_id]);
 
+        // Obtener el médico basado en el ID proporcionado
+        //$medico = Medico::findOrFail($medico_id);
+    
+        // Obtener todas las citas del médico
+        // $citas = Cita::with(['paciente', 'especialidad'])
+        //             ->where('medicoId', $medico->id)
+        //             ->orderBy('fecha', 'asc')
+        //             ->orderBy('hora_inicio', 'asc')
+        //             ->get();
+    
+        // Registrar en el log el número de citas encontradas
+        Log::info("Número de citas encontradas: " . count($citas));
+        
+        // Retornar la vista con las citas del médico
+        return view('medico.agenda', compact('citas'));
+    }
+
+    public function atenderCita($cita_id)
+    {
+        // Obtener la cita con el paciente y la especialidad asociados
+        $cita = Cita::with(['paciente', 'especialidad'])->findOrFail($cita_id);
+
+        // Asumir que estamos utilizando un ID de médico fijo
+        $medicoIdFijo = 24; // Aquí pones el ID del médico que quieras usar para pruebas
+
+        // Verificar que la cita pertenezca al médico con el ID fijo
+        if ($cita->medicoId !== $medicoIdFijo) {
+            return redirect()->back()->with('error', 'No tienes permiso para atender esta cita.');
+        }
+
+        // Retornar la vista para atender la cita
+        return view('medico.atender', compact('cita'));
+    }
+
+    // Método para registrar la atención del paciente
+    public function registrarAtencion(Request $request, $cita_id)
+    {
+        // Obtener la cita por su ID
+        $cita = Cita::findOrFail($cita_id);
+
+        // Crear nueva historia clínica y asociarla con la cita y el paciente
+        $historia = new HistoriaClinica();
+        $historia->pacienteId = $cita->pacienteId; // Usamos el ID del paciente desde la cita
+        $historia->citaId = $cita->id; // Asociamos la historia con la cita
+        $historia->fechaHora = now();  // Registramos la fecha y hora actual (puedes usar la fecha de la cita también)
+        $historia->diagnostico = $request->input('diagnostico'); // Diagnóstico proporcionado por el médico
+        $historia->examenes = $request->input('examenes'); // Exámenes solicitados
+        $historia->receta = $request->input('receta'); // Receta médica generada
+        $historia->proximoControl = $request->input('proximo_control'); // Fecha del próximo control
+        $historia->save(); // Guardamos la historia clínica
+
+        // Marcar la cita como atendida en la tabla citas
+        $cita->estado = 'Atendida'; // Actualizamos el estado a 'Atendida'
+        $cita->save(); // Guardamos los cambios en la cita
+
+        // Redirigir a la agenda del médico con un mensaje de éxito
+        return redirect()->route('medico.agenda')->with('success', 'Atención registrada con éxito.');
+    }
 }
+
+    
+
+
