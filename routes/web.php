@@ -184,7 +184,24 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 // Rutas específicas para el médico fuera del prefijo 'admin'
 Route::prefix('medico')->name('medico.')->group(function () {
+
+    // Mostrar el formulario de búsqueda
+    // Route::get('/buscar-medico', function () {
+    //     return view('medico.buscar_medico');
+    // })->name('buscarMedico');
+
+    // Ruta para la vista de búsqueda de agenda de un médico
+    Route::get('/buscar-agenda', [MedicosController::class, 'mostrarFormularioBuscarAgenda'])->name('buscarAgendaFormulario');
+    
+    // Ruta para procesar la búsqueda de agenda de un médico por su identificación
+    Route::get('/agenda/buscar', [MedicosController::class, 'buscarAgendaPorIdentificacion'])->name('buscarAgenda');
+
+    // Procesar la búsqueda del médico por número de identificación
+    //Route::get('/buscar-medico/resultado', [MedicosController::class, 'buscarMedico'])->name('buscarMedicoResultado');
        
+    //Route::get('/buscar-agenda', [MedicosController::class, 'buscarAgenda'])->name('buscarMedico');
+
+
     // Ruta para mostrar la agenda del médico. El {medico_id} se pasa como parámetro para identificar al médico y mostrar sus citas.
     Route::get('/agenda/{medico_id}', [MedicosController::class, 'agenda'])->name('medico.agenda');
 
@@ -194,6 +211,7 @@ Route::prefix('medico')->name('medico.')->group(function () {
     // Ruta para registrar la atención al paciente. Recibe el {cita_id} para saber a qué cita pertenece la atención registrada.
     Route::post('/registrar-atencion/{cita_id}', [MedicosController::class, 'registrarAtencion'])->name('registrarAtencion');
 
+    // Ruta para buscar y mostrar la historia clínica de un paciente
     Route::get('/historias-clinicas', [MedicosController::class, 'consultarHistoriaClinica'])->name('consultarHistoriaClinica');
 
 });

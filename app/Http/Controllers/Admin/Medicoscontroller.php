@@ -312,9 +312,74 @@ class MedicosController extends Controller
     }
 
 
+    // Método para mostrar el formulario de búsqueda de agenda de un médico
+    public function mostrarFormularioBuscarAgenda()
+    {
+        return view('medico.buscar_agenda'); // Vista para el formulario
+    }
+
+    // Método para buscar la agenda de un médico por su número de identificación
+    public function buscarAgendaPorIdentificacion(Request $request)
+    {
+        
+        $numeroIdentificacion = $request->input('numeroIdentificacion');
+
+        Log::info('Buscando agenda para el médico con identificación: ' . $numeroIdentificacion);
+
+        // Consulta para obtener el usuario con el número de identificación
+        $usuario = User::where('numeroIdentificacion', $numeroIdentificacion)->first();
+
+        if (!$usuario) {
+            Log::info('No se encontró médico con identificación: ' . $numeroIdentificacion);
+            return redirect()->back()->with('error', 'No se encontró médico con esa identificación.');
+        }
+
+        // Consulta para obtener el medico_id usando el usuarioId del usuario
+        $medico = Medico::where('usuarioId', $usuario->id)->first();
+
+        if (!$medico) {
+            Log::info('No se encontró médico asociado con el usuario ID: ' . $usuario->id);
+            return redirect()->back()->with('error', 'No se encontró médico asociado a ese usuario.');
+        }
+
+        // Registrar el medico_id obtenido
+        Log::info('Medico encontrado. ID del médico: ' . $medico->id);
+
+        // Redirigir a la vista de agenda con el id del médico
+        return redirect()->route('medico.medico.agenda', ['medico_id' => $medico->id]);
+    }
+
+    // public function buscarAgenda(Request $request)
+    // {
+    //     // Obtener la identificación del médico del formulario
+    //     $numeroIdentificacion = $request->input('numeroIdentificacion');
+
+    //     // Registrar la búsqueda en el log
+    //     Log::info('Buscando agenda para el médico con identificación: ' . $numeroIdentificacion);
+
+    //     // Buscar el médico en la base de datos por número de identificación
+    //     $medico = User::where('numeroIdentificacion', $numeroIdentificacion)->first();
+
+    //     // Verificar si el médico existe
+    //     if (!$medico) {
+    //         // Si no se encuentra el médico, redirigir de nuevo con un mensaje de error
+    //         Log::info('No se encontró médico con identificación: ' . $numeroIdentificacion);
+    //         return redirect()->back()->with('error', 'No se encontró un médico con esa identificación.');
+    //     }
+
+    //     // Obtener el ID del médico
+    //     $medico_id = $medico->id;
+
+    //     // Redirigir a la ruta de la agenda del médico con el ID obtenido
+    //     return redirect()->route('medico.agenda', ['medico_id' => $medico_id]);
+
+    }
 
 
-}
+
+
+
+
 
     
 
