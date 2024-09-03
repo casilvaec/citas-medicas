@@ -136,6 +136,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
     
     Route::get('/citas', [CitasController::class, 'index'])->name('citas.index'); // Para ver las citas
     Route::get('/citas/cancel', [CitasController::class, 'cancel'])->name('citas.cancel'); // Para cancelar citas
+    // Ruta para cancelar una cita específica
+    Route::post('/citas/cancelar/{id}', [CitasController::class, 'cancelarCita'])->name('citas.cancelar');
     Route::get('/citas/reschedule', [CitasController::class, 'reschedule'])->name('citas.reschedule'); // Para reprogramar citas
 
     Route::get('/citas/obtener-especialidades', [CitasController::class, 'obtenerEspecialidades']);
