@@ -124,36 +124,194 @@ class CitasController extends Controller
     }
 
 
-    // public function cancelarCita($id)
+    public function reschedule()
+    {
+        $citas = DB::table('citas')
+            ->join('users as pacientes', 'citas.pacienteId', '=', 'pacientes.id')
+            ->join('medicos', 'citas.medicoId', '=', 'medicos.id')
+            ->join('users as medicosUsuarios', 'medicos.usuarioId', '=', 'medicosUsuarios.id')
+            ->join('especialidades_medicas as especialidades', 'citas.especialidad_id', '=', 'especialidades.id')
+            ->select(
+                'citas.id as cita_id',
+                'pacientes.nombre as paciente_nombre',
+                'pacientes.apellidos as paciente_apellido',
+                'medicosUsuarios.nombre as medico_nombre',
+                'medicosUsuarios.apellidos as medico_apellido',
+                'especialidades.nombre as especialidad_nombre',
+                'citas.fecha',
+                'citas.hora_inicio',
+                'citas.hora_fin'
+            )
+            ->where('citas.estado', 'Agendada')
+            ->get();
+    
+        return view('admin.citas.reschedule', compact('citas'));
+    }
+    
+
+    public function update(Request $request, $id)
+    {
+        $cita = DB::table('citas')->where('id', $id)->first();
+
+        if ($cita) {
+            // Validar que el nuevo horario esté disponible
+            $disponible = DB::table('disponibilidad_medicos')
+                ->where('medicoId', $cita->medicoId)
+                ->where('fecha', $request->input('fecha'))
+                ->where('horaInicio', explode(' - ', $request->input('horario'))[0])
+                ->where('disponible', 1)
+                ->first();
+
+            if ($disponible) {
+                // Actualizar la disponibilidad del horario anterior a "Disponible"
+                DB::table('disponibilidad_medicos')
+                    ->where('medicoId', $cita->medicoId)
+                    ->where('fecha', $cita->fecha)
+                    ->where('horaInicio', $cita->hora_inicio)
+                    ->update(['disponible' => 1]);
+
+                // Actualizar la disponibilidad del nuevo horario a "No Disponible"
+                DB::table('disponibilidad_medicos')
+                    ->where('medicoId', $cita->medicoId)
+                    ->where('fecha', $request->input('fecha'))
+                    ->where('horaInicio', explode(' - ', $request->input('horario'))[0])
+                    ->update(['disponible' => 2]);
+
+                // Actualizar la cita con la nueva fecha, horario y estado
+                DB::table('citas')
+                    ->where('id', $id)
+                    ->update([
+                        'fecha' => $request->input('fecha'),
+                        'hora_inicio' => explode(' - ', $request->input('horario'))[0],
+                        'hora_fin' => explode(' - ', $request->input('horario'))[1],
+                        'estado' => 'Reagendada' // Cambiar el estado de la cita a "Reagendada"
+                    ]);
+
+                // Redirigir a la vista de confirmación de la reprogramación de la cita
+                return redirect()->route('citas.confirmacionReprogramacion', ['id' => $id]);
+            } else {
+                return back()->with('error', 'El horario seleccionado no está disponible.');
+            }
+        }
+
+        return back()->with('error', 'Cita no encontrada.');
+    }
+
+
+
+    public function confirmacionReprogramacion($id)
+    {
+        $cita = DB::table('citas')
+            ->join('users as pacientes', 'citas.pacienteId', '=', 'pacientes.id')
+            ->join('medicos', 'citas.medicoId', '=', 'medicos.id')
+            ->join('users as medicosUsuarios', 'medicos.usuarioId', '=', 'medicosUsuarios.id')
+            ->join('especialidades_medicas as especialidades', 'citas.especialidad_id', '=', 'especialidades.id')
+            ->select(
+                'citas.id as cita_id',
+                'pacientes.nombre as paciente_nombre',
+                'pacientes.apellidos as paciente_apellido',
+                'medicosUsuarios.nombre as medico_nombre',
+                'medicosUsuarios.apellidos as medico_apellido',
+                'especialidades.nombre as especialidad_nombre',
+                'citas.fecha',
+                'citas.hora_inicio',
+                'citas.hora_fin',
+                'citas.estado'
+            )
+            ->where('citas.id', $id)
+            ->first();
+
+        return view('admin.citas.confirmacionReprogramacion', compact('cita'));
+    }
+
+
+
+    // public function reschedule($id)
     // {
+        
     //     $cita = DB::table('citas')->where('id', $id)->first();
 
-    //     if ($cita && $cita->estado != 'Cancelada') {
-    //         // Cambiar el estado de la cita a 'Cancelada'
-    //         DB::table('citas')
-    //             ->where('id', $id)
-    //             ->update(['estado' => 'Cancelada']);
+    //     // Obtener las disponibilidades del médico con la misma especialidad en septiembre
+    //     $disponibilidades = DB::table('disponibilidad_medicos as dm')
+    //         ->join('medico_especialidades as me', 'dm.medicoId', '=', 'me.medicoId')
+    //         ->where('me.especialidadId', $cita->especialidad_id)
+    //         ->where('dm.medicoId', $cita->medicoId)
+    //         ->where('dm.disponible', 1) // Solo mostrar horarios disponibles
+           
+    //         ->select('dm.medicoId', 'dm.fecha', 'dm.horaInicio', 'dm.horaFin', 'dm.disponible', 'me.especialidadId')
+    //         ->get();
 
-    //         // Liberar el horario del médico en la tabla 'disponibilidad_medicos'
-    //         DB::table('disponibilidad_medicos')
-    //             ->where('medico_id', $cita->medicoId)
-    //             ->where('fecha', $cita->fecha)
-    //             ->where('hora_inicio', $cita->hora_inicio)
-                
-    //             ->update(['disponible' => 1]);  // Cambiar a 1 para 'Disponible'
-
-    //         return redirect()->route('admin.citas.cancel')->with('success', 'Cita cancelada exitosamente y horario liberado.');
-    //     } else {
-    //         return redirect()->route('admin.citas.cancel')->with('error', 'No se puede cancelar esta cita.');
-    //     }
+    //     return view('admin.citas.reschedule', compact('cita', 'disponibilidades'));
+        
+    //     // Lógica para reprogramar citas
+    //     //return view('admin.citas.reschedule');
     // }
 
 
-    public function reschedule()
+    // public function update(Request $request, $id)
+    // {
+    //     $cita = DB::table('citas')->where('id', $id)->first();
+
+    //     if ($cita) {
+    //         // Validar que el nuevo horario esté disponible
+    //         $disponible = DB::table('disponibilidad_medicos')
+    //             ->where('medicoId', $cita->medicoId)
+    //             ->where('fecha', $request->input('fecha'))
+    //             ->where('horaInicio', explode(' - ', $request->input('horario'))[0])
+    //             ->where('disponible', 1)
+    //             ->first();
+
+    //         if ($disponible) {
+    //             // Actualizar la disponibilidad del horario anterior a "Disponible"
+    //             DB::table('disponibilidad_medicos')
+    //                 ->where('medicoId', $cita->medicoId)
+    //                 ->where('fecha', $cita->fecha)
+    //                 ->where('horaInicio', $cita->hora_inicio)
+    //                 ->update(['disponible' => 1]);
+
+    //             // Actualizar la disponibilidad del nuevo horario a "No Disponible"
+    //             DB::table('disponibilidad_medicos')
+    //                 ->where('medicoId', $cita->medicoId)
+    //                 ->where('fecha', $request->input('fecha'))
+    //                 ->where('horaInicio', explode(' - ', $request->input('horario'))[0])
+    //                 ->update(['disponible' => 2]);
+
+    //             // Actualizar la cita con la nueva fecha y horario
+    //             DB::table('citas')
+    //                 ->where('id', $id)
+    //                 ->update([
+    //                     'fecha' => $request->input('fecha'),
+    //                     'hora_inicio' => explode(' - ', $request->input('horario'))[0],
+    //                     'hora_fin' => explode(' - ', $request->input('horario'))[1],
+    //                 ]);
+
+    //             return redirect()->route('admin.citas.index')->with('success', 'Cita reprogramada exitosamente.');
+    //         } else {
+    //             return back()->with('error', 'El horario seleccionado no está disponible.');
+    //         }
+    //     }
+
+    //     return back()->with('error', 'Cita no encontrada.');
+    // }
+
+
+    public function reprogramar($id)
     {
-        // Lógica para reprogramar citas
-        return view('admin.citas.reschedule');
+        $cita = DB::table('citas')->where('id', $id)->first();
+
+        // Obtener disponibilidades del médico de la cita
+        $disponibilidades = DB::table('disponibilidad_medicos')
+            ->where('medicoId', $cita->medicoId)
+            ->where('disponible', 1) // Disponibilidad
+            ->where('fecha', '>=', now()->toDateString()) // Mostrar solo fechas desde hoy en adelante
+            ->get();
+
+        return view('admin.citas.reprogramar', compact('cita', 'disponibilidades'));
     }
+
+
+
+
 
    
 
@@ -346,33 +504,7 @@ class CitasController extends Controller
         }
     
 
-    // public function cancelar()
-    // {
-    //     // Consulta SQL para obtener las citas con estado 'Agendada' o 'Reagendada'
-    //     $citas = DB::table('citas')
-    //         ->join('users as pacientes', 'citas.pacienteId', '=', 'pacientes.id')
-    //         ->join('especialidades_medicas as especialidades', 'citas.especialidad_id', '=', 'especialidades.id')
-    //         ->join('medicos', 'citas.medicoId', '=', 'medicos.id')
-    //         ->join('users as medicos', 'medicos.usuarioId', '=', 'medicos.id')
-    //         ->select(
-    //             'citas.id as cita_id',
-    //             'pacientes.nombre as paciente_nombre',
-    //             'pacientes.apellidos as paciente_apellido',
-    //             'medicos.nombre as medico_nombre',
-    //             'medicos.apellidos as medico_apellido',
-    //             'citas.fecha',
-    //             'citas.hora_inicio',
-    //             'citas.hora_fin',
-    //             'especialidades.nombre as especialidad_nombre',
-    //             'citas.estado'
-    //         )
-    //         ->whereIn('citas.estado', ['Agendada', 'Reagendada']) // Solo mostrar citas que puedan cancelarse
-    //         ->orderBy('citas.fecha', 'asc')
-    //         ->orderBy('citas.hora_inicio', 'asc')
-    //         ->get();
-
-    //     return view('admin.citas.cancel', compact('citas'));
-    // }
+    
 
     
 

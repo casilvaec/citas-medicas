@@ -1,0 +1,41 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <h2>Reprogramar Citas Médicas</h2>
+
+    {{-- @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+    @if(session('error'))
+        <div class="alert alert-danger">{{ session('error') }}</div>
+    @endif --}}
+
+    <table id="citas-table" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Paciente</th>
+                <th>Médico</th>
+                <th>Especialidad</th>
+                <th>Fecha Actual</th>
+                <th>Hora Actual</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($citas as $cita)
+            <tr>
+                <td>{{ $cita->paciente_nombre }} {{ $cita->paciente_apellido }}</td>
+                <td>{{ $cita->medico_nombre }} {{ $cita->medico_apellido }}</td>
+                <td>{{ $cita->especialidad_nombre }}</td>
+                <td>{{ \Carbon\Carbon::parse($cita->fecha)->format('d-M-Y') }}</td>
+                <td>{{ $cita->hora_inicio }} - {{ $cita->hora_fin }}</td>
+                <td>
+                    <a href="{{ route('citas.reschedule', $cita->cita_id) }}" class="btn btn-warning">Seleccionar para Reprogramar</a>
+                </td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
+</div>
+@endsection

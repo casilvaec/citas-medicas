@@ -138,7 +138,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::get('/citas/cancel', [CitasController::class, 'cancel'])->name('citas.cancel'); // Para cancelar citas
     // Ruta para cancelar una cita específica
     Route::post('/citas/cancelar/{id}', [CitasController::class, 'cancelarCita'])->name('citas.cancelar');
-    Route::get('/citas/reschedule', [CitasController::class, 'reschedule'])->name('citas.reschedule'); // Para reprogramar citas
+    Route::get('/citas/reschedule/', [CitasController::class, 'reschedule'])->name('citas.reschedule'); // Para mostrar la vista de reprogramación
+    Route::put('/citas/update/{id}', [CitasController::class, 'update'])->name('citas.update'); // Para actualizar la cita reprogramada
+    Route::get('/admin/citas/reprogramar/{id}', [CitasController::class, 'reprogramar'])->name('citas.reprogramar');
+    Route::get('/admin/citas/confirmacionReprogramacion/{id}', [CitasController::class, 'confirmacionReprogramacion'])->name('admin.citas.confirmacionReprogramacion');
+
 
     Route::get('/citas/obtener-especialidades', [CitasController::class, 'obtenerEspecialidades']);
     // Definir la ruta para crear un nuevo paciente
