@@ -28,6 +28,8 @@ use App\Http\Controllers\Admin\ConsultoriosController;
 use App\Http\Controllers\Admin\ConsultorioMedicoController;
 use App\Http\Controllers\Admin\CitasController;
 use App\Http\Controllers\Admin\PacientesController;
+use App\Http\Controllers\Dashboard\MedicoController;
+use App\Http\Controllers\Dashboard\PacienteController;
 
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -66,6 +68,17 @@ Route::delete('profile', [ProfileController::class, 'destroy'])->name('profile.d
 Route::get('profile', function () {
     return redirect()->route('profile.edit');
 })->name('profile.redirect');
+
+// web.php
+
+// RUTAS DE VISTAS PRINCIPALES SEGUN ROL
+
+// Ruta para el dashboard del médico
+Route::get('/dashboard/medico', [MedicoController::class, 'dashboard'])->name('dashboard.medico');
+
+// Ruta para el dashboard del paciente
+Route::get('/dashboard/paciente', [PacienteController::class, 'dashboard'])->name('dashboard.paciente');
+
 
 
 

@@ -8,6 +8,8 @@ use App\Http\Requests\LoginRequest;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
+
 class LoginController extends Controller
 {
     // Usar el trait AuthenticatesUsers para proporcionar la funcionalidad de autenticación
@@ -123,31 +125,59 @@ class LoginController extends Controller
      */
     protected function authenticated(Request $request, $user)
     {
-    //     // Obtener los IDs de los roles
-    //     $adminRoleId = 7;
-    //     $patientRoleId = 1;
-    //     // Otros roles pueden ser añadidos aquí si es necesario
+        //     // Obtener los IDs de los roles
+        //     $adminRoleId = 7;
+        //     $patientRoleId = 1;
+        //     // Otros roles pueden ser añadidos aquí si es necesario
 
-    //     // Verificar si el estado del usuario es igual a 1
-    if ($user->estadoId == 1) {
-    //      Redirigir a la página de edición de perfil
-            return redirect()->route('profile.edit');
-    }
+        //     // Verificar si el estado del usuario es igual a 1
+        if ($user->estadoId == 1) {
+        //      Redirigir a la página de edición de perfil
+                return redirect()->route('profile.edit');
+        }
 
-    //     Verificar si el estado del usuario es igual a 2
-    if ($user->estadoId == 2) {
-        return redirect()->route('admin.dashboard');
-    //         // Redirección basada en el rol del usuario
-    //if ($user->roles->contains($adminRoleId)) {
-    //             return redirect()->route('admin.dashboard');
-    //         } elseif ($user->roles->contains($patientRoleId)) {
-    //             return redirect()->route('patient.dashboard');
-    //         }
-    //     }
+        //     Verificar si el estado del usuario es igual a 2
+        if ($user->estadoId == 2) {
 
-    // Redirección por defecto
+            // Verificar si el usuario es un médico consultando la tabla "medicos"
+
+            $esMedico = DB::selectOne('SELECT u.id, u.nombre, u.apellidos, m.id AS medico_id
+                                    FROM users u
+                                    JOIN medicos m ON m.usuarioId = u.id
+                                    WHERE u.id = ?', [$user->id]);
+            
+            // Verificar el resultado de la consulta
+            //dd('Resultado de la consulta:', $esMedico); // Depuración
+
+            if ($esMedico) { // Si la consulta devuelve resultados, el usuario es un médico
+
+                    //dd('Redirigiendo a dashboard.medico'); // Depuración
+                    return redirect()->route('dashboard.medico'); // Redirigir al dashboard del médico
+                
+            } 
+            
+            // Verificar si el usuario es un paciente consultando la tabla "users" con la condición del rol de paciente
+            $esPaciente = DB::selectOne('SELECT u.id, u.nombre, u.apellidos 
+                                        FROM users u
+                                        JOIN model_has_roles mhr ON mhr.model_id = u.id
+                                        JOIN roles r ON r.id = mhr.role_id
+                                        WHERE u.id = ? AND r.name = "Paciente"', [$user->id]);
+
+            if ($esPaciente) {
+            // Redirigir al dashboard del paciente
+            return redirect()->route('dashboard.paciente');
+            }
+            
+            
+            else {
+                dd('Redirigiendo a admin.dashboard'); // Depuración
+                // Si no es médico, redirigir al dashboard del administrador (u otro rol predeterminado)
+                return redirect()->route('admin.dashboard');
+            }
     
+        
+        }
+        dd('Redirigiendo a home'); // Depuración
+        return redirect()->route('home');
     }
-    return redirect()->route('home');
-}
 }

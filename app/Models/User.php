@@ -1,43 +1,6 @@
 <?php
 
-// namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-// use Illuminate\Database\Eloquent\Factories\HasFactory;
-// use Illuminate\Foundation\Auth\User as Authenticatable;
-// use Illuminate\Notifications\Notifiable; -->
-
-// class User extends Authenticatable
-// {
-//     use HasFactory, Notifiable;
-
-//     protected $fillable = [
-//         'nombre',
-//         'correoElectronico',
-//         'password',
-//         'tipoIdentificacionId',
-//         'fechaNacimiento',
-//         'generoId',
-//         'telefono',
-//         'direccion',
-//         'ciudadResidenciaId',
-//         'estado',
-//     ];
-
-//     protected $hidden = [
-//         'password',
-//     ];
-
-//     public function getEmailAttribute()
-//     {
-//         return $this->attributes['correoElectronico'];
-//     }
-
-//     public function setEmailAttribute($value)
-//     {
-//         $this->attributes['correoElectronico'] = $value;
-//     }
-// } -->
 
 
 
