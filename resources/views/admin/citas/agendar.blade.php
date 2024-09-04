@@ -13,7 +13,7 @@
               <input type="text" name="busquedaPaciente" id="busquedaPaciente" class="form-control" placeholder="Ingrese Identificación (Cédula, Pasaporte, RUC)" required>
               <div class="input-group-append">
                   <button type="submit" class="btn btn-primary">Buscar</button>
-                  <a href="{{ route('admin.pacientes.create') }}" class="btn btn-success ml-2">Registrar Nuevo Paciente</a>
+                  {{-- <a href="{{ route('admin.pacientes.create') }}" class="btn btn-success ml-2">Registrar Nuevo Paciente</a> --}}
               </div>
           </div>
       </div>

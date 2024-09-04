@@ -9,6 +9,8 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+
 
 class LoginController extends Controller
 {
@@ -41,13 +43,21 @@ class LoginController extends Controller
 
         // Si el usuario existe, procedemos a verificar el estado
         if ($user) {
-            // Autenticar manualmente al usuario (sin verificar la contraseña)
-            Auth::login($user);
 
-            // Llamar al método authenticated para verificar su estado
-            return $this->authenticated($request, $user);
+            // Validar la contraseña ingresada con la almacenada en la base de datos
+            if (Hash::check($request->input('password'), $user->password)) {
+                // Autenticar manualmente al usuario (sin verificar la contraseña)
+                Auth::login($user);
+
+                // Llamar al método authenticated para verificar su estado
+                return $this->authenticated($request, $user);
+            }else {
+                // Si la contraseña no coincide, redirigir de vuelta con un mensaje de error
+                return redirect()->back()->withErrors([
+                    'password' => 'Contraseña incorrecta.',
+                ]);
+            }
         }
-
         // Si no se encuentra el usuario, redirigir de vuelta al login con un mensaje de error
         return redirect()->back()->withErrors([
             'username' => 'Usuario no encontrado.',
@@ -104,13 +114,13 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         // Cerrar sesión
-        //Auth::logout();
+        Auth::logout();
 
         // Invalidar la sesión
-        //$request->session()->invalidate();
+        $request->session()->invalidate();
 
         // Regenerar el token de la sesión
-        //$request->session()->regenerateToken();
+        $request->session()->regenerateToken();
 
         // Redirigir a la página de inicio de sesión después de cerrar sesión
         return redirect('/login');

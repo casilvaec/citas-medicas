@@ -11,7 +11,7 @@
     <!-- Botones de acciones que puede realizar el paciente -->
     
         <a href="{{ url('/admin/citas/agendar') }}" class="btn btn-primary">Agendar Cita</a>
-        <a href="{{ url('/admin/citas/cancel') }}" class="btn btn-secondary">Cancelar Cita</a>
+        {{-- <a href="{{ url('/admin/citas/cancel') }}" class="btn btn-secondary">Cancelar Cita</a> --}}
         <a href="{{ url('/profile/edit') }}" class="btn btn-info">Ver Perfil Personal</a>
     
 </div>

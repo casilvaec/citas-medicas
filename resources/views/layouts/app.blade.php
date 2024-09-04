@@ -36,6 +36,19 @@
         <!-- Navbar -->
         @include('layouts.navbar')
 
+        <!-- Enlace de Logout que redirige directamente al login -->
+        {{-- <a href="{{ url('/login') }}" class="nav-link">
+            Logout
+        </a> --}}
+
+        {{-- <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+            @csrf
+        </form>
+
+        <a href="#" class="nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a> --}}
+        <!-- Enlace de Logout Simplificado -->
+        {{-- <a href="{{ route('login') }}" class="nav-link">Logout</a> --}}
+
         <!-- Main Sidebar Container -->
         @include('layouts.sidebar')
 
