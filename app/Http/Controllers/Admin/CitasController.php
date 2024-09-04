@@ -188,7 +188,7 @@ class CitasController extends Controller
                     ]);
 
                 // Redirigir a la vista de confirmación de la reprogramación de la cita
-                return redirect()->route('citas.confirmacionReprogramacion', ['id' => $id]);
+                return redirect()->route('admin.admin.citas.confirmacionReprogramacion', ['id' => $id]);
             } else {
                 return back()->with('error', 'El horario seleccionado no está disponible.');
             }
