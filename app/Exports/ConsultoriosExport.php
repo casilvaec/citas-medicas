@@ -44,13 +44,15 @@
 namespace App\Exports;
 
 use Illuminate\Support\Facades\DB;
-use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\FromCollection; //para exportar colecciones de datos a Excel.
+use Maatwebsite\Excel\Concerns\WithHeadings; //para definir encabezados de las columnas en Excel.
+
 
 class ConsultoriosExport implements FromCollection, WithHeadings
 {
     public function collection()
     {
+        //Realiza una consulta compleja a la base de datos usando Query Builder de Laravel.
         return DB::table('consultorios')
             ->leftJoin('consultorio_medico', 'consultorios.id', '=', 'consultorio_medico.consultorio_id')
             ->leftJoin('medicos', 'consultorio_medico.medico_id', '=', 'medicos.id')
@@ -68,6 +70,7 @@ class ConsultoriosExport implements FromCollection, WithHeadings
             ->get();
     }
 
+    //define los encabezados de las columnas en el archivo Excel.
     public function headings(): array
     {
         return [

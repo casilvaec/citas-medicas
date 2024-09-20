@@ -12,6 +12,7 @@ class UsersExport implements FromCollection
     */
     public function collection()
     {
+        //User::all() devuelve todos los registros de la tabla 'users' como una colección de Laravel.
         return User::all();
     }
 }

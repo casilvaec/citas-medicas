@@ -145,6 +145,7 @@ class CitasController extends Controller
             ->where('citas.estado', 'Agendada')
             ->get();
     
+        //Devuelve la vista 'admin.citas.reschedule' con los datos de las citas agendadas.    
         return view('admin.citas.reschedule', compact('citas'));
     }
     

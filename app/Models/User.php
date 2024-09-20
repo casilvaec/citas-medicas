@@ -62,5 +62,12 @@ class User extends Authenticatable
         return $this->belongsToMany(Consultorio::class, 'consultorio_medico', 'medicoId', 'consultorioId')
                     ->withPivot('fecha_asignacion');
     }
+
+
+    public function genero()
+    {
+        return $this->belongsTo(Genero::class, 'generoId');
+    }
+
 }
 

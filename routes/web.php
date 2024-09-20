@@ -31,6 +31,9 @@ use App\Http\Controllers\Admin\PacientesController;
 use App\Http\Controllers\Dashboard\MedicoController;
 use App\Http\Controllers\Dashboard\PacienteController;
 
+use App\Http\Controllers\TriajeController;
+
+
 use Maatwebsite\Excel\Facades\Excel;
 
 Route::get('/', function () {
@@ -237,6 +240,14 @@ Route::prefix('medico')->name('medico.')->group(function () {
     // Ruta para buscar y mostrar la historia clínica de un paciente
     Route::get('/historias-clinicas', [MedicosController::class, 'consultarHistoriaClinica'])->name('consultarHistoriaClinica');
 
+    Route::get('/triaje', [TriajeController::class, 'mostrarFormularioTriaje'])->name('triaje.formulario');
+
+    // Ruta para mostrar el formulario de búsqueda de paciente
+    Route::get('/triaje/buscar', [TriajeController::class, 'buscarPacienteParaTriaje'])->name('triaje.buscar');
+
+    // Ruta para registrar el triaje (almacenar los signos vitales)
+    Route::post('/triaje', [TriajeController::class, 'store'])->name('triaje.store');
+
 });
 
 
@@ -246,4 +257,5 @@ Route::prefix('medico')->name('medico.')->group(function () {
 //     Route::get('historial/{paciente_id}', [MedicoController::class, 'historial'])->name('historial');
 //     Route::post('atencion/registrar', [MedicoController::class, 'registrarAtencion'])->name('registrarAtencion');
 // });
+
 

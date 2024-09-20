@@ -14,5 +14,11 @@
     <a href="{{ url('/medico/buscar-agenda') }}" class="btn btn-primary">Revisar Agenda</a>
     <a href="{{ url('/medico/historias-clinicas') }}" class="btn btn-secondary">Historia Clínica de Pacientes</a>
     <a href="{{ url('/profile/edit') }}" class="btn btn-info">Ver Perfil Personal</a>
+
+    <!-- Botón nuevo para Gestionar Triajes -->
+    
+    <a href="{{ url('/medico/triaje') }}" class="btn btn-warning">Registrar Triaje</a>
+
+
 </div>
 @endsection
