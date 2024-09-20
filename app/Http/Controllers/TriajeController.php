@@ -150,13 +150,7 @@ class TriajeController extends Controller
 
     public function eliminarTriaje($id)
     {
-        // try {
-        //     $triaje = Triaje::findOrFail($id);
-        //     $triaje->delete();
-        //     return redirect()->route('triajes.listar')->with('success', 'Triaje eliminado correctamente.');
-        // } catch (\Exception $e) {
-        //     return redirect()->route('triajes.listar')->with('error', 'Error al eliminar el triaje.');
-        // }
+        
 
         try {
           // Buscar el triaje por ID
@@ -218,16 +212,6 @@ class TriajeController extends Controller
         // Guardar los cambios
         $triaje->save();
 
-        // Actualizar los datos del triaje
-        // $triaje->update([
-        //     'frecuenciaCardiaca' => $request->frecuenciaCardiaca,
-        //     'frecuenciaRespiratoria' => $request->frecuenciaRespiratoria,
-        //     'presionArterialMin' => $request->presionArterialMin,
-        //     'presionArterialMax' => $request->presionArterialMax,
-        //     'temperaturaCorporal' => $request->temperaturaCorporal,
-        //     'saturacionOxigeno' => $request->saturacionOxigeno,
-        //     //'prioridad' => $request->prioridad,
-        // ]);
 
         // Redirigir al listado de triajes con un mensaje de éxito
         return redirect()->route('medico.triajes.listar')->with('success', 'Triaje actualizado correctamente.');

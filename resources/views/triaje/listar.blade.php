@@ -4,7 +4,7 @@
 <div class="container mt-4">
     <h2>Lista de Triajes</h2>
 
-    <table class="table table-bordered table-hover">
+    <table id="tabla-triajes" class="table table-bordered table-hover">
         <thead class="thead-dark">
             <tr>
                 <th>Paciente</th>
@@ -47,3 +47,16 @@
     </table>
 </div>
 @endsection
+
+<!-- script para inicializar DataTables -->
+@push('scripts')
+<script>
+    $(document).ready(function() {
+        $('#tabla-triajes').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.10.21/i18n/Spanish.json'
+            }
+        });
+    });
+</script>
+@endpush

@@ -1,6 +1,25 @@
+<?php
+    // Obtener el ID del usuario autenticado
+    //$userId = Auth::user()->id;
 
+    // Verificar si el usuario está en la tabla medicos
+    //$esMedico = \App\Models\Medico::where('usuarioId', $userId)->exists();
+    // Verificar si el usuario está autenticado antes de obtener el ID
+    if (Auth::check()) {
+        $userId = Auth::user()->id;
 
+        // Verificar si el usuario está en la tabla medicos
+        $esMedico = \App\Models\Medico::where('usuarioId', $userId)->exists();
+        $esPaciente = \App\Models\Paciente::where('usuarioId', $userId)->exists();
+    } else {
+        $esMedico = false; // Si no está autenticado, asumimos que no es médico
+        $esPaciente = false; // Si no está autenticado, asumimos que no es paciente
+    }
 
+?>
+
+<!-- Mostrar solo si NO es médico -->
+@if(!$esMedico && !$esPaciente)
 
 
 
@@ -268,3 +287,4 @@
         </nav>
     </div>
 </aside>
+@endif

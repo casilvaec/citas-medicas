@@ -21,6 +21,7 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class, // Valida el tamaño del POST (limita el tamaño de la carga de archivos)
         \App\Http\Middleware\TrimStrings::class, // Elimina espacios en blanco de los valores de entrada
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class, // Convierte cadenas vacías en NULL
+        
     ];
 
     /**
@@ -66,5 +67,6 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class, // Middleware para limitar la tasa de solicitudes
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class, // Middleware para asegurar que el email esté verificado
         //'redirectBasedOnRole' => \App\Http\Middleware\RedirectBasedOnRole::class, // Middleware para redirigir basado en el rol
+        'medico' => \App\Http\Middleware\MedicoMiddleware::class, // Middleware para verificar si el usuario es médico
     ];
 }

@@ -39,14 +39,7 @@
             <input type="number" name="saturacionOxigeno" class="form-control" value="{{ $triaje->saturacionOxigeno }}" required>
         </div>
 
-        {{-- <div class="form-group">
-            <label for="prioridad">Prioridad:</label>
-            <select name="prioridad" class="form-control" required>
-                <option value="Bajo" {{ $triaje->prioridad == 'Bajo' ? 'selected' : '' }}>Bajo</option>
-                <option value="Medio" {{ $triaje->prioridad == 'Medio' ? 'selected' : '' }}>Medio</option>
-                <option value="Alto" {{ $triaje->prioridad == 'Alto' ? 'selected' : '' }}>Alto</option>
-            </select>
-        </div> --}}
+        
 
         <button type="submit" class="btn btn-primary">Actualizar Triaje</button>
     </form>
