@@ -248,6 +248,18 @@ Route::prefix('medico')->name('medico.')->group(function () {
     // Ruta para registrar el triaje (almacenar los signos vitales)
     Route::post('/triaje', [TriajeController::class, 'store'])->name('triaje.store');
 
+    Route::get('/triajes', [TriajeController::class, 'listarTriajes'])->name('triajes.listar');
+
+    // Ruta para mostrar el formulario de edición de un triaje
+    Route::get('/triajes/{id}/editar', [TriajeController::class, 'editarTriaje'])->name('triajes.editar');
+
+    // Ruta para eliminar un triaje
+    Route::delete('/triajes/{id}', [TriajeController::class, 'eliminarTriaje'])->name('triajes.eliminar');
+
+    Route::put('/triajes/{id}', [TriajeController::class, 'actualizarTriaje'])->name('triajes.actualizar');
+
+
+
 });
 
 

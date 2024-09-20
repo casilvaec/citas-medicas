@@ -134,4 +134,108 @@ class TriajeController extends Controller
         }
         // return response()->view('triaje.buscar');
     }
+
+    public function listarTriajes()
+    {
+        // Obtener todos los triajes, ordenados por prioridad y fecha de registro
+        // Obtener todos los triajes con el paciente relacionado, ordenados por prioridad y fecha de registro
+        $triajes = Triaje::with('paciente.user') // Cargamos la relación del paciente y del usuario
+            ->where('estadoRegistro', 'activo') // Solo triajes activos
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        // Retornar la vista con los triajes
+        return view('triaje.listar', compact('triajes'));
+    }
+
+    public function eliminarTriaje($id)
+    {
+        // try {
+        //     $triaje = Triaje::findOrFail($id);
+        //     $triaje->delete();
+        //     return redirect()->route('triajes.listar')->with('success', 'Triaje eliminado correctamente.');
+        // } catch (\Exception $e) {
+        //     return redirect()->route('triajes.listar')->with('error', 'Error al eliminar el triaje.');
+        // }
+
+        try {
+          // Buscar el triaje por ID
+          $triaje = Triaje::findOrFail($id);
+  
+          // Cambiar el estado a 'inactivo' en lugar de eliminar físicamente
+          $triaje->estadoRegistro = 'inactivo';
+          $triaje->save();
+  
+          // Redirigir con un mensaje de éxito
+          return redirect()->route('medico.triajes.listar')->with('success', 'El triaje ha sido eliminado correctamente.');
+          } catch (\Exception $e) {
+              // En caso de error, retornar a la lista de triajes con un mensaje de error
+              return redirect()->route('medico.triajes.listar')->with('error', 'Error al eliminar el triaje.');
+          }
+
+
+    }
+
+
+    public function editarTriaje($id)
+    {
+        // Buscar el triaje por ID
+        $triaje = Triaje::findOrFail($id);
+
+        // Retornar la vista con los datos del triaje
+        return view('triaje.editar', compact('triaje'));
+    }
+
+    public function actualizarTriaje(Request $request, $id)
+    {
+       
+      try {
+      // Validar los datos ingresados
+        $request->validate([
+            'frecuenciaCardiaca' => 'required|integer|between:60,100',
+            'frecuenciaRespiratoria' => 'required|integer|between:12,20',
+            'presionArterialMin' => 'required|integer|between:80,84',
+            'presionArterialMax' => 'required|integer|between:120,129',
+            'temperaturaCorporal' => 'required|numeric|between:12,40',
+            'saturacionOxigeno' => 'required|numeric|between:70,100',
+            //'prioridad' => 'required|string',
+        ]);
+
+        // Buscar el triaje por ID
+        $triaje = Triaje::findOrFail($id);
+
+        // Actualizar los signos vitales
+        $triaje->frecuenciaCardiaca = $request->frecuenciaCardiaca;
+        $triaje->frecuenciaRespiratoria = $request->frecuenciaRespiratoria;
+        $triaje->presionArterialMin = $request->presionArterialMin;
+        $triaje->presionArterialMax = $request->presionArterialMax;
+        $triaje->temperaturaCorporal = $request->temperaturaCorporal;
+        $triaje->saturacionOxigeno = $request->saturacionOxigeno;
+
+        // Recalcular la prioridad basada en los nuevos signos vitales
+        $triaje->prioridad = $this->calcularPrioridad($triaje);
+
+        // Guardar los cambios
+        $triaje->save();
+
+        // Actualizar los datos del triaje
+        // $triaje->update([
+        //     'frecuenciaCardiaca' => $request->frecuenciaCardiaca,
+        //     'frecuenciaRespiratoria' => $request->frecuenciaRespiratoria,
+        //     'presionArterialMin' => $request->presionArterialMin,
+        //     'presionArterialMax' => $request->presionArterialMax,
+        //     'temperaturaCorporal' => $request->temperaturaCorporal,
+        //     'saturacionOxigeno' => $request->saturacionOxigeno,
+        //     //'prioridad' => $request->prioridad,
+        // ]);
+
+        // Redirigir al listado de triajes con un mensaje de éxito
+        return redirect()->route('medico.triajes.listar')->with('success', 'Triaje actualizado correctamente.');
+      } catch (\Exception $e) {
+        // En caso de error, redirigir al listado de triajes con un mensaje de error
+        return redirect()->route('medico.triajes.listar')->with('error', 'Error al actualizar el triaje.' . $e->getMessage());
+      }
+    }
+
+
 }

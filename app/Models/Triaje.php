@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Triaje extends Model
 {
     use HasFactory;
+
+    // Definir la relación con el paciente (usuario)
+    public function paciente()
+    {
+        return $this->belongsTo(Paciente::class, 'pacienteId');
+    }
 }

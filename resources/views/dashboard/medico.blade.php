@@ -19,6 +19,9 @@
     
     <a href="{{ url('/medico/triaje') }}" class="btn btn-warning">Registrar Triaje</a>
 
+    <!-- Botón nuevo para Ver Triajes -->
+    <a href="{{ url('/medico/triajes') }}" class="btn btn-info">Ver Triajes</a>
+
 
 </div>
 @endsection
